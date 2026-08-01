@@ -1154,6 +1154,7 @@ def main(page: ft.Page):
             expand=True,
             height=34,
             alignment=ft.Alignment.CENTER,
+            padding=ft.Padding(0, 0, 0, 2),
             ink=True,
             on_click=lambda e: _on_row5_changed(STATUS_ONLY_INGAME),
         )
@@ -1164,6 +1165,7 @@ def main(page: ft.Page):
             expand=True,
             height=34,
             alignment=ft.Alignment.CENTER,
+            padding=ft.Padding(0, 0, 0, 2),
             ink=True,
             on_click=lambda e: _on_row5_changed(STATUS_ONLY_ONLINE),
         )
@@ -1174,6 +1176,7 @@ def main(page: ft.Page):
             expand=True,
             height=34,
             alignment=ft.Alignment.CENTER,
+            padding=ft.Padding(0, 0, 0, 2),
             ink=True,
             on_click=lambda e: _on_row5_changed(STATUS_BOTH),
         )
