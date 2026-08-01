@@ -1173,7 +1173,7 @@ def main(page: ft.Page):
                 row5_cell_both,
             ], spacing=1, vertical_alignment=ft.CrossAxisAlignment.CENTER),
             bgcolor="#8d9199",
-            border_radius=20,
+            border_radius=24,
             width=360,
             height=40,
             padding=1,
