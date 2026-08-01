@@ -1139,7 +1139,7 @@ def main(page: ft.Page):
         row5_cell_ingame = ft.Container(
             content=ft.Text("In Game", color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
             bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_INGAME else SETTINGS_BG,
-            width=116,
+            expand=True,
             height=36,
             alignment=ft.Alignment.CENTER,
             ink=True,
@@ -1149,7 +1149,7 @@ def main(page: ft.Page):
         row5_cell_online = ft.Container(
             content=ft.Text("On Site", color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
             bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_ONLINE else SETTINGS_BG,
-            width=116,
+            expand=True,
             height=36,
             alignment=ft.Alignment.CENTER,
             ink=True,
@@ -1159,7 +1159,7 @@ def main(page: ft.Page):
         row5_cell_both = ft.Container(
             content=ft.Text("Both", color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
             bgcolor="#3b4858" if current_status_filter == STATUS_BOTH else SETTINGS_BG,
-            width=116,
+            expand=True,
             height=36,
             alignment=ft.Alignment.CENTER,
             ink=True,
@@ -1171,12 +1171,12 @@ def main(page: ft.Page):
                 row5_cell_ingame,
                 row5_cell_online,
                 row5_cell_both,
-            ], spacing=2, vertical_alignment=ft.CrossAxisAlignment.CENTER),
-            bgcolor="#8d9199",
-            border_radius=24,
+            ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+            bgcolor=SETTINGS_BG,
+            border=ft.Border.all(2, "#8d9199"),
+            border_radius=20,
             width=360,
             height=40,
-            padding=2,
         )
 
         content = ft.Column([
