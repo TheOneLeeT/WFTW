@@ -1092,11 +1092,19 @@ def main(page: ft.Page):
         ], spacing=8, tight=True)
 
         def _on_empty_split_click(e):
-            pass
+            selected = list(e.control.selected)
+            clicked = e.control.selected[0] if e.control.selected else None
+            if clicked in selected:
+                selected.remove(clicked)
+            else:
+                selected.append(clicked)
+            e.control.selected = selected
+            e.control.update()
 
         split_v1 = ft.SegmentedButton(
             selected=[],
             allow_empty_selection=True,
+            allow_multiple_selection=True,
             segments=[
                 ft.Segment(value="1", label=ft.Text("1")),
                 ft.Segment(value="2", label=ft.Text("2")),
