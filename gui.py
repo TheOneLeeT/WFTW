@@ -1119,6 +1119,12 @@ def main(page: ft.Page):
 
         row5_status_filter = current_status_filter
 
+        def _row5_content(label, selected):
+            return ft.Row([
+                ft.Icon(ft.Icons.CHECK, size=14, color="#d7e3f7") if selected else ft.Container(width=14),
+                ft.Text(label, color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
+            ], spacing=4, vertical_alignment=ft.CrossAxisAlignment.CENTER)
+
         def _on_row5_changed(value):
             nonlocal row5_status_filter, current_status_filter, tracking_status
             row5_status_filter = value
@@ -1126,6 +1132,9 @@ def main(page: ft.Page):
             row5_cell_ingame.bgcolor = "#3b4858" if value == STATUS_ONLY_INGAME else BG_LIGHT
             row5_cell_online.bgcolor = "#3b4858" if value == STATUS_ONLY_ONLINE else BG_LIGHT
             row5_cell_both.bgcolor = "#3b4858" if value == STATUS_BOTH else BG_LIGHT
+            row5_cell_ingame.content = _row5_content("In Game", value == STATUS_ONLY_INGAME)
+            row5_cell_online.content = _row5_content("On Site", value == STATUS_ONLY_ONLINE)
+            row5_cell_both.content = _row5_content("Both", value == STATUS_BOTH)
             row5_cell_ingame.update()
             row5_cell_online.update()
             row5_cell_both.update()
@@ -1137,7 +1146,7 @@ def main(page: ft.Page):
             append_log(f"Default status filter set to {current_status_filter}")
 
         row5_cell_ingame = ft.Container(
-            content=ft.Text("In Game", color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
+            content=_row5_content("In Game", current_status_filter == STATUS_ONLY_INGAME),
             bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_INGAME else BG_LIGHT,
             expand=True,
             height=34,
@@ -1148,7 +1157,7 @@ def main(page: ft.Page):
         )
 
         row5_cell_online = ft.Container(
-            content=ft.Text("On Site", color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
+            content=_row5_content("On Site", current_status_filter == STATUS_ONLY_ONLINE),
             bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_ONLINE else BG_LIGHT,
             expand=True,
             height=34,
@@ -1159,7 +1168,7 @@ def main(page: ft.Page):
         )
 
         row5_cell_both = ft.Container(
-            content=ft.Text("Both", color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
+            content=_row5_content("Both", current_status_filter == STATUS_BOTH),
             bgcolor="#3b4858" if current_status_filter == STATUS_BOTH else BG_LIGHT,
             expand=True,
             height=34,
