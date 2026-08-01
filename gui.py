@@ -1140,7 +1140,7 @@ def main(page: ft.Page):
             content=ft.Text("In Game", color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
             bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_INGAME else BG_LIGHT,
             expand=True,
-            height=40,
+            height=36,
             alignment=ft.Alignment.CENTER,
             ink=True,
             on_click=lambda e: _on_row5_changed(STATUS_ONLY_INGAME),
@@ -1150,7 +1150,7 @@ def main(page: ft.Page):
             content=ft.Text("On Site", color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
             bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_ONLINE else BG_LIGHT,
             expand=True,
-            height=40,
+            height=36,
             alignment=ft.Alignment.CENTER,
             ink=True,
             on_click=lambda e: _on_row5_changed(STATUS_ONLY_ONLINE),
@@ -1160,7 +1160,7 @@ def main(page: ft.Page):
             content=ft.Text("Both", color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
             bgcolor="#3b4858" if current_status_filter == STATUS_BOTH else BG_LIGHT,
             expand=True,
-            height=40,
+            height=36,
             alignment=ft.Alignment.CENTER,
             ink=True,
             on_click=lambda e: _on_row5_changed(STATUS_BOTH),
@@ -1175,7 +1175,7 @@ def main(page: ft.Page):
             bgcolor=BG_LIGHT,
             border_radius=20,
             width=360,
-            height=40,
+            height=36,
         )
 
         content = ft.Column([
