@@ -1173,6 +1173,7 @@ def main(page: ft.Page):
                 row5_cell_both,
             ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
             bgcolor=BG_LIGHT,
+            border_radius=20,
             width=360,
             height=40,
         )
