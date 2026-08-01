@@ -1116,11 +1116,84 @@ def main(page: ft.Page):
             width=360,
         )
 
+        row5_status_filter = current_status_filter
+
+        def _on_row5_changed(value):
+            nonlocal row5_status_filter, current_status_filter, tracking_status
+            row5_status_filter = value
+            current_status_filter = value
+            row5_cell_ingame.bgcolor = BG_LIGHT
+            row5_cell_online.bgcolor = BG_LIGHT
+            row5_cell_both.bgcolor = BG_LIGHT
+            if value == STATUS_ONLY_INGAME:
+                row5_cell_ingame.bgcolor = "#9ecaed"
+            elif value == STATUS_ONLY_ONLINE:
+                row5_cell_online.bgcolor = "#9ecaed"
+            else:
+                row5_cell_both.bgcolor = "#9ecaed"
+            row5_cell_ingame.update()
+            row5_cell_online.update()
+            row5_cell_both.update()
+            default_status_seg.selected = [value]
+            default_status_seg.update()
+            _sync_main_status()
+            _settings["default_status"] = current_status_filter
+            save_settings(_settings)
+            append_log(f"Default status filter set to {current_status_filter}")
+
+        row5_cell_ingame = ft.Container(
+            content=ft.Text("In Game", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
+            bgcolor="#9ecaed" if current_status_filter == STATUS_ONLY_INGAME else BG_LIGHT,
+            width=120,
+            height=40,
+            alignment=ft.Alignment.CENTER,
+            ink=True,
+            on_click=lambda e: _on_row5_changed(STATUS_ONLY_INGAME),
+        )
+
+        row5_cell_online = ft.Container(
+            content=ft.Text("On Site", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
+            bgcolor="#9ecaed" if current_status_filter == STATUS_ONLY_ONLINE else BG_LIGHT,
+            width=120,
+            height=40,
+            alignment=ft.Alignment.CENTER,
+            ink=True,
+            on_click=lambda e: _on_row5_changed(STATUS_ONLY_ONLINE),
+        )
+
+        row5_cell_both = ft.Container(
+            content=ft.Text("Both", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
+            bgcolor="#9ecaed" if current_status_filter == STATUS_BOTH else BG_LIGHT,
+            width=120,
+            height=40,
+            alignment=ft.Alignment.CENTER,
+            ink=True,
+            on_click=lambda e: _on_row5_changed(STATUS_BOTH),
+        )
+
+        split_v5 = ft.Container(
+            content=ft.Row([
+                row5_cell_ingame,
+                ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
+                row5_cell_online,
+                ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
+                row5_cell_both,
+            ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+            bgcolor=BG_LIGHT,
+            border=ft.Border.all(1, color=ft.Colors.OUTLINE_VARIANT),
+            border_radius=20,
+            width=360,
+            height=40,
+            clip_behavior=ft.ClipBehavior.HARD_EDGE,
+        )
+
         content = ft.Column([
             ft.Divider(),
             settings_rows,
             ft.Divider(),
             split_v4,
+            ft.Divider(),
+            split_v5,
         ], spacing=8, tight=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
         return ft.AlertDialog(
             title=ft.Text("Settings", size=19, weight=ft.FontWeight.BOLD),
