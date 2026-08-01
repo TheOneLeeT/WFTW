@@ -882,23 +882,77 @@ def main(page: ft.Page):
             _apply_status_color()
             page.update()
 
-        def _on_default_status_changed(e):
+        def _segmented_btn_content(label, selected):
+            return ft.Text(
+                f"{'✓ ' if selected else ''}{label}",
+                color="#d7e3f7",
+                text_align=ft.TextAlign.CENTER,
+                size=13,
+                weight=ft.FontWeight.W_500,
+            )
+
+        def _on_default_status_changed(value):
             nonlocal current_status_filter, tracking_status
-            current_status_filter = e.control.selected[0] if e.control.selected else STATUS_ONLY_INGAME
+            current_status_filter = value
+            row1_cell_ingame.bgcolor = "#3b4858" if value == STATUS_ONLY_INGAME else BG_LIGHT
+            row1_cell_online.bgcolor = "#3b4858" if value == STATUS_ONLY_ONLINE else BG_LIGHT
+            row1_cell_both.bgcolor = "#3b4858" if value == STATUS_BOTH else BG_LIGHT
+            row1_cell_ingame.content = _segmented_btn_content("In Game", value == STATUS_ONLY_INGAME)
+            row1_cell_online.content = _segmented_btn_content("On Site", value == STATUS_ONLY_ONLINE)
+            row1_cell_both.content = _segmented_btn_content("Both", value == STATUS_BOTH)
+            row1_cell_ingame.update()
+            row1_cell_online.update()
+            row1_cell_both.update()
             _sync_main_status()
             _settings["default_status"] = current_status_filter
             save_settings(_settings)
             append_log(f"Default status filter set to {current_status_filter}")
 
-        default_status_seg = ft.SegmentedButton(
-            selected=[current_status_filter],
-            segments=[
-                ft.Segment(value=STATUS_ONLY_INGAME, label=ft.Text("In Game", size=13, weight=ft.FontWeight.W_500)),
-                ft.Segment(value=STATUS_ONLY_ONLINE, label=ft.Text("On Site", size=13, weight=ft.FontWeight.W_500)),
-                ft.Segment(value=STATUS_BOTH, label=ft.Text("Both", size=13, weight=ft.FontWeight.W_500)),
-            ],
-            on_change=_on_default_status_changed,
+        row1_cell_ingame = ft.Container(
+            content=_segmented_btn_content("In Game", current_status_filter == STATUS_ONLY_INGAME),
+            bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_INGAME else BG_LIGHT,
+            expand=True,
+            height=34,
+            alignment=ft.Alignment.CENTER,
+            padding=ft.Padding(0, 0, 0, 2),
+            ink=True,
+            on_click=lambda e: _on_default_status_changed(STATUS_ONLY_INGAME),
+        )
+
+        row1_cell_online = ft.Container(
+            content=_segmented_btn_content("On Site", current_status_filter == STATUS_ONLY_ONLINE),
+            bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_ONLINE else BG_LIGHT,
+            expand=True,
+            height=34,
+            alignment=ft.Alignment.CENTER,
+            padding=ft.Padding(0, 0, 0, 2),
+            ink=True,
+            on_click=lambda e: _on_default_status_changed(STATUS_ONLY_ONLINE),
+        )
+
+        row1_cell_both = ft.Container(
+            content=_segmented_btn_content("Both", current_status_filter == STATUS_BOTH),
+            bgcolor="#3b4858" if current_status_filter == STATUS_BOTH else BG_LIGHT,
+            expand=True,
+            height=34,
+            alignment=ft.Alignment.CENTER,
+            padding=ft.Padding(0, 0, 0, 2),
+            ink=True,
+            on_click=lambda e: _on_default_status_changed(STATUS_BOTH),
+        )
+
+        default_status_seg = ft.Container(
+            content=ft.Row([
+                row1_cell_ingame,
+                ft.Container(width=2, bgcolor=SETTINGS_BG),
+                row1_cell_online,
+                ft.Container(width=2, bgcolor=SETTINGS_BG),
+                row1_cell_both,
+            ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+            bgcolor=BG_LIGHT,
+            border_radius=20,
             width=360,
+            height=34,
         )
 
         notifications_enabled = _settings.get("notifications_enabled", True)
@@ -1119,15 +1173,6 @@ def main(page: ft.Page):
 
         row5_status_filter = current_status_filter
 
-        def _row5_content(label, selected):
-            return ft.Text(
-                f"{'✓ ' if selected else ''}{label}",
-                color="#d7e3f7",
-                text_align=ft.TextAlign.CENTER,
-                size=13,
-                weight=ft.FontWeight.W_500,
-            )
-
         def _on_row5_changed(value):
             nonlocal row5_status_filter, current_status_filter, tracking_status
             row5_status_filter = value
@@ -1135,21 +1180,28 @@ def main(page: ft.Page):
             row5_cell_ingame.bgcolor = "#3b4858" if value == STATUS_ONLY_INGAME else BG_LIGHT
             row5_cell_online.bgcolor = "#3b4858" if value == STATUS_ONLY_ONLINE else BG_LIGHT
             row5_cell_both.bgcolor = "#3b4858" if value == STATUS_BOTH else BG_LIGHT
-            row5_cell_ingame.content = _row5_content("In Game", value == STATUS_ONLY_INGAME)
-            row5_cell_online.content = _row5_content("On Site", value == STATUS_ONLY_ONLINE)
-            row5_cell_both.content = _row5_content("Both", value == STATUS_BOTH)
+            row5_cell_ingame.content = _segmented_btn_content("In Game", value == STATUS_ONLY_INGAME)
+            row5_cell_online.content = _segmented_btn_content("On Site", value == STATUS_ONLY_ONLINE)
+            row5_cell_both.content = _segmented_btn_content("Both", value == STATUS_BOTH)
             row5_cell_ingame.update()
             row5_cell_online.update()
             row5_cell_both.update()
-            default_status_seg.selected = [value]
-            default_status_seg.update()
+            row1_cell_ingame.bgcolor = "#3b4858" if value == STATUS_ONLY_INGAME else BG_LIGHT
+            row1_cell_online.bgcolor = "#3b4858" if value == STATUS_ONLY_ONLINE else BG_LIGHT
+            row1_cell_both.bgcolor = "#3b4858" if value == STATUS_BOTH else BG_LIGHT
+            row1_cell_ingame.content = _segmented_btn_content("In Game", value == STATUS_ONLY_INGAME)
+            row1_cell_online.content = _segmented_btn_content("On Site", value == STATUS_ONLY_ONLINE)
+            row1_cell_both.content = _segmented_btn_content("Both", value == STATUS_BOTH)
+            row1_cell_ingame.update()
+            row1_cell_online.update()
+            row1_cell_both.update()
             _sync_main_status()
             _settings["default_status"] = current_status_filter
             save_settings(_settings)
             append_log(f"Default status filter set to {current_status_filter}")
 
         row5_cell_ingame = ft.Container(
-            content=_row5_content("In Game", current_status_filter == STATUS_ONLY_INGAME),
+            content=_segmented_btn_content("In Game", current_status_filter == STATUS_ONLY_INGAME),
             bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_INGAME else BG_LIGHT,
             expand=True,
             height=34,
@@ -1160,7 +1212,7 @@ def main(page: ft.Page):
         )
 
         row5_cell_online = ft.Container(
-            content=_row5_content("On Site", current_status_filter == STATUS_ONLY_ONLINE),
+            content=_segmented_btn_content("On Site", current_status_filter == STATUS_ONLY_ONLINE),
             bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_ONLINE else BG_LIGHT,
             expand=True,
             height=34,
@@ -1171,7 +1223,7 @@ def main(page: ft.Page):
         )
 
         row5_cell_both = ft.Container(
-            content=_row5_content("Both", current_status_filter == STATUS_BOTH),
+            content=_segmented_btn_content("Both", current_status_filter == STATUS_BOTH),
             bgcolor="#3b4858" if current_status_filter == STATUS_BOTH else BG_LIGHT,
             expand=True,
             height=34,
