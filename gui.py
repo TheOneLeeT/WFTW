@@ -352,7 +352,7 @@ def main(page: ft.Page):
                     ft.Text("Delete Log", size=13, color="#ff9800"),
                 ], spacing=2, alignment=ft.MainAxisAlignment.CENTER),
                 ink=True,
-                padding=ft.Padding.symmetric(horizontal=6, vertical=2),
+                padding=ft.Padding.symmetric(horizontal=4, vertical=1),
                 on_click=on_delete,
             )
 
