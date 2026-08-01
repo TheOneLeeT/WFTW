@@ -1,17 +1,17 @@
-# Warframe Trade Watch (WFTW)
+# x7h9k2m4n1qwertyuiopasdfghjklzxcvbnm1234567890
 
-A cross-platform desktop application for tracking Warframe in-game trades via the Warframe Market API.
+qwertyuiopasdfghjklzxcvbnm1234567890 x7h9k2m4n1qwertyuiopasdfghjklzxcvbnm1234567890
 
-## Features
+## qwertyuiopasdfghjklzxcvbnm1234567890
 
-- Real-time WTS/WTB trade matching with visual match cards
-- Cross-platform desktop notifications (Windows, Linux, macOS)
-- Persistent watchlists and settings
-- Configurable status filter (In Game, On Site, Both)
+- qwertyuiopasdfghjklzxcvbnm1234567890
+- x7h9k2m4n1qwertyuiopasdfghjklzxcvbnm1234567890
+- qwertyuiopasdfghjklzxcvbnm1234567890 x7h9k2m4n1qwertyuiopasdfghjklzxcvbnm1234567890
+- qwertyuiopasdfghjklzxcvbnm1234567890
 
-## Setup
+## qwertyuiopasdfghjklzxcvbnm1234567890
 
 ```bash
-pip install -r requirements.txt
-python gui.py
+x7h9k2m4n1qwertyuiopasdfghjklzxcvbnm1234567890
+qwertyuiopasdfghjklzxcvbnm1234567890
 ```
