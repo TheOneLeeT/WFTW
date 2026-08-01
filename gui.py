@@ -1102,37 +1102,25 @@ def main(page: ft.Page):
             ], spacing=16, vertical_alignment=ft.CrossAxisAlignment.CENTER),
         ], spacing=8, tight=True)
 
-        split_v4 = ft.Stack([
-            ft.SegmentedButton(
-                selected=[],
-                allow_empty_selection=True,
-                disabled=True,
-                segments=[
-                    ft.Segment(value="1", label=ft.Text("")),
-                    ft.Segment(value="2", label=ft.Text("")),
-                    ft.Segment(value="3", label=ft.Text("")),
-                    ft.Segment(value="4", label=ft.Text("")),
-                    ft.Segment(value="5", label=ft.Text("")),
-                ],
-                width=360,
-            ),
-            ft.Container(
-                content=ft.Row([
-                    ft.Container(content=ft.Text("1", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500), width=40, height=40, alignment=ft.Alignment.CENTER),
-                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                    ft.Container(content=ft.Text("2", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500), width=40, height=40, alignment=ft.Alignment.CENTER),
-                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                    ft.Container(content=ft.Text("3", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500), expand=True, height=40, alignment=ft.Alignment.CENTER),
-                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                    ft.Container(content=ft.Text("4", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500), width=40, height=40, alignment=ft.Alignment.CENTER),
-                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                    ft.Container(content=ft.Text("5", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500), width=40, height=40, alignment=ft.Alignment.CENTER),
-                ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
-                bgcolor=ft.Colors.TRANSPARENT,
-                width=360,
-                height=40,
-            ),
-        ], width=360, height=40, clip_behavior=ft.ClipBehavior.HARD_EDGE)
+        split_v4 = ft.Container(
+            content=ft.Row([
+                ft.Container(content=ft.Text("1", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500), width=40, height=40, alignment=ft.Alignment.CENTER),
+                ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
+                ft.Container(content=ft.Text("2", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500), width=40, height=40, alignment=ft.Alignment.CENTER),
+                ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
+                ft.Container(content=ft.Text("3", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500), expand=True, height=40, alignment=ft.Alignment.CENTER),
+                ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
+                ft.Container(content=ft.Text("4", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500), width=40, height=40, alignment=ft.Alignment.CENTER),
+                ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
+                ft.Container(content=ft.Text("5", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500), width=40, height=40, alignment=ft.Alignment.CENTER),
+            ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+            bgcolor=BG_LIGHT,
+            border=ft.Border.all(1, color=ft.Colors.OUTLINE_VARIANT),
+            border_radius=20,
+            width=360,
+            height=40,
+            clip_behavior=ft.ClipBehavior.HARD_EDGE,
+        )
 
         content = ft.Column([
             ft.Divider(),
