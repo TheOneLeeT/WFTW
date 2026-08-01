@@ -992,7 +992,7 @@ def main(page: ft.Page):
             alignment=ft.Alignment.CENTER,
             padding=ft.Padding(0, 0, 0, 2),
             ink=True,
-            on_click=lambda e: _on_notif_on_click(),
+            on_click=lambda: _on_notif_on_click(),
         )
 
         row2_cell_off = ft.Container(
@@ -1003,7 +1003,7 @@ def main(page: ft.Page):
             alignment=ft.Alignment.CENTER,
             padding=ft.Padding(0, 0, 0, 2),
             ink=True,
-            on_click=lambda e: _on_notif_off_click(),
+            on_click=lambda: _on_notif_off_click(),
         )
 
         row2_cell_test = ft.Container(
@@ -1014,7 +1014,7 @@ def main(page: ft.Page):
             alignment=ft.Alignment.CENTER,
             padding=ft.Padding(0, 0, 0, 2),
             ink=True,
-            on_click=lambda e: _on_notif_test_click(),
+            on_click=lambda e: _on_notif_test_click(e),
         )
 
         notifications_seg = ft.Container(
