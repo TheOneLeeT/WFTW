@@ -957,27 +957,78 @@ def main(page: ft.Page):
 
         notifications_enabled = _settings.get("notifications_enabled", True)
 
-        def _on_notifications_changed(e):
-            selected = e.control.selected[0] if e.control.selected else "on"
-            if selected == "test":
-                test_notification(e)
-                notifications_seg.selected = ["on" if _settings.get("notifications_enabled", True) else "off"]
-                notifications_seg.update()
-                return
-            _settings["notifications_enabled"] = selected == "on"
+        def _on_notif_on_click(e):
+            _settings["notifications_enabled"] = True
             save_settings(_settings)
-            append_log(f"Notifications {'enabled' if selected == 'on' else 'disabled'}")
+            row2_cell_on.bgcolor = "#3b4858"
+            row2_cell_off.bgcolor = BG_LIGHT
+            row2_cell_on.content = _segmented_btn_content("On", True)
+            row2_cell_off.content = _segmented_btn_content("Off", False)
+            row2_cell_on.update()
+            row2_cell_off.update()
+            append_log("Notifications enabled")
             page.update()
 
-        notifications_seg = ft.SegmentedButton(
-            selected=["on" if notifications_enabled else "off"],
-            segments=[
-                ft.Segment(value="on", label=ft.Text("On", size=13, weight=ft.FontWeight.W_500)),
-                ft.Segment(value="off", label=ft.Text("Off", size=13, weight=ft.FontWeight.W_500)),
-                ft.Segment(value="test", label=ft.Row([ft.Icon(ft.Icons.NOTIFICATIONS, size=14), ft.Text("Test", size=13, weight=ft.FontWeight.W_500)], spacing=4, tight=True)),
-            ],
-            on_change=_on_notifications_changed,
+        def _on_notif_off_click(e):
+            _settings["notifications_enabled"] = False
+            save_settings(_settings)
+            row2_cell_on.bgcolor = BG_LIGHT
+            row2_cell_off.bgcolor = "#3b4858"
+            row2_cell_on.content = _segmented_btn_content("On", False)
+            row2_cell_off.content = _segmented_btn_content("Off", True)
+            row2_cell_on.update()
+            row2_cell_off.update()
+            append_log("Notifications disabled")
+            page.update()
+
+        def _on_notif_test_click(e):
+            test_notification(e)
+
+        row2_cell_on = ft.Container(
+            content=_segmented_btn_content("On", notifications_enabled),
+            bgcolor="#3b4858" if notifications_enabled else BG_LIGHT,
+            expand=True,
+            height=34,
+            alignment=ft.Alignment.CENTER,
+            padding=ft.Padding(0, 0, 0, 2),
+            ink=True,
+            on_click=lambda e: _on_notif_on_click(),
+        )
+
+        row2_cell_off = ft.Container(
+            content=_segmented_btn_content("Off", not notifications_enabled),
+            bgcolor="#3b4858" if not notifications_enabled else BG_LIGHT,
+            expand=True,
+            height=34,
+            alignment=ft.Alignment.CENTER,
+            padding=ft.Padding(0, 0, 0, 2),
+            ink=True,
+            on_click=lambda e: _on_notif_off_click(),
+        )
+
+        row2_cell_test = ft.Container(
+            content=ft.Text("Test", color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
+            bgcolor=BG_LIGHT,
+            expand=True,
+            height=34,
+            alignment=ft.Alignment.CENTER,
+            padding=ft.Padding(0, 0, 0, 2),
+            ink=True,
+            on_click=lambda e: _on_notif_test_click(),
+        )
+
+        notifications_seg = ft.Container(
+            content=ft.Row([
+                row2_cell_on,
+                ft.Container(width=2, bgcolor=SETTINGS_BG),
+                row2_cell_off,
+                ft.Container(width=2, bgcolor=SETTINGS_BG),
+                row2_cell_test,
+            ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+            bgcolor=BG_LIGHT,
+            border_radius=20,
             width=360,
+            height=34,
         )
 
         current_sound = _settings.get("notification_sound") or _sounds_config.get("default_sound") or "notification.wav"
