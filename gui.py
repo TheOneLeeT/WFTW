@@ -1102,68 +1102,52 @@ def main(page: ft.Page):
             ], spacing=16, vertical_alignment=ft.CrossAxisAlignment.CENTER),
         ], spacing=8, tight=True)
 
-        def _on_empty_split_click(e):
-            current = list(e.control.selected)
-            clicked = current[-1] if current else None
-            if clicked is not None:
-                if clicked in current[:-1]:
-                    current.remove(clicked)
-            e.control.selected = current
-            e.control.update()
+        split_v1 = ft.Stack([
+            ft.SegmentedButton(
+                selected=[],
+                allow_empty_selection=True,
+                disabled=True,
+                segments=[
+                    ft.Segment(value="1", label=ft.Text("")),
+                    ft.Segment(value="2", label=ft.Text("")),
+                    ft.Segment(value="3", label=ft.Text("")),
+                    ft.Segment(value="4", label=ft.Text("")),
+                    ft.Segment(value="5", label=ft.Text("")),
+                ],
+                width=360,
+            ),
+            ft.Container(
+                content=ft.Row([
+                    ft.Container(width=40, height=40),
+                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
+                    ft.Container(width=40, height=40),
+                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
+                    ft.Container(width=196, height=40),
+                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
+                    ft.Container(width=40, height=40),
+                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
+                    ft.Container(width=40, height=40),
+                ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+                bgcolor=ft.Colors.TRANSPARENT,
+                width=360,
+                height=40,
+            ),
+        ], width=360, height=40, clip_behavior=ft.ClipBehavior.HARD_EDGE)
 
-        split_v1 = ft.SegmentedButton(
-            selected=[],
-            allow_empty_selection=True,
-            allow_multiple_selection=True,
-            segments=[
-                ft.Segment(value="1", label=ft.Text("1")),
-                ft.Segment(value="2", label=ft.Text("2")),
-                ft.Segment(value="3", label=ft.Text("3")),
-                ft.Segment(value="4", label=ft.Text("4")),
-                ft.Segment(value="5", label=ft.Text("5")),
-            ],
-            on_change=_on_empty_split_click,
-            width=360,
-        )
-
-        split_v2 = ft.Container(
+        split_v4 = ft.Container(
             content=ft.Row([
-                ft.Container(width=20, height=40, bgcolor=BG_LIGHT),
+                ft.Container(width=40, height=40),
                 ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                ft.Container(content=ft.Text("1", text_align=ft.TextAlign.CENTER, expand=True), bgcolor=BG_LIGHT, width=72, height=40, alignment=ft.Alignment.CENTER, ink=True, on_click=_on_empty_split_click),
+                ft.Container(width=40, height=40),
                 ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                ft.Container(content=ft.Text("2", text_align=ft.TextAlign.CENTER, expand=True), bgcolor=BG_LIGHT, width=72, height=40, alignment=ft.Alignment.CENTER, ink=True, on_click=_on_empty_split_click),
+                ft.Container(width=196, height=40),
                 ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                ft.Container(content=ft.Text("3", text_align=ft.TextAlign.CENTER, expand=True), bgcolor=BG_LIGHT, width=72, height=40, alignment=ft.Alignment.CENTER, ink=True, on_click=_on_empty_split_click),
+                ft.Container(width=40, height=40),
                 ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                ft.Container(content=ft.Text("4", text_align=ft.TextAlign.CENTER, expand=True), bgcolor=BG_LIGHT, width=72, height=40, alignment=ft.Alignment.CENTER, ink=True, on_click=_on_empty_split_click),
-                ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                ft.Container(content=ft.Text("5", text_align=ft.TextAlign.CENTER, expand=True), bgcolor=BG_LIGHT, width=72, height=40, alignment=ft.Alignment.CENTER, ink=True, on_click=_on_empty_split_click),
-                ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                ft.Container(width=20, height=40, bgcolor=BG_LIGHT),
+                ft.Container(width=40, height=40),
             ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
             bgcolor=BG_LIGHT,
-            border=ft.Border.all(1, ft.Colors.OUTLINE_VARIANT),
-            border_radius=20,
-            width=360,
-            height=40,
-            clip_behavior=ft.ClipBehavior.HARD_EDGE,
-        )
-
-        split_v3 = ft.Container(
-            content=ft.Row([
-                ft.TextButton(content=ft.Text("1", color="white"), on_click=_on_empty_split_click, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0), padding=0, bgcolor=BG_LIGHT), width=72, height=40),
-                ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                ft.TextButton(content=ft.Text("2", color="white"), on_click=_on_empty_split_click, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0), padding=0, bgcolor=BG_LIGHT), width=72, height=40),
-                ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                ft.TextButton(content=ft.Text("3", color="white"), on_click=_on_empty_split_click, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0), padding=0, bgcolor=BG_LIGHT), width=72, height=40),
-                ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                ft.TextButton(content=ft.Text("4", color="white"), on_click=_on_empty_split_click, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0), padding=0, bgcolor=BG_LIGHT), width=72, height=40),
-                ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                ft.TextButton(content=ft.Text("5", color="white"), on_click=_on_empty_split_click, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0), padding=0, bgcolor=BG_LIGHT), width=72, height=40),
-            ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
-            bgcolor=BG_LIGHT,
-            border=ft.Border.all(1, ft.Colors.OUTLINE_VARIANT),
+            border=ft.Border.all(1, color=ft.Colors.OUTLINE_VARIANT),
             border_radius=20,
             width=360,
             height=40,
@@ -1176,9 +1160,7 @@ def main(page: ft.Page):
             ft.Divider(),
             split_v1,
             ft.Divider(),
-            split_v2,
-            ft.Divider(),
-            split_v3,
+            split_v4,
         ], spacing=8, tight=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
         return ft.AlertDialog(
             title=ft.Text("Settings", size=19, weight=ft.FontWeight.BOLD),
