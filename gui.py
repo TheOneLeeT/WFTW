@@ -1168,16 +1168,14 @@ def main(page: ft.Page):
         split_v5 = ft.Container(
             content=ft.Row([
                 row5_cell_ingame,
-                ft.VerticalDivider(width=2, color="#8d9199"),
                 row5_cell_online,
-                ft.VerticalDivider(width=2, color="#8d9199"),
                 row5_cell_both,
-            ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
-            bgcolor=BG_LIGHT,
-            border=ft.Border.all(2, "#8d9199"),
+            ], spacing=1, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+            bgcolor="#8d9199",
             border_radius=20,
             width=360,
             height=40,
+            padding=1,
         )
 
         content = ft.Column([
