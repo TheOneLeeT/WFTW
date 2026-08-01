@@ -1020,61 +1020,72 @@ def main(page: ft.Page):
 
         sound_dropdown.on_change = _on_sound_selected
 
-        sound_seg = ft.Container(
-            content=ft.Row([
-                ft.Container(
-                    content=ft.Icon(ft.Icons.FOLDER_OPEN, size=16, color="white"),
-                    bgcolor=BG_LIGHT,
-                    width=40,
-                    height=40,
-                    alignment=ft.Alignment.CENTER,
-                    ink=True,
-                    on_click=_on_browse_click,
-                ),
-                ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                ft.Container(
-                    content=ft.Icon(ft.Icons.REFRESH, size=16, color="white"),
-                    bgcolor=BG_LIGHT,
-                    width=40,
-                    height=40,
-                    alignment=ft.Alignment.CENTER,
-                    ink=True,
-                    on_click=lambda e: _refresh_sounds(),
-                ),
-                ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                ft.Container(
-                    content=volume_slider,
-                    bgcolor=BG_LIGHT,
-                    width=140,
-                    height=40,
-                    alignment=ft.Alignment.CENTER,
-                    padding=ft.Padding.symmetric(horizontal=8, vertical=0),
-                ),
-                ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                ft.Container(
-                    content=volume_text,
-                    bgcolor=BG_LIGHT,
-                    width=40,
-                    height=40,
-                    alignment=ft.Alignment.CENTER,
-                ),
-                ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                ft.Container(
-                    content=sound_dropdown,
-                    bgcolor=BG_LIGHT,
-                    expand=True,
-                    height=40,
-                    alignment=ft.Alignment.CENTER,
-                    padding=ft.Padding.symmetric(horizontal=4, vertical=0),
-                ),
-            ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
-            bgcolor=BG_LIGHT,
-            border=ft.Border.all(1, ft.Colors.OUTLINE_VARIANT),
-            border_radius=8,
-            width=360,
-            height=40,
-            clip_behavior=ft.ClipBehavior.HARD_EDGE,
-        )
+        sound_seg = ft.Stack([
+            ft.SegmentedButton(
+                selected=[],
+                allow_empty_selection=True,
+                disabled=True,
+                segments=[
+                    ft.Segment(value="open", label=ft.Text("")),
+                    ft.Segment(value="refresh", label=ft.Text("")),
+                    ft.Segment(value="volume", label=ft.Text("")),
+                    ft.Segment(value="indicator", label=ft.Text("")),
+                    ft.Segment(value="sound", label=ft.Text("")),
+                ],
+                width=360,
+            ),
+            ft.Container(
+                content=ft.Row([
+                    ft.Container(
+                        content=ft.Icon(ft.Icons.FOLDER_OPEN, size=16, color="white"),
+                        bgcolor=BG_LIGHT,
+                        width=40,
+                        height=40,
+                        alignment=ft.Alignment.CENTER,
+                        ink=True,
+                        on_click=_on_browse_click,
+                    ),
+                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
+                    ft.Container(
+                        content=ft.Icon(ft.Icons.REFRESH, size=16, color="white"),
+                        bgcolor=BG_LIGHT,
+                        width=40,
+                        height=40,
+                        alignment=ft.Alignment.CENTER,
+                        ink=True,
+                        on_click=lambda e: _refresh_sounds(),
+                    ),
+                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
+                    ft.Container(
+                        content=volume_slider,
+                        bgcolor=BG_LIGHT,
+                        width=140,
+                        height=40,
+                        alignment=ft.Alignment.CENTER,
+                        padding=ft.Padding.symmetric(horizontal=8, vertical=0),
+                    ),
+                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
+                    ft.Container(
+                        content=volume_text,
+                        bgcolor=BG_LIGHT,
+                        width=40,
+                        height=40,
+                        alignment=ft.Alignment.CENTER,
+                    ),
+                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
+                    ft.Container(
+                        content=sound_dropdown,
+                        bgcolor=BG_LIGHT,
+                        expand=True,
+                        height=40,
+                        alignment=ft.Alignment.CENTER,
+                        padding=ft.Padding.symmetric(horizontal=4, vertical=0),
+                    ),
+                ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+                width=360,
+                height=40,
+            ),
+        ], width=360, height=40, clip_behavior=ft.ClipBehavior.HARD_EDGE)
 
         settings_rows = ft.Column([
             ft.Row([
@@ -1092,13 +1103,12 @@ def main(page: ft.Page):
         ], spacing=8, tight=True)
 
         def _on_empty_split_click(e):
-            selected = list(e.control.selected)
-            clicked = e.control.selected[0] if e.control.selected else None
-            if clicked in selected:
-                selected.remove(clicked)
-            else:
-                selected.append(clicked)
-            e.control.selected = selected
+            current = list(e.control.selected)
+            clicked = current[-1] if current else None
+            if clicked is not None:
+                if clicked in current[:-1]:
+                    current.remove(clicked)
+            e.control.selected = current
             e.control.update()
 
         split_v1 = ft.SegmentedButton(
