@@ -1139,10 +1139,9 @@ def main(page: ft.Page):
         row5_cell_ingame = ft.Container(
             content=ft.Text("In Game", color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
             bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_INGAME else BG_LIGHT,
-            width=119,
+            expand=True,
             height=36,
             alignment=ft.Alignment.CENTER,
-            padding=ft.Padding(0, 0, 0, 1),
             ink=True,
             on_click=lambda e: _on_row5_changed(STATUS_ONLY_INGAME),
         )
@@ -1150,10 +1149,9 @@ def main(page: ft.Page):
         row5_cell_online = ft.Container(
             content=ft.Text("On Site", color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
             bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_ONLINE else BG_LIGHT,
-            width=119,
+            expand=True,
             height=36,
             alignment=ft.Alignment.CENTER,
-            padding=ft.Padding(0, 0, 0, 1),
             ink=True,
             on_click=lambda e: _on_row5_changed(STATUS_ONLY_ONLINE),
         )
@@ -1161,10 +1159,9 @@ def main(page: ft.Page):
         row5_cell_both = ft.Container(
             content=ft.Text("Both", color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
             bgcolor="#3b4858" if current_status_filter == STATUS_BOTH else BG_LIGHT,
-            width=120,
+            expand=True,
             height=36,
             alignment=ft.Alignment.CENTER,
-            padding=ft.Padding(0, 0, 0, 1),
             ink=True,
             on_click=lambda e: _on_row5_changed(STATUS_BOTH),
         )
@@ -1172,9 +1169,9 @@ def main(page: ft.Page):
         split_v5 = ft.Container(
             content=ft.Row([
                 row5_cell_ingame,
-                ft.Container(width=1, bgcolor=SETTINGS_BG),
+                ft.Container(width=2, bgcolor=SETTINGS_BG),
                 row5_cell_online,
-                ft.Container(width=1, bgcolor=SETTINGS_BG),
+                ft.Container(width=2, bgcolor=SETTINGS_BG),
                 row5_cell_both,
             ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
             bgcolor=BG_LIGHT,
