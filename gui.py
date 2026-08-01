@@ -1121,7 +1121,7 @@ def main(page: ft.Page):
 
         def _row5_content(label, selected):
             return ft.Row([
-                ft.Icon(ft.Icons.CHECK, size=14, color="#d7e3f7") if selected else ft.Container(width=14),
+                ft.Text("✓" if selected else "", color="#d7e3f7", size=14, weight=ft.FontWeight.W_500),
                 ft.Text(label, color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
             ], spacing=4, vertical_alignment=ft.CrossAxisAlignment.CENTER)
 
