@@ -1178,7 +1178,6 @@ def main(page: ft.Page):
             border_radius=20,
             width=360,
             height=40,
-            clip_behavior=ft.ClipBehavior.HARD_EDGE,
         )
 
         content = ft.Column([
