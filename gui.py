@@ -1122,18 +1122,6 @@ def main(page: ft.Page):
             nonlocal row5_status_filter, current_status_filter, tracking_status
             row5_status_filter = value
             current_status_filter = value
-            row5_cell_ingame.bgcolor = BG_LIGHT
-            row5_cell_online.bgcolor = BG_LIGHT
-            row5_cell_both.bgcolor = BG_LIGHT
-            if value == STATUS_ONLY_INGAME:
-                row5_cell_ingame.bgcolor = "#9ecaed"
-            elif value == STATUS_ONLY_ONLINE:
-                row5_cell_online.bgcolor = "#9ecaed"
-            else:
-                row5_cell_both.bgcolor = "#9ecaed"
-            row5_cell_ingame.update()
-            row5_cell_online.update()
-            row5_cell_both.update()
             default_status_seg.selected = [value]
             default_status_seg.update()
             _sync_main_status()
@@ -1141,50 +1129,15 @@ def main(page: ft.Page):
             save_settings(_settings)
             append_log(f"Default status filter set to {current_status_filter}")
 
-        row5_cell_ingame = ft.Container(
-            content=ft.Text("In Game", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
-            bgcolor="#9ecaed" if current_status_filter == STATUS_ONLY_INGAME else BG_LIGHT,
-            width=120,
-            height=40,
-            alignment=ft.Alignment.CENTER,
-            ink=True,
-            on_click=lambda e: _on_row5_changed(STATUS_ONLY_INGAME),
-        )
-
-        row5_cell_online = ft.Container(
-            content=ft.Text("On Site", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
-            bgcolor="#9ecaed" if current_status_filter == STATUS_ONLY_ONLINE else BG_LIGHT,
-            width=120,
-            height=40,
-            alignment=ft.Alignment.CENTER,
-            ink=True,
-            on_click=lambda e: _on_row5_changed(STATUS_ONLY_ONLINE),
-        )
-
-        row5_cell_both = ft.Container(
-            content=ft.Text("Both", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
-            bgcolor="#9ecaed" if current_status_filter == STATUS_BOTH else BG_LIGHT,
-            width=120,
-            height=40,
-            alignment=ft.Alignment.CENTER,
-            ink=True,
-            on_click=lambda e: _on_row5_changed(STATUS_BOTH),
-        )
-
-        split_v5 = ft.Container(
-            content=ft.Row([
-                row5_cell_ingame,
-                ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                row5_cell_online,
-                ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                row5_cell_both,
-            ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
-            bgcolor=BG_LIGHT,
-            border=ft.Border.all(1, color=ft.Colors.OUTLINE_VARIANT),
-            border_radius=20,
+        split_v5 = ft.SegmentedButton(
+            selected=[current_status_filter],
+            segments=[
+                ft.Segment(value=STATUS_ONLY_INGAME, label=ft.Text("In Game", size=13, weight=ft.FontWeight.W_500)),
+                ft.Segment(value=STATUS_ONLY_ONLINE, label=ft.Text("On Site", size=13, weight=ft.FontWeight.W_500)),
+                ft.Segment(value=STATUS_BOTH, label=ft.Text("Both", size=13, weight=ft.FontWeight.W_500)),
+            ],
+            on_change=lambda e: _on_row5_changed(e.control.selected[0] if e.control.selected else STATUS_ONLY_INGAME),
             width=360,
-            height=40,
-            clip_behavior=ft.ClipBehavior.HARD_EDGE,
         )
 
         content = ft.Column([
