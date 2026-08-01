@@ -1168,9 +1168,9 @@ def main(page: ft.Page):
         split_v5 = ft.Container(
             content=ft.Row([
                 row5_cell_ingame,
-                ft.VerticalDivider(width=1, color="#8d9199"),
+                ft.VerticalDivider(width=2, color="#8d9199"),
                 row5_cell_online,
-                ft.VerticalDivider(width=1, color="#8d9199"),
+                ft.VerticalDivider(width=2, color="#8d9199"),
                 row5_cell_both,
             ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
             bgcolor=BG_LIGHT,
