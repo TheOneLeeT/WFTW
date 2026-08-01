@@ -1,5 +1,17 @@
+# x7h9k2m4n1qwertyuiopasdfghjklzxcvbnm1234567890
+
+qwertyuiopasdfghjklzxcvbnm1234567890 x7h9k2m4n1qwertyuiopasdfghjklzxcvbnm1234567890
+
+## qwertyuiopasdfghjklzxcvbnm1234567890
+
+- qwertyuiopasdfghjklzxcvbnm1234567890
+- x7h9k2m4n1qwertyuiopasdfghjklzxcvbnm1234567890
+- qwertyuiopasdfghjklzxcvbnm1234567890 x7h9k2m4n1qwertyuiopasdfghjklzxcvbnm1234567890
+- qwertyuiopasdfghjklzxcvbnm1234567890
+
+## qwertyuiopasdfghjklzxcvbnm1234567890
 
 ```bash
-pip install -r requirements.txt
-python gui.py
+x7h9k2m4n1qwertyuiopasdfghjklzxcvbnm1234567890
+qwertyuiopasdfghjklzxcvbnm1234567890
 ```
