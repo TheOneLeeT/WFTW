@@ -1134,19 +1134,37 @@ def main(page: ft.Page):
             ),
         ], width=360, height=40, clip_behavior=ft.ClipBehavior.HARD_EDGE)
 
-        split_v4 = ft.SegmentedButton(
-            selected=[],
-            allow_empty_selection=True,
-            disabled=True,
-            segments=[
-                ft.Segment(value="1", label=ft.Text("")),
-                ft.Segment(value="2", label=ft.Text("")),
-                ft.Segment(value="3", label=ft.Text("")),
-                ft.Segment(value="4", label=ft.Text("")),
-                ft.Segment(value="5", label=ft.Text("")),
-            ],
-            width=360,
-        )
+        split_v4 = ft.Stack([
+            ft.SegmentedButton(
+                selected=[],
+                allow_empty_selection=True,
+                disabled=True,
+                segments=[
+                    ft.Segment(value="1", label=ft.Text("")),
+                    ft.Segment(value="2", label=ft.Text("")),
+                    ft.Segment(value="3", label=ft.Text("")),
+                    ft.Segment(value="4", label=ft.Text("")),
+                    ft.Segment(value="5", label=ft.Text("")),
+                ],
+                width=360,
+            ),
+            ft.Container(
+                content=ft.Row([
+                    ft.Container(width=40, height=40),
+                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
+                    ft.Container(width=40, height=40),
+                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
+                    ft.Container(width=196, height=40),
+                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
+                    ft.Container(width=40, height=40),
+                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
+                    ft.Container(width=40, height=40),
+                ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+                bgcolor=ft.Colors.TRANSPARENT,
+                width=360,
+                height=40,
+            ),
+        ], width=360, height=40, clip_behavior=ft.ClipBehavior.HARD_EDGE)
 
         content = ft.Column([
             ft.Divider(),
