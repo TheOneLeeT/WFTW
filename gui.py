@@ -30,6 +30,7 @@ WTS_COLOR = "#cb4a9e"
 WTB_COLOR = "#209e70"
 BG_DARK = "#071013"
 BG_LIGHT = "#171e21"
+SETTINGS_BG = "#272a2f"
 
 
 def load_settings():
@@ -1137,7 +1138,7 @@ def main(page: ft.Page):
 
         row5_cell_ingame = ft.Container(
             content=ft.Text("In Game", color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
-            bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_INGAME else BG_LIGHT,
+            bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_INGAME else SETTINGS_BG,
             width=120,
             height=40,
             alignment=ft.Alignment.CENTER,
@@ -1147,7 +1148,7 @@ def main(page: ft.Page):
 
         row5_cell_online = ft.Container(
             content=ft.Text("On Site", color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
-            bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_ONLINE else BG_LIGHT,
+            bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_ONLINE else SETTINGS_BG,
             width=120,
             height=40,
             alignment=ft.Alignment.CENTER,
@@ -1157,7 +1158,7 @@ def main(page: ft.Page):
 
         row5_cell_both = ft.Container(
             content=ft.Text("Both", color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
-            bgcolor="#3b4858" if current_status_filter == STATUS_BOTH else BG_LIGHT,
+            bgcolor="#3b4858" if current_status_filter == STATUS_BOTH else SETTINGS_BG,
             width=120,
             height=40,
             alignment=ft.Alignment.CENTER,
@@ -1189,6 +1190,7 @@ def main(page: ft.Page):
         return ft.AlertDialog(
             title=ft.Text("Settings", size=19, weight=ft.FontWeight.BOLD),
             content=content,
+            bgcolor=SETTINGS_BG,
             actions=[ft.TextButton("Close", on_click=lambda e: page.pop_dialog())],
             actions_alignment=ft.MainAxisAlignment.END,
             title_padding=ft.Padding(left=24, top=16, right=24, bottom=0),
