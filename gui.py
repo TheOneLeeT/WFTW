@@ -1120,12 +1120,12 @@ def main(page: ft.Page):
         row5_status_filter = current_status_filter
 
         def _row5_content(label, selected):
-            return ft.Container(
-                content=ft.Row([
-                    ft.Text("✓" if selected else "", color="#d7e3f7", size=14, weight=ft.FontWeight.W_500),
-                    ft.Text(label, color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
-                ], spacing=4, vertical_alignment=ft.CrossAxisAlignment.CENTER),
-                alignment=ft.Alignment.CENTER,
+            return ft.Text(
+                f"{'✓ ' if selected else ''}{label}",
+                color="#d7e3f7",
+                text_align=ft.TextAlign.CENTER,
+                size=13,
+                weight=ft.FontWeight.W_500,
             )
 
         def _on_row5_changed(value):
@@ -1154,7 +1154,6 @@ def main(page: ft.Page):
             expand=True,
             height=34,
             alignment=ft.Alignment.CENTER,
-            padding=ft.Padding(0, 0, 0, 2),
             ink=True,
             on_click=lambda e: _on_row5_changed(STATUS_ONLY_INGAME),
         )
@@ -1165,7 +1164,6 @@ def main(page: ft.Page):
             expand=True,
             height=34,
             alignment=ft.Alignment.CENTER,
-            padding=ft.Padding(0, 0, 0, 2),
             ink=True,
             on_click=lambda e: _on_row5_changed(STATUS_ONLY_ONLINE),
         )
@@ -1176,7 +1174,6 @@ def main(page: ft.Page):
             expand=True,
             height=34,
             alignment=ft.Alignment.CENTER,
-            padding=ft.Padding(0, 0, 0, 2),
             ink=True,
             on_click=lambda e: _on_row5_changed(STATUS_BOTH),
         )
