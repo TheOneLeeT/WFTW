@@ -1102,77 +1102,10 @@ def main(page: ft.Page):
             ], spacing=16, vertical_alignment=ft.CrossAxisAlignment.CENTER),
         ], spacing=8, tight=True)
 
-        split_v1 = ft.Stack([
-            ft.SegmentedButton(
-                selected=[],
-                allow_empty_selection=True,
-                disabled=True,
-                segments=[
-                    ft.Segment(value="1", label=ft.Text("")),
-                    ft.Segment(value="2", label=ft.Text("")),
-                    ft.Segment(value="3", label=ft.Text("")),
-                    ft.Segment(value="4", label=ft.Text("")),
-                    ft.Segment(value="5", label=ft.Text("")),
-                ],
-                width=360,
-            ),
-            ft.Container(
-                content=ft.Row([
-                    ft.Container(width=40, height=40),
-                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                    ft.Container(width=40, height=40),
-                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                    ft.Container(width=196, height=40),
-                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                    ft.Container(width=40, height=40),
-                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                    ft.Container(width=40, height=40),
-                ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
-                bgcolor=ft.Colors.TRANSPARENT,
-                width=360,
-                height=40,
-            ),
-        ], width=360, height=40, clip_behavior=ft.ClipBehavior.HARD_EDGE)
-
-        split_v4 = ft.Stack([
-            ft.SegmentedButton(
-                selected=[],
-                allow_empty_selection=True,
-                disabled=True,
-                segments=[
-                    ft.Segment(value="1", label=ft.Text("")),
-                    ft.Segment(value="2", label=ft.Text("")),
-                    ft.Segment(value="3", label=ft.Text("")),
-                    ft.Segment(value="4", label=ft.Text("")),
-                    ft.Segment(value="5", label=ft.Text("")),
-                ],
-                width=360,
-            ),
-            ft.Container(
-                content=ft.Row([
-                    ft.Container(width=40, height=40),
-                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                    ft.Container(width=40, height=40),
-                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                    ft.Container(width=196, height=40),
-                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                    ft.Container(width=40, height=40),
-                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                    ft.Container(width=40, height=40),
-                ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
-                bgcolor=ft.Colors.TRANSPARENT,
-                width=360,
-                height=40,
-            ),
-        ], width=360, height=40, clip_behavior=ft.ClipBehavior.HARD_EDGE)
-
         content = ft.Column([
             ft.Divider(),
             settings_rows,
             ft.Divider(),
-            split_v1,
-            ft.Divider(),
-            split_v4,
         ], spacing=8, tight=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
         return ft.AlertDialog(
             title=ft.Text("Settings", size=19, weight=ft.FontWeight.BOLD),
