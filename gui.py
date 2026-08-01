@@ -1120,10 +1120,13 @@ def main(page: ft.Page):
         row5_status_filter = current_status_filter
 
         def _row5_content(label, selected):
-            return ft.Row([
-                ft.Text("✓" if selected else "", color="#d7e3f7", size=14, weight=ft.FontWeight.W_500),
-                ft.Text(label, color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
-            ], spacing=4, vertical_alignment=ft.CrossAxisAlignment.CENTER)
+            return ft.Container(
+                content=ft.Row([
+                    ft.Text("✓" if selected else "", color="#d7e3f7", size=14, weight=ft.FontWeight.W_500),
+                    ft.Text(label, color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
+                ], spacing=4, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+                alignment=ft.Alignment.CENTER,
+            )
 
         def _on_row5_changed(value):
             nonlocal row5_status_filter, current_status_filter, tracking_status
