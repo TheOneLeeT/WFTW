@@ -957,7 +957,7 @@ def main(page: ft.Page):
 
         notifications_enabled = _settings.get("notifications_enabled", True)
 
-        def _on_notif_on_click(e):
+        def _on_notif_on_click():
             _settings["notifications_enabled"] = True
             save_settings(_settings)
             row2_cell_on.bgcolor = "#3b4858"
@@ -969,7 +969,7 @@ def main(page: ft.Page):
             append_log("Notifications enabled")
             page.update()
 
-        def _on_notif_off_click(e):
+        def _on_notif_off_click():
             _settings["notifications_enabled"] = False
             save_settings(_settings)
             row2_cell_on.bgcolor = BG_LIGHT
