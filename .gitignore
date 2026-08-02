@@ -6,3 +6,5 @@ __pycache__/
 settings.json
 watchlist.json
 wftw_alerts.log
+load_log.txt
+save_watchlists_log.txt
