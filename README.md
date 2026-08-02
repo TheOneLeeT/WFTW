@@ -1,4 +1,4 @@
-# Warframe Trade Watch
+# Warframe Trade Watch (WFTW)
 
 ---
 
