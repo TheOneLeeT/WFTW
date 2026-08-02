@@ -1,6 +1,4 @@
-# WFTW
-
-qwertyuiopasdfghjklzxcvbnm1234567890
+# Warframe Trade Watch
 
 ---
 
