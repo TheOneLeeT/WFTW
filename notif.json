@@ -1,0 +1,6 @@
+{
+  "default_sound": "Dnotif.wav",
+  "sounds": {
+    "Dnotif.wav": {"name": "Notification"}
+  }
+}

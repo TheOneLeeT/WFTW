@@ -1,7 +1,7 @@
 import flet as ft
 import json
+import math
 import os
-import shutil
 import subprocess
 import sys
 import threading
@@ -22,7 +22,7 @@ except Exception:
 
 CONFIG_PATH = "watchlist.json"
 SETTINGS_PATH = "settings.json"
-SOUNDS_PATH = "sounds.json"
+NOTIF_PATH = "notif.json"
 STATUS_BOTH = "both"
 STATUS_ONLY_INGAME = "ingame"
 STATUS_ONLY_ONLINE = "online"
@@ -49,12 +49,12 @@ def save_settings(settings):
         pass
 
 
-def load_sounds_config():
+def load_notif_config():
     try:
-        with open(SOUNDS_PATH, "r", encoding="utf-8") as f:
+        with open(NOTIF_PATH, "r", encoding="utf-8") as f:
             return json.load(f)
     except Exception:
-        return {"default_sound": "notification.wav", "sounds": {}}
+        return {"default_sound": "Dnotif.wav", "sounds": {}}
 
 
 def _apply_volume_to_wav(src_path, volume):
@@ -84,10 +84,31 @@ def _apply_volume_to_wav(src_path, volume):
         return src_path
 
 
+def _ensure_default_sound():
+    default_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Media", "Sound", "Dnotif.wav")
+    if os.path.isfile(default_path):
+        return
+    try:
+        import wave, struct
+        sample_rate = 44100
+        frequency = 880.0
+        duration = 0.15
+        nframes = int(duration * sample_rate)
+        samples = [int(32767 * 0.5 * math.sin(2 * math.pi * frequency * t / sample_rate)) for t in range(nframes)]
+        with wave.open(default_path, "wb") as wf:
+            wf.setnchannels(1)
+            wf.setsampwidth(2)
+            wf.setframerate(sample_rate)
+            wf.writeframes(struct.pack(f"<{len(samples)}h", *samples))
+        print(f"Created default sound: {default_path}")
+    except Exception as ex:
+        print(f"Failed to create default sound: {ex}")
+
+
 def play_notification_sound(sound_filename=None, volume=1.0):
     if not sound_filename:
-        sound_filename = "notification.wav"
-    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sounds", sound_filename)
+        sound_filename = "Dnotif.wav"
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Media", "Sound", sound_filename)
     if not os.path.isfile(path):
         return
     try:
@@ -318,6 +339,11 @@ def main(page: ft.Page):
         log_queue.put(msg)
 
     def _color_for(msg):
+        upper = msg.upper()
+        if "WANT TO SELL" in upper or "WTS" in upper:
+            return WTS_COLOR
+        if "WANT TO BUY" in upper or "WTB" in upper:
+            return WTB_COLOR
         return None
 
     def _format_name(name):
@@ -477,7 +503,8 @@ def main(page: ft.Page):
     load_watchlists()
     _overlay.start()
     _settings = load_settings()
-    _sounds_config = load_sounds_config()
+    _notif_config = load_notif_config()
+    _ensure_default_sound()
     current_status_filter = _settings.get("default_status", STATUS_ONLY_INGAME)
     if current_status_filter not in (STATUS_BOTH, STATUS_ONLY_INGAME, STATUS_ONLY_ONLINE):
         current_status_filter = STATUS_ONLY_INGAME
@@ -490,7 +517,7 @@ def main(page: ft.Page):
         title = f"{data['item_name']}{data['display_rank']}"
         line2 = f"[{data['timestamp']}] {data['user'].upper()} ({data['mode'].upper()})"
         line3 = f"{data['price']}p"
-        show_overlay_notification(title, line2, line3, title_color=color, price_color=color, settings=_settings, sound_filename=_sounds_config.get("default_sound"), volume=_settings.get("notification_volume", 1.0))
+        show_overlay_notification(title, line2, line3, title_color=color, price_color=color, settings=_settings, sound_filename=_settings.get("notification_sound") or _notif_config.get("default_sound"), volume=_settings.get("notification_volume", 0.5))
 
     core_wts = TrackerCore(log_callback=append_log, match_callback=_on_match)
     core_wtb = TrackerCore(log_callback=append_log, match_callback=_on_match)
@@ -854,29 +881,106 @@ def main(page: ft.Page):
                 append_log("System notification sent")
             except Exception as ex:
                 append_log(f"System notification failed: {ex}")
-        show_overlay_notification("Attachment Prime Set", "[23:17:39] PLAYER_ONE (WTS)", "150p", title_color=WTS_COLOR, price_color=WTS_COLOR, settings={"notifications_enabled": True}, sound_filename=_sounds_config.get("default_sound"), volume=_settings.get("notification_volume", 1.0))
+        show_overlay_notification("Attachment Prime Set", "[23:17:39] PLAYER_ONE (WTS)", "150p", title_color=WTS_COLOR, price_color=WTS_COLOR, settings={"notifications_enabled": True}, sound_filename=_settings.get("notification_sound") or _notif_config.get("default_sound"), volume=_settings.get("notification_volume", 0.5))
         append_log("Overlay notification shown")
         page.update()
+
+    def _segmented_btn_content(label, selected):
+        return ft.Text(
+            f"{'✓ ' if selected else ''}{label}",
+            color="#d7e3f7",
+            text_align=ft.TextAlign.CENTER,
+            size=13,
+            weight=ft.FontWeight.W_500,
+        )
 
     start_btn = ft.Button(
         content=ft.Row([ft.Icon(ft.Icons.PLAY_ARROW), ft.Text("Scan")], spacing=8, tight=True),
         on_click=start_tracker,
         bgcolor=ft.Colors.GREEN_400,
         color="white",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=8)),
+        width=120,
+        height=34,
+        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=8), padding=ft.Padding(0, 0, 0, 2)),
     )
     stop_btn = ft.Button(
         content=ft.Row([ft.Icon(ft.Icons.STOP), ft.Text("Stop")], spacing=8, tight=True),
         on_click=stop_tracker,
         bgcolor=ft.Colors.RED_400,
         color="white",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=8)),
+        width=120,
+        height=34,
+        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=8), padding=ft.Padding(0, 0, 0, 2)),
         visible=False,
     )
+
+    def _update_main_status_filter():
+        main_status_ingame.bgcolor = "#3b4858" if current_status_filter == STATUS_ONLY_INGAME else BG_LIGHT
+        main_status_online.bgcolor = "#3b4858" if current_status_filter == STATUS_ONLY_ONLINE else BG_LIGHT
+        main_status_both.bgcolor = "#3b4858" if current_status_filter == STATUS_BOTH else BG_LIGHT
+        main_status_ingame.content = _segmented_btn_content("In Game", current_status_filter == STATUS_ONLY_INGAME)
+        main_status_online.content = _segmented_btn_content("On Site", current_status_filter == STATUS_ONLY_ONLINE)
+        main_status_both.content = _segmented_btn_content("Both", current_status_filter == STATUS_BOTH)
+        main_status_ingame.update()
+        main_status_online.update()
+        main_status_both.update()
+
+    main_status_ingame = ft.Container(
+        content=_segmented_btn_content("In Game", current_status_filter == STATUS_ONLY_INGAME),
+        bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_INGAME else BG_LIGHT,
+        expand=True,
+        height=34,
+        alignment=ft.Alignment.CENTER,
+        padding=ft.Padding(0, 0, 0, 2),
+        ink=True,
+        on_click=lambda e: _on_main_status_changed(STATUS_ONLY_INGAME),
+    )
+    main_status_online = ft.Container(
+        content=_segmented_btn_content("On Site", current_status_filter == STATUS_ONLY_ONLINE),
+        bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_ONLINE else BG_LIGHT,
+        expand=True,
+        height=34,
+        alignment=ft.Alignment.CENTER,
+        padding=ft.Padding(0, 0, 0, 2),
+        ink=True,
+        on_click=lambda e: _on_main_status_changed(STATUS_ONLY_ONLINE),
+    )
+    main_status_both = ft.Container(
+        content=_segmented_btn_content("Both", current_status_filter == STATUS_BOTH),
+        bgcolor="#3b4858" if current_status_filter == STATUS_BOTH else BG_LIGHT,
+        expand=True,
+        height=34,
+        alignment=ft.Alignment.CENTER,
+        padding=ft.Padding(0, 0, 0, 2),
+        ink=True,
+        on_click=lambda e: _on_main_status_changed(STATUS_BOTH),
+    )
+    main_status_seg = ft.Container(
+        content=ft.Row([
+            main_status_ingame,
+            ft.Container(width=2, bgcolor=BG_DARK),
+            main_status_online,
+            ft.Container(width=2, bgcolor=BG_DARK),
+            main_status_both,
+        ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+        bgcolor=BG_LIGHT,
+        border_radius=20,
+        width=360,
+        height=34,
+    )
+
+    def _on_main_status_changed(value):
+        nonlocal current_status_filter, tracking_status
+        current_status_filter = value
+        tracking_status = f"Active ({current_status_filter})" if running else "Idle"
+        _update_main_status_filter()
+        _set_tracking_status()
+        _apply_status_color()
+        page.update()
+
     def _build_settings_dialog():
         def _sync_main_status():
-            status_segmented.selected = [current_status_filter]
-            status_segmented.update()
+            _update_main_status_filter()
             tracking_status = f"Active ({current_status_filter})" if running else "Idle"
             _set_tracking_status()
             _apply_status_color()
@@ -1007,8 +1111,8 @@ def main(page: ft.Page):
         )
 
         row2_cell_test = ft.Container(
-            content=ft.Text("Test", color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
-            bgcolor=BG_LIGHT,
+            content=ft.Text("⌂ Test", color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
+            bgcolor="#3b4858",
             expand=True,
             height=34,
             alignment=ft.Alignment.CENTER,
@@ -1031,19 +1135,12 @@ def main(page: ft.Page):
             height=34,
         )
 
-        current_sound = _settings.get("notification_sound") or _sounds_config.get("default_sound") or "notification.wav"
-        current_volume = _settings.get("notification_volume", 1.0)
-        sound_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sounds")
+        current_sound = _settings.get("notification_sound") or _notif_config.get("default_sound") or "Dnotif.wav"
+        current_volume = _settings.get("notification_volume", 0.5)
+        sound_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Media", "Sound")
         wav_files = sorted([f for f in os.listdir(sound_dir) if f.lower().endswith(".wav")]) if os.path.isdir(sound_dir) else []
         if not wav_files:
-            wav_files = [current_sound] if current_sound else ["notification.wav"]
-
-        current_sound = _settings.get("notification_sound") or _sounds_config.get("default_sound") or "notification.wav"
-        current_volume = _settings.get("notification_volume", 1.0)
-        sound_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sounds")
-        wav_files = sorted([f for f in os.listdir(sound_dir) if f.lower().endswith(".wav")]) if os.path.isdir(sound_dir) else []
-        if not wav_files:
-            wav_files = [current_sound] if current_sound else ["notification.wav"]
+            wav_files = [current_sound] if current_sound else ["Dnotif.wav"]
 
         def _on_browse_click(e):
             folder = sound_dir
@@ -1070,13 +1167,23 @@ def main(page: ft.Page):
         )
 
         def _refresh_sounds():
+            nonlocal wav_files, current_sound
             new_files = sorted([f for f in os.listdir(sound_dir) if f.lower().endswith(".wav")]) if os.path.isdir(sound_dir) else []
             if not new_files:
-                new_files = [current_sound] if current_sound else ["notification.wav"]
-            sound_dropdown.options = [ft.dropdown.Option(f) for f in new_files]
-            if sound_dropdown.value not in new_files:
-                sound_dropdown.value = new_files[0]
-            sound_dropdown.update()
+                new_files = [current_sound] if current_sound else ["Dnotif.wav"]
+            wav_files = new_files
+            if current_sound not in wav_files:
+                current_sound = wav_files[0]
+            sound_dropdown_items.clear()
+            sound_dropdown_panel.content = ft.Column([
+                _make_sound_dropdown_item(f)
+                for f in wav_files
+            ], spacing=0, tight=True, scroll=ft.ScrollMode.AUTO)
+            sound_dropdown_panel.height = min(len(wav_files), dropdown_max_visible) * dropdown_item_height
+            current_sound_text.value = current_sound
+            _update_sound_dropdown_selection()
+            sound_dropdown_panel.update()
+            current_sound_text.update()
 
         refresh_btn = ft.Container(
             content=ft.Icon(ft.Icons.REFRESH, size=16, color="white"),
@@ -1090,108 +1197,284 @@ def main(page: ft.Page):
             on_click=lambda e: _refresh_sounds(),
         )
 
-        volume_text = ft.Text(f"{int(current_volume * 100)}%", size=11, width=36, text_align=ft.TextAlign.CENTER)
+        volume_text = ft.Text(f"{int(current_volume * 100)}%", size=11, text_align=ft.TextAlign.CENTER)
 
-        volume_slider = ft.Slider(
-            min=0,
-            max=100,
-            value=int(current_volume * 100),
-            width=120,
-        )
-
-        def _on_volume_changed(e):
-            val = volume_slider.value
-            _settings["notification_volume"] = val / 100.0
-            save_settings(_settings)
+        def _update_volume_ui(val):
             volume_text.value = f"{int(val)}%"
             volume_text.update()
-            page.update()
 
-        sound_dropdown = ft.Dropdown(
-            value=current_sound if current_sound in wav_files else wav_files[0],
-            options=[ft.dropdown.Option(f) for f in wav_files],
-            dense=True,
-            bgcolor=BG_LIGHT,
-            border_color=ft.Colors.OUTLINE_VARIANT,
-            focused_border_color=ft.Colors.OUTLINE_VARIANT,
+        def _save_volume(val):
+            _settings["notification_volume"] = val / 100.0
+            save_settings(_settings)
+
+        def _on_volume_changed(val):
+            update_slider_positions(val)
+            _update_volume_ui(val)
+
+        def _on_volume_commit(val):
+            _save_volume(val)
+
+        thumb_size = 14
+        halo_size = thumb_size + 4
+        track_height = 6
+        slider_width = 87
+
+        def slider_thumb_x(val):
+            return 5 + (val / 100.0) * (slider_width - thumb_size - 10)
+
+        def get_value_from_x(x):
+            ratio = max(0, min(1, (x - 5) / (slider_width - thumb_size - 10)))
+            return round(ratio * 100)
+
+        def update_slider_positions(val):
+            tx = slider_thumb_x(val)
+            track_active.width = (val / 100.0) * 77
+            halo_pos.left = tx - 2
+            thumb_pos.left = tx
+
+        track_bg = ft.Container(
+            width=77, height=track_height,
+            bgcolor=SETTINGS_BG, border_radius=2,
+        )
+        track_active = ft.Container(
+            width=(int(current_volume * 100) / 100.0) * 77,
+            height=track_height,
+            bgcolor="#3b4858", border_radius=2,
+        )
+        halo = ft.Container(
+            width=halo_size, height=halo_size,
+            bgcolor="#c5d9f7",
+            border_radius=halo_size // 2,
+        )
+        thumb = ft.Container(
+            width=thumb_size, height=thumb_size,
+            bgcolor="#a0cafd",
+            border_radius=thumb_size // 2,
         )
 
-        def _on_sound_selected(e):
-            selected = sound_dropdown.value
-            if selected:
-                _settings["notification_sound"] = selected
-                _sounds_config["default_sound"] = selected
-                save_settings(_settings)
-                append_log(f"Sound set to {selected}")
+        tx = slider_thumb_x(int(current_volume * 100))
+        track_bg_pos = ft.Container(
+            content=track_bg,
+            left=5, top=(halo_size - track_height) // 2,
+        )
+        track_active_pos = ft.Container(
+            content=track_active,
+            left=5, top=(halo_size - track_height) // 2,
+        )
+        halo_pos = ft.Container(
+            content=halo,
+            left=tx - 2, top=0,
+        )
+        thumb_pos = ft.Container(
+            content=thumb,
+            left=tx, top=(halo_size - thumb_size) // 2,
+        )
 
-        sound_dropdown.on_change = _on_sound_selected
+        stack = ft.Stack([
+            track_bg_pos,
+            track_active_pos,
+            halo_pos,
+            thumb_pos,
+        ], width=slider_width, height=halo_size)
 
-        sound_seg = ft.Stack([
-            ft.SegmentedButton(
-                selected=[],
-                allow_empty_selection=True,
-                disabled=True,
-                segments=[
-                    ft.Segment(value="open", label=ft.Text("")),
-                    ft.Segment(value="refresh", label=ft.Text("")),
-                    ft.Segment(value="volume", label=ft.Text("")),
-                    ft.Segment(value="indicator", label=ft.Text("")),
-                    ft.Segment(value="sound", label=ft.Text("")),
-                ],
-                width=360,
-            ),
-            ft.Container(
-                content=ft.Row([
-                    ft.Container(
+        def on_pan_start(e):
+            val = get_value_from_x(e.local_position.x)
+            _on_volume_changed(val)
+            stack.update()
+
+        def on_pan_update(e):
+            val = get_value_from_x(e.local_position.x)
+            _on_volume_changed(val)
+            stack.update()
+
+        def on_pan_end(e):
+            val = get_value_from_x(e.local_position.x)
+            _on_volume_commit(val)
+
+        def on_tap(e):
+            val = get_value_from_x(e.local_position.x)
+            _on_volume_changed(val)
+            _on_volume_commit(val)
+            stack.update()
+
+        volume_slider = ft.GestureDetector(
+            content=stack,
+            drag_interval=8,
+            on_pan_start=on_pan_start,
+            on_pan_update=on_pan_update,
+            on_pan_end=on_pan_end,
+            on_tap=on_tap,
+        )
+
+        sound_dropdown_items = []
+        sound_dropdown_open = False
+
+        def _update_sound_dropdown_selection():
+            for item, filename in zip(sound_dropdown_items, wav_files):
+                item.bgcolor = "#3b4858" if filename == current_sound else BG_LIGHT
+                try:
+                    item.update()
+                except RuntimeError:
+                    pass
+
+        def _toggle_sound_dropdown():
+            nonlocal sound_dropdown_open
+            sound_dropdown_open = not sound_dropdown_open
+            sound_dropdown_panel.visible = sound_dropdown_open
+            if sound_dropdown_open:
+                _update_sound_dropdown_selection()
+            sound_dropdown_panel.update()
+            sound_dropdown_arrow.content = ft.Icon(
+                ft.Icons.ARROW_DROP_UP if sound_dropdown_open else ft.Icons.ARROW_DROP_DOWN,
+                size=20,
+                color="white",
+            )
+            sound_dropdown_arrow.update()
+
+        def _select_sound(sound):
+            nonlocal current_sound
+            current_sound = sound
+            _settings["notification_sound"] = sound
+            _notif_config["default_sound"] = sound
+            save_settings(_settings)
+            append_log(f"Sound set to {sound}")
+            current_sound_text.value = sound
+            current_sound_text.update()
+            _toggle_sound_dropdown()
+
+        current_sound_text = ft.Text(
+            current_sound if current_sound else wav_files[0],
+            size=10,
+            color=ft.Colors.ON_SURFACE_VARIANT,
+            no_wrap=True,
+            max_lines=1,
+            overflow=ft.TextOverflow.ELLIPSIS,
+        )
+
+        sound_dropdown_items = []
+
+        def _get_sound_display_path(filename):
+            full_path = os.path.join(sound_dir, filename)
+            rel_path = os.path.relpath(full_path, os.path.dirname(os.path.abspath(__file__)))
+            parts = rel_path.split(os.sep)
+            if len(parts) > 2:
+                return os.path.join(*parts[-3:])
+            return rel_path
+
+        def _make_sound_dropdown_item(filename):
+            item = ft.Container(
+                content=ft.Text(_get_sound_display_path(filename), size=12, color="white", no_wrap=True),
+                bgcolor=BG_LIGHT,
+                padding=ft.Padding.symmetric(horizontal=8, vertical=6),
+                alignment=ft.Alignment.CENTER_RIGHT,
+                ink=True,
+                on_click=lambda e, sound=filename: _select_sound(sound),
+            )
+            sound_dropdown_items.append(item)
+            return item
+
+        dropdown_item_height = 24  # 12px text + 12px vertical padding
+        dropdown_max_visible = 5
+        dropdown_height = min(len(wav_files), dropdown_max_visible) * dropdown_item_height
+
+        sound_dropdown_panel = ft.Container(
+            content=ft.Column([
+                _make_sound_dropdown_item(f)
+                for f in wav_files
+            ], spacing=0, tight=True, scroll=ft.ScrollMode.AUTO),
+            bgcolor=SETTINGS_BG,
+            border_radius=6,
+            width=536,
+            height=dropdown_height,
+            visible=False,
+        )
+
+        sound_dropdown_arrow = ft.Container(
+            content=ft.Icon(ft.Icons.ARROW_DROP_DOWN, size=20, color="white"),
+            width=32,
+            height=32,
+            alignment=ft.Alignment.CENTER,
+            ink=True,
+            on_click=lambda e: _toggle_sound_dropdown(),
+        )
+
+        sound_seg = ft.Container(
+            content=ft.Row([
+                ft.Container(
+                    content=ft.Container(
                         content=ft.Icon(ft.Icons.FOLDER_OPEN, size=16, color="white"),
-                        bgcolor=BG_LIGHT,
-                        width=40,
-                        height=40,
+                        width=32,
+                        height=32,
                         alignment=ft.Alignment.CENTER,
-                        ink=True,
-                        on_click=_on_browse_click,
+                        margin=ft.Padding(4, 0, 0, 0),
                     ),
-                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                    ft.Container(
+                    width=58,
+                    height=34,
+                    alignment=ft.Alignment.CENTER,
+                    padding=ft.Padding(0, 0, 0, 2),
+                    bgcolor=BG_LIGHT,
+                    ink=True,
+                    on_click=_on_browse_click,
+                ),
+                ft.Container(width=2, bgcolor=SETTINGS_BG),
+                ft.Container(
+                    content=ft.Container(
                         content=ft.Icon(ft.Icons.REFRESH, size=16, color="white"),
-                        bgcolor=BG_LIGHT,
-                        width=40,
-                        height=40,
+                        width=32,
+                        height=32,
                         alignment=ft.Alignment.CENTER,
-                        ink=True,
-                        on_click=lambda e: _refresh_sounds(),
+                        margin=ft.Padding(0, 0, 2, 0),
                     ),
-                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                    ft.Container(
-                        content=volume_slider,
-                        bgcolor=BG_LIGHT,
-                        width=140,
-                        height=40,
-                        alignment=ft.Alignment.CENTER,
-                        padding=ft.Padding.symmetric(horizontal=8, vertical=0),
-                    ),
-                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                    ft.Container(
-                        content=volume_text,
-                        bgcolor=BG_LIGHT,
-                        width=40,
-                        height=40,
-                        alignment=ft.Alignment.CENTER,
-                    ),
-                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                    ft.Container(
-                        content=sound_dropdown,
-                        bgcolor=BG_LIGHT,
-                        expand=True,
-                        height=40,
-                        alignment=ft.Alignment.CENTER,
-                        padding=ft.Padding.symmetric(horizontal=4, vertical=0),
-                    ),
-                ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
-                width=360,
-                height=40,
-            ),
-        ], width=360, height=40, clip_behavior=ft.ClipBehavior.HARD_EDGE)
+                    width=58,
+                    height=34,
+                    alignment=ft.Alignment.CENTER,
+                    padding=ft.Padding(0, 0, 0, 2),
+                    bgcolor=BG_LIGHT,
+                    ink=True,
+                    on_click=lambda e: _refresh_sounds(),
+                ),
+                ft.Container(width=2, bgcolor=SETTINGS_BG),
+                ft.Container(
+                    content=ft.Row([
+                        volume_slider,
+                        ft.Container(
+                            content=ft.Row([
+                                volume_text,
+                                ft.Container(width=3),
+                            ], spacing=0, alignment=ft.MainAxisAlignment.CENTER),
+                            expand=True,
+                        ),
+                    ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+                    width=119,
+                    height=34,
+                    alignment=ft.Alignment.CENTER,
+                    padding=ft.Padding(0, 0, 0, 1),
+                ),
+                ft.Container(width=2, bgcolor=SETTINGS_BG),
+                ft.Container(
+                    content=ft.Row([
+                        ft.Container(width=3),
+                        ft.Container(
+                            content=current_sound_text,
+                            width=81,
+                            height=28,
+                            alignment=ft.Alignment.CENTER_LEFT,
+                            padding=ft.Padding(0, 0, 0, 2),
+                        ),
+                        ft.Container(width=3),
+                        sound_dropdown_arrow,
+                    ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+                    width=119,
+                    height=34,
+                    alignment=ft.Alignment.CENTER,
+                    padding=ft.Padding(0, 0, 0, 0),
+                ),
+            ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+            bgcolor=BG_LIGHT,
+            border_radius=20,
+            width=360,
+            height=34,
+        )
 
         settings_rows = ft.Column([
             ft.Row([
@@ -1202,150 +1485,59 @@ def main(page: ft.Page):
                 ft.Text("Notifications", size=14, weight=ft.FontWeight.BOLD, width=160),
                 notifications_seg,
             ], spacing=16, vertical_alignment=ft.CrossAxisAlignment.CENTER),
-            ft.Row([
-                ft.Text("Sound", size=14, weight=ft.FontWeight.BOLD, width=160),
-                sound_seg,
-            ], spacing=16, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+            ft.Column([
+                ft.Row([
+                    ft.Text("Sound", size=14, weight=ft.FontWeight.BOLD, width=160),
+                    sound_seg,
+                ], spacing=16, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+                ft.Row([
+                    sound_dropdown_panel,
+                ], alignment=ft.MainAxisAlignment.END),
+            ], spacing=0, tight=True),
         ], spacing=8, tight=True)
-
-        split_v4 = ft.SegmentedButton(
-            selected=[],
-            allow_empty_selection=True,
-            segments=[
-                ft.Segment(value="1", label=ft.Text("1", size=13, weight=ft.FontWeight.W_500)),
-                ft.Segment(value="2", label=ft.Text("2", size=13, weight=ft.FontWeight.W_500)),
-                ft.Segment(value="3", label=ft.Text("3", size=13, weight=ft.FontWeight.W_500)),
-                ft.Segment(value="4", label=ft.Text("4", size=13, weight=ft.FontWeight.W_500)),
-                ft.Segment(value="5", label=ft.Text("5", size=13, weight=ft.FontWeight.W_500)),
-            ],
-            on_change=lambda e: None,
-            width=360,
-        )
-
-        row5_status_filter = current_status_filter
-
-        def _on_row5_changed(value):
-            nonlocal row5_status_filter, current_status_filter, tracking_status
-            row5_status_filter = value
-            current_status_filter = value
-            row5_cell_ingame.bgcolor = "#3b4858" if value == STATUS_ONLY_INGAME else BG_LIGHT
-            row5_cell_online.bgcolor = "#3b4858" if value == STATUS_ONLY_ONLINE else BG_LIGHT
-            row5_cell_both.bgcolor = "#3b4858" if value == STATUS_BOTH else BG_LIGHT
-            row5_cell_ingame.content = _segmented_btn_content("In Game", value == STATUS_ONLY_INGAME)
-            row5_cell_online.content = _segmented_btn_content("On Site", value == STATUS_ONLY_ONLINE)
-            row5_cell_both.content = _segmented_btn_content("Both", value == STATUS_BOTH)
-            row5_cell_ingame.update()
-            row5_cell_online.update()
-            row5_cell_both.update()
-            row1_cell_ingame.bgcolor = "#3b4858" if value == STATUS_ONLY_INGAME else BG_LIGHT
-            row1_cell_online.bgcolor = "#3b4858" if value == STATUS_ONLY_ONLINE else BG_LIGHT
-            row1_cell_both.bgcolor = "#3b4858" if value == STATUS_BOTH else BG_LIGHT
-            row1_cell_ingame.content = _segmented_btn_content("In Game", value == STATUS_ONLY_INGAME)
-            row1_cell_online.content = _segmented_btn_content("On Site", value == STATUS_ONLY_ONLINE)
-            row1_cell_both.content = _segmented_btn_content("Both", value == STATUS_BOTH)
-            row1_cell_ingame.update()
-            row1_cell_online.update()
-            row1_cell_both.update()
-            _sync_main_status()
-            _settings["default_status"] = current_status_filter
-            save_settings(_settings)
-            append_log(f"Default status filter set to {current_status_filter}")
-
-        row5_cell_ingame = ft.Container(
-            content=_segmented_btn_content("In Game", current_status_filter == STATUS_ONLY_INGAME),
-            bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_INGAME else BG_LIGHT,
-            expand=True,
-            height=34,
-            alignment=ft.Alignment.CENTER,
-            padding=ft.Padding(0, 0, 0, 2),
-            ink=True,
-            on_click=lambda e: _on_row5_changed(STATUS_ONLY_INGAME),
-        )
-
-        row5_cell_online = ft.Container(
-            content=_segmented_btn_content("On Site", current_status_filter == STATUS_ONLY_ONLINE),
-            bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_ONLINE else BG_LIGHT,
-            expand=True,
-            height=34,
-            alignment=ft.Alignment.CENTER,
-            padding=ft.Padding(0, 0, 0, 2),
-            ink=True,
-            on_click=lambda e: _on_row5_changed(STATUS_ONLY_ONLINE),
-        )
-
-        row5_cell_both = ft.Container(
-            content=_segmented_btn_content("Both", current_status_filter == STATUS_BOTH),
-            bgcolor="#3b4858" if current_status_filter == STATUS_BOTH else BG_LIGHT,
-            expand=True,
-            height=34,
-            alignment=ft.Alignment.CENTER,
-            padding=ft.Padding(0, 0, 0, 2),
-            ink=True,
-            on_click=lambda e: _on_row5_changed(STATUS_BOTH),
-        )
-
-        split_v5 = ft.Container(
-            content=ft.Row([
-                row5_cell_ingame,
-                ft.Container(width=2, bgcolor=SETTINGS_BG),
-                row5_cell_online,
-                ft.Container(width=2, bgcolor=SETTINGS_BG),
-                row5_cell_both,
-            ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
-            bgcolor=BG_LIGHT,
-            border_radius=20,
-            width=360,
-            height=34,
-        )
 
         content = ft.Column([
             ft.Divider(),
             settings_rows,
-            ft.Divider(),
-            split_v4,
-            ft.Divider(),
-            split_v5,
         ], spacing=8, tight=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
+
+        def _close_settings_dialog(e=None):
+            nonlocal sound_dropdown_open
+            if sound_dropdown_open:
+                sound_dropdown_open = False
+                sound_dropdown_panel.visible = False
+                sound_dropdown_arrow.content = ft.Icon(ft.Icons.ARROW_DROP_DOWN, size=20, color="white")
+                sound_dropdown_panel.update()
+                sound_dropdown_arrow.update()
+            page.pop_dialog()
+
         return ft.AlertDialog(
             title=ft.Text("Settings", size=19, weight=ft.FontWeight.BOLD),
             content=content,
             bgcolor=SETTINGS_BG,
-            actions=[ft.TextButton("Close", on_click=lambda e: page.pop_dialog())],
+            actions=[ft.TextButton("Close", on_click=_close_settings_dialog)],
             actions_alignment=ft.MainAxisAlignment.END,
             title_padding=ft.Padding(left=24, top=16, right=24, bottom=0),
             content_padding=ft.Padding(left=24, top=0, right=24, bottom=16),
+            on_dismiss=_close_settings_dialog,
         )
 
     settings_dlg = _build_settings_dialog()
 
-    settings_btn = ft.IconButton(
-        icon=ft.Icons.SETTINGS,
-        icon_size=24,
-        tooltip="Settings",
-        icon_color="white",
-        style=ft.ButtonStyle(shape=ft.CircleBorder(), padding=8),
-        width=40,
-        height=40,
+    FUNCTION_BAR_SPACING = 10
+
+    settings_btn = ft.Container(
+        content=ft.Stack([
+            ft.Container(
+                content=ft.Icon(ft.Icons.SETTINGS, size=34, color="#d7e3f7"),
+                left=0,
+                top=-0,
+            )
+        ], width=24, height=34),
+        width=34,
+        height=34,
+        ink=True,
         on_click=lambda e: page.show_dialog(settings_dlg),
-    )
-
-    def on_status_changed(e):
-        nonlocal current_status_filter, tracking_status
-        current_status_filter = e.control.selected[0] if e.control.selected else STATUS_BOTH
-        tracking_status = f"Active ({current_status_filter})" if running else "Idle"
-        _set_tracking_status()
-        _apply_status_color()
-        page.update()
-
-    status_segmented = ft.SegmentedButton(
-        selected=[current_status_filter],
-        segments=[
-            ft.Segment(value=STATUS_ONLY_INGAME, label=ft.Text("In Game")),
-            ft.Segment(value=STATUS_ONLY_ONLINE, label=ft.Text("On Site")),
-            ft.Segment(value=STATUS_BOTH, label=ft.Text("Both")),
-        ],
-        on_change=on_status_changed,
-        width=360,
     )
 
     def add_item_inline(mode):
@@ -1451,19 +1643,27 @@ def main(page: ft.Page):
     page.add(
         ft.Column([
             ft.Row([
-                ft.Text("Warframe Trade Watch (WFTW)", size=20, weight=ft.FontWeight.BOLD),
+                ft.Container(
+                    content=ft.Text("Warframe Trade Watch (WFTW)", size=20, weight=ft.FontWeight.BOLD),
+                    alignment=ft.Alignment.CENTER_LEFT,
+                    height=34,
+                ),
                 ft.Container(expand=True),
-                settings_btn,
-                status_segmented,
-                start_btn,
-                stop_btn,
-            ], vertical_alignment=ft.CrossAxisAlignment.CENTER),
+                ft.Row([
+                    settings_btn,
+                    ft.Container(width=FUNCTION_BAR_SPACING),
+                    main_status_seg,
+                    ft.Container(width=FUNCTION_BAR_SPACING),
+                    start_btn,
+                    stop_btn,
+                ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+            ], vertical_alignment=ft.CrossAxisAlignment.CENTER, height=34),
             ft.Divider(height=4),
             ft.Column([
                 ft.Row([
                     ft.Column([
                         ft.Row([
-                            ft.Text("Want to Sell", size=15, weight=ft.FontWeight.BOLD, color=WTS_COLOR),
+                            ft.Text("Want to Sell Orders", size=15, weight=ft.FontWeight.BOLD, color=WTS_COLOR),
                             ft.Container(expand=True),
                         ]),
                         wts_add_form,
@@ -1479,7 +1679,7 @@ def main(page: ft.Page):
                     ft.VerticalDivider(width=8),
                     ft.Column([
                         ft.Row([
-                            ft.Text("Want to Buy", size=15, weight=ft.FontWeight.BOLD, color=WTB_COLOR),
+                            ft.Text("Want to Buy Orders", size=15, weight=ft.FontWeight.BOLD, color=WTB_COLOR),
                             ft.Container(expand=True),
                         ]),
                         wtb_add_form,

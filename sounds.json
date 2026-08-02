@@ -1,6 +1,0 @@
-{
-  "default_sound": "notification.wav",
-  "sounds": {
-    "notification.wav": {"name": "Notification"}
-  }
-}

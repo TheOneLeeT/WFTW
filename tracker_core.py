@@ -1,5 +1,4 @@
 import time
-import subprocess
 import sys
 from datetime import datetime
 import requests
@@ -13,24 +12,6 @@ try:
 except ImportError:
     HAS_PLYER = False
 
-
-def _play_notification_sound():
-    path = os.path.join("sounds", "notification.wav")
-    if not os.path.isfile(path):
-        return
-    try:
-        if sys.platform == "win32":
-            import winsound
-            winsound.PlaySound(path, winsound.SND_FILENAME | winsound.SND_ASYNC)
-        elif sys.platform == "darwin":
-            subprocess.Popen(["afplay", path])
-        else:
-            if os.path.isfile("/usr/bin/paplay"):
-                subprocess.Popen(["paplay", path])
-            elif os.path.isfile("/usr/bin/aplay"):
-                subprocess.Popen(["aplay", path])
-    except Exception:
-        pass
 
 def _write_debug_log(msg):
     try:
@@ -401,8 +382,6 @@ class TrackerCore:
                             "timestamp": timestamp,
                             "whisper_msg": whisper_msg,
                         })
-
-                    _play_notification_sound()
 
                     if HAS_PLYER:
                         try:
