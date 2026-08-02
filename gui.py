@@ -308,17 +308,27 @@ def main(page: ft.Page):
     page.theme_mode = ft.ThemeMode.DARK
     page.bgcolor = BG_DARK
     page.padding = 16
+
+    _base_dir = os.path.dirname(os.path.abspath(__file__))
+
+    def _set_icon():
+        try:
+            import sys
+            if sys.platform == "darwin":
+                page.window.icon = os.path.join(_base_dir, "Media", "Icon", "WFTW.icns")
+            elif sys.platform == "win32":
+                page.window.icon = os.path.join(_base_dir, "Media", "Icon", "WFTW.ico")
+            else:
+                page.window.icon = os.path.join(_base_dir, "Media", "Icon", "WFTW.png")
+        except Exception:
+            pass
+
+    _set_icon()
+
     page.window.width = 1365
     page.window.height = 768
     page.window.min_width = 1365
     page.window.min_height = 768
-    import sys
-    if sys.platform == "darwin":
-        page.window.icon = "Media/Icon/WFTW.icns"
-    elif sys.platform == "win32":
-        page.window.icon = "Media/Icon/WFTW.ico"
-    else:
-        page.window.icon = "Media/Icon/WFTW.png"
 
     def _force_window_size():
         page.window.width = 1365
