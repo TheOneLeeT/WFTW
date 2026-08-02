@@ -47,12 +47,7 @@ STATUS_BOTH = "both"
 
 
 def _safe_defaults():
-    return {
-        "Lua Madurai Lens": 33,
-        "Lua Zenurik Lens": 33,
-        "Primed Counterbalance": [75, 10],
-        "Primed Cleanse Infested": [75, 10],
-    }
+    return {}
 
 
 def load_watchlists():
