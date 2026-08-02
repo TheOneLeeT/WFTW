@@ -312,6 +312,7 @@ def main(page: ft.Page):
     page.window.height = 768
     page.window.min_width = 1365
     page.window.min_height = 768
+    page.window.icon = "Media/Icon/WFTW.ico"
 
     def _force_window_size():
         page.window.width = 1365
