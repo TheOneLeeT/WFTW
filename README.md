@@ -4,32 +4,28 @@
 
 ## What it is
 
-WFTW is a desktop companion that watches Warframe Market for you and instantly alerts you when matching buy or sell orders appear. No account. No browser tab. Just passive notifications while you play.
+Warframe Trade Watch is a desktop companion that watches Warframe Market for you and instantly alerts you when matching buy or sell orders appear. No account. No browser tab. Just passive notifications while you play.
 
 ## Why it exists
 
-Warframe Market is excellent for browsing and trading manually. WFTW complements it by continuously monitoring the public market for the items you care about, so you don't have to refresh pages or keep browser tabs open.
+Warframe Market is excellent for browsing and trading manually. Warframe Trade Watch complements it by continuously monitoring the public market for the items you care about, so you don't have to refresh pages or keep browser tabs open.
 
-No Warframe Market account required. WFTW monitors public market listings directly, so it works independently of your browser session or marketplace login.
-
-## How it works
-
-WFTW monitors public Warframe Market listings in the background and notifies you when an order matches your criteria. It does not modify the game, interact with Digital Extremes servers, or depend on a logged-in Warframe Market session.
+No Warframe Market account required. Warframe Trade Watch monitors public market listings directly, so it works independently of your browser session or marketplace login.
 
 ## What you get
 
-- Use without any marketplace login
-- Monitor dozens of items simultaneously instead of searching one at a time
-- Runs quietly in the system tray while you play
-- Know immediately when a matching order appears with desktop notification and sound
-- Available on Windows, macOS, and Linux
-- Runs locally without account creation, cloud sync, or background telemetry
-- Lightweight background polling keeps the interface responsive while monitoring continues
+- **No account required**: monitor public market listings without staying signed in
+- **Monitor dozens of items at once**: track multiple buy and sell orders across as many items as you want
+- **Runs quietly in the background**: a lightweight tray app that stays out of your way while you play
+- **Instant desktop alerts**: know immediately when a matching order appears with sound and notification
+- **Available everywhere**: cross-platform desktop app for Windows, macOS, and Linux
+- **Private by default**: no telemetry, no cloud sync, and no account creation
+- **Responsive while monitoring**: lightweight background polling keeps the interface snappy
 
 ## What it tracks
 
-- WTS orders with price and rank filters
-- WTB orders with price and rank filters
+- Sell orders with price and rank filters
+- Buy orders with price and rank filters
 - Online and in-game status awareness
 - Local notifications with customizable sound and volume
 
