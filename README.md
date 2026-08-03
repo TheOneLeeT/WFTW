@@ -10,7 +10,7 @@ Warframe Trade Watch is a desktop companion that watches Warframe Market for you
 
 Warframe Market is excellent for browsing and trading manually. Warframe Trade Watch complements it by continuously monitoring the public market for the items you care about, so you don't have to refresh pages or keep browser tabs open.
 
-No Warframe Market account required. Warframe Trade Watch monitors public market listings directly, so it works independently of your browser session or marketplace login.
+No Warframe Market account required. Warframe Trade Watch monitors public market listings directly, so it works independently of your browser session or Warframe Market login.
 
 ## What you get
 
