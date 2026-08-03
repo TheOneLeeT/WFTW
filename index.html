@@ -3,8 +3,107 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Warframe Trade Watch (WFTW) — Desktop Trade Notifications for Warframe Market</title>
-  <meta name="description" content="Get instant desktop notifications for buy and sell orders on Warframe Market. No account required. No browser tab needed. Monitor multiple items while you play.">
+  <title>Warframe Trade Watch (WFTW) – Warframe Market Tracker & Desktop Trade Notifications</title>
+  <meta name="description" content="Warframe Trade Watch is a desktop Warframe Market tracker that provides instant buy and sell order notifications, price alerts, and multi-item monitoring. No account required.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://theoneleet.github.io/WFTW/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Warframe Trade Watch (WFTW) – Warframe Market Tracker & Desktop Trade Notifications">
+  <meta property="og:description" content="Get instant desktop notifications for buy and sell orders on Warframe Market. No account required. No browser tab needed. Monitor multiple items while you play.">
+  <meta property="og:url" content="https://theoneleet.github.io/WFTW/">
+  <meta property="og:site_name" content="Warframe Trade Watch">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Warframe Trade Watch (WFTW) – Warframe Market Tracker & Desktop Trade Notifications">
+  <meta name="twitter:description" content="Get instant desktop notifications for buy and sell orders on Warframe Market. No account required. No browser tab needed.">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Warframe Trade Watch",
+    "applicationCategory": "Utility",
+    "operatingSystem": "Windows, macOS, Linux",
+    "description": "A desktop Warframe Market tracker that provides instant trade notifications, price alerts, and buy/sell order monitoring for Warframe traders. No account required.",
+    "author": {
+      "@type": "Organization",
+      "name": "Warframe Trade Watch Contributors"
+    },
+    "url": "https://github.com/TheOneLeeT/WFTW",
+    "license": "https://opensource.org/licenses/MIT",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is Warframe Trade Watch?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Warframe Trade Watch is a desktop application for players who actively trade on Warframe Market. It continuously monitors public market listings and notifies you when matching buy or sell orders appear."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Warframe Trade Watch require a Warframe Market account?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Warframe Trade Watch monitors public market listings directly and works without any marketplace login or browser session."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I monitor multiple items at once?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. You can track dozens of items simultaneously instead of searching one at a time on the website."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Warframe Trade Watch work on Windows, macOS, and Linux?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Warframe Trade Watch is a cross-platform desktop app available on Windows, macOS, and Linux."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Warframe Trade Watch modify Warframe?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Warframe Trade Watch does not modify the Warframe client, interact with Digital Extremes servers, or automate in-game actions. It is a passive notification client for an external community website."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I monitor both buy and sell orders?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Warframe Trade Watch can monitor both WTS sell orders and WTB buy orders on Warframe Market with price and rank filters."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do Warframe Market notifications work?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "When a matching order appears on Warframe Market, Warframe Trade Watch shows a desktop notification and plays a sound so you can act immediately while playing."
+        }
+      }
+    ]
+  }
+  </script>
+
   <style>
     :root {
       --bg: #0b0d12;
@@ -144,6 +243,23 @@
     }
     .highlight h3 { margin: 0 0 8px; font-size: 17px; }
     .highlight p { margin: 0; color: var(--muted); font-size: 15px; }
+    .faq-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .faq-item h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+      color: var(--text);
+    }
+    .faq-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
     footer {
       border-top: 1px solid var(--border);
       padding: 40px 0;
@@ -162,6 +278,7 @@
       <nav>
         <a href="#features">Features</a>
         <a href="#how-it-works">How it works</a>
+        <a href="#faq">FAQ</a>
         <a href="#download">Download</a>
       </nav>
     </div>
@@ -173,6 +290,14 @@
         <h1>Never miss a deal on Warframe Market</h1>
         <p>Warframe Trade Watch is a desktop companion that monitors Warframe Market for you and alerts you the moment a matching buy or sell order appears. No account. No browser tab. Just passive notifications while you play.</p>
         <a class="cta" href="#download">Download for free</a>
+      </div>
+    </section>
+
+    <section id="intro" class="section">
+      <div class="container">
+        <h2>Warframe Market tracker for active traders</h2>
+        <p class="lead">Warframe Trade Watch is a desktop application for players who actively trade on Warframe Market. Instead of refreshing the website throughout the day, Warframe Trade Watch continuously monitors public market listings and notifies you when matching buy or sell orders appear. Whether you are flipping Prime parts, hunting Arcanes, or watching high-value mods, Warframe Trade Watch helps you react faster while keeping the trading process simple.</p>
+        <p class="lead">Warframe Trade Watch is a desktop Warframe Market tracker that provides instant trade notifications, price alerts, and buy/sell order monitoring for Warframe traders. It works as a Warframe Market alert tool that runs quietly in the background, so you can focus on playing while it watches the market for you.</p>
       </div>
     </section>
 
@@ -257,11 +382,46 @@
 
     <section class="section">
       <div class="container">
-        <h2>Why traders use Warframe Trade Watch</h2>
-        <p class="lead">Warframe trading moves fast. This is the simplest way to keep up without turning it into a second job.</p>
+        <h2>Supported trading items</h2>
+        <p class="lead">Warframe Trade Watch monitors whatever you track on Warframe Market, including Prime parts, mods, arcanes, weapons, and more. If it is listed publicly, you can watch it.</p>
         <div class="highlight">
           <h3>Monitor public market listings without staying signed in</h3>
           <p>Unlike workflows that depend on keeping a logged-in browser session open, Warframe Trade Watch continuously monitors public listings on its own. No login required.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="section">
+      <div class="container">
+        <h2>Frequently asked questions</h2>
+        <p class="lead">Everything you need to know about Warframe Trade Watch.</p>
+        <div class="faq-item">
+          <h3>What is Warframe Trade Watch?</h3>
+          <p>Warframe Trade Watch is a desktop application for players who actively trade on Warframe Market. It continuously monitors public market listings and notifies you when matching buy or sell orders appear.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Does Warframe Trade Watch require a Warframe Market account?</h3>
+          <p>No. Warframe Trade Watch monitors public market listings directly and works without any marketplace login or browser session.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Can I monitor multiple items?</h3>
+          <p>Yes. You can track dozens of items simultaneously instead of searching one at a time on the website.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Does Warframe Trade Watch work on Windows, macOS, and Linux?</h3>
+          <p>Yes. Warframe Trade Watch is a cross-platform desktop app available on Windows, macOS, and Linux.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Does Warframe Trade Watch modify Warframe?</h3>
+          <p>No. Warframe Trade Watch does not modify the Warframe client, interact with Digital Extremes servers, or automate in-game actions. It is a passive notification client for an external community website.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Can I monitor both buy and sell orders?</h3>
+          <p>Yes. Warframe Trade Watch can monitor both WTS sell orders and WTB buy orders on Warframe Market with price and rank filters.</p>
+        </div>
+        <div class="faq-item">
+          <h3>How do Warframe Market notifications work?</h3>
+          <p>When a matching order appears on Warframe Market, Warframe Trade Watch shows a desktop notification and plays a sound so you can act immediately while playing.</p>
         </div>
       </div>
     </section>
@@ -273,7 +433,7 @@
         <div class="grid">
           <div class="card">
             <h3>Requirements</h3>
-            <p>Python 3.9 or later. That's it.</p>
+            <p>Python 3.9 or later. That is it.</p>
           </div>
           <div class="card">
             <h3>Quick start</h3>
