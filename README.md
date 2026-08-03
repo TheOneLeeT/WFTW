@@ -4,39 +4,33 @@
 
 ## What it is
 
-WFTW is a desktop trade notification tool for Warframe. It watches live orders on Warframe Market and alerts you the moment a matching order appears. No account required. No browser tab needed. Just fast, passive notifications while you play.
+WFTW is a desktop companion that watches Warframe Market for you and instantly alerts you when matching buy or sell orders appear. No account. No browser tab. Just passive notifications while you play.
 
 ## Why it exists
 
-The Warframe Market site is useful, but it is fundamentally limited for active traders:
-- only one item search at a time
-- requires a logged-in session to use some features
-- depends on the tab staying open in a browser
-- noisy UI if you just want a signal when something you care about shows up
+Warframe Market is excellent for browsing and trading manually. WFTW complements it by continuously monitoring the public market for the items you care about, so you don't have to refresh pages or keep browser tabs open.
 
-WFTW does one thing and does it cleanly: it keeps watch on the items you choose and tells you when they appear.
+No Warframe Market account required. WFTW monitors public market listings directly, so it works independently of your browser session or marketplace login.
 
 ## How it works
 
-WFTW talks directly to the public Warframe Market API. It does not use the websocket, it does not need an account, and it does not inject into or modify the game in any way. It is purely an external reader of public market data with local notification logic on top.
+WFTW monitors public Warframe Market listings in the background and notifies you when an order matches your criteria. It does not modify the game, interact with Digital Extremes servers, or depend on a logged-in Warframe Market session.
 
-Because it bypasses the account-bound websocket path, the app does not inherit the same restrictions that apply to logged-in browser sessions. It simply reads public order data and evaluates it against your local watchlist.
+## What you get
 
-## Advantages
-
-- **No account required**: works without any Warframe Market login
-- **Multiple items at once**: track as many items as you want simultaneously
-- **Low overhead**: lightweight tray-style behavior, not a browser tab
-- **Instant alerts**: sound and desktop notification on match
-- **Cross-platform**: Windows, macOS, Linux
-- **Private by default**: no telemetry, no account, no cloud sync
-- **Fast**: optimized polling keeps the UI responsive while the tracker runs in the background
+- Use without any marketplace login
+- Monitor dozens of items simultaneously instead of searching one at a time
+- Runs quietly in the system tray while you play
+- Know immediately when a matching order appears with desktop notification and sound
+- Available on Windows, macOS, and Linux
+- Runs locally without account creation, cloud sync, or background telemetry
+- Lightweight background polling keeps the interface responsive while monitoring continues
 
 ## What it tracks
 
-- WTS orders with price/rank filters
-- WTB orders with price/rank filters
-- Online / in-game status awareness
+- WTS orders with price and rank filters
+- WTB orders with price and rank filters
+- Online and in-game status awareness
 - Local notifications with customizable sound and volume
 
 ## Installation
