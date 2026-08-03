@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warframe Trade Watch — Desktop Trade Notifications for Warframe Market</title>
+  <meta name="description" content="Get instant desktop notifications for buy and sell orders on Warframe Market. No account required. No browser tab needed. Monitor multiple items while you play.">
+  <style>
+    :root {
+      --bg: #0b0d12;
+      --surface: #12151c;
+      --surface-2: #1a1e27;
+      --text: #e6e8ee;
+      --muted: #9aa0b0;
+      --accent: #4f8cff;
+      --accent-2: #7aa8ff;
+      --border: #232733;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    header {
+      border-bottom: 1px solid var(--border);
+      background: rgba(11,13,18,0.8);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    header .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 0.2px;
+    }
+    nav a {
+      margin-left: 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    nav a:hover { color: var(--text); text-decoration: none; }
+    .hero {
+      padding: 96px 0 80px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: clamp(32px, 5vw, 56px);
+      line-height: 1.1;
+      margin: 0 0 18px;
+      font-weight: 700;
+    }
+    .hero p {
+      color: var(--muted);
+      font-size: clamp(16px, 2vw, 20px);
+      max-width: 680px;
+      margin: 0 auto 32px;
+    }
+    .cta {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 16px;
+    }
+    .cta:hover { background: var(--accent-2); text-decoration: none; }
+    .section {
+      padding: 72px 0;
+      border-top: 1px solid var(--border);
+    }
+    .section h2 {
+      font-size: 28px;
+      margin: 0 0 12px;
+    }
+    .section .lead {
+      color: var(--muted);
+      max-width: 720px;
+      margin: 0 0 48px;
+      font-size: 17px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+    }
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+    }
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+      counter-reset: step;
+    }
+    .step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      position: relative;
+    }
+    .step::before {
+      counter-increment: step;
+      content: "0" counter(step);
+      display: block;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .step h3 { margin: 0 0 6px; font-size: 17px; }
+    .step p { margin: 0; color: var(--muted); font-size: 15px; }
+    .highlight {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+    }
+    .highlight h3 { margin: 0 0 8px; font-size: 17px; }
+    .highlight p { margin: 0; color: var(--muted); font-size: 15px; }
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .footer-inner { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-links a { margin-right: 16px; color: var(--muted); }
+    .footer-links a:hover { color: var(--text); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="logo">Warframe Trade Watch</div>
+      <nav>
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How it works</a>
+        <a href="#download">Download</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <h1>Never miss a deal on Warframe Market</h1>
+        <p>Warframe Trade Watch is a desktop companion that monitors Warframe Market for you and alerts you the moment a matching buy or sell order appears. No account. No browser tab. Just passive notifications while you play.</p>
+        <a class="cta" href="#download">Download for free</a>
+      </div>
+    </section>
+
+    <section id="features" class="section">
+      <div class="container">
+        <h2>Built for Warframe traders</h2>
+        <p class="lead">Warframe Market is excellent for browsing and trading manually. Warframe Trade Watch complements it by continuously monitoring the public market for the items you care about, so you don't have to refresh pages or keep browser tabs open.</p>
+        <div class="grid">
+          <div class="card">
+            <h3>No account required</h3>
+            <p>Monitor public market listings without staying signed in. Works independently of your browser session or marketplace login.</p>
+          </div>
+          <div class="card">
+            <h3>Monitor dozens of items at once</h3>
+            <p>Track multiple buy and sell orders across as many items as you want, all from one place.</p>
+          </div>
+          <div class="card">
+            <h3>Instant desktop alerts</h3>
+            <p>Know immediately when a matching order appears with a clear desktop notification and sound.</p>
+          </div>
+          <div class="card">
+            <h3>Runs quietly in the background</h3>
+            <p>A lightweight tray app that stays out of your way while you're in-game or doing anything else.</p>
+          </div>
+          <div class="card">
+            <h3>Available everywhere</h3>
+            <p>Cross-platform desktop app for Windows, macOS, and Linux.</p>
+          </div>
+          <div class="card">
+            <h3>Private by default</h3>
+            <p>No telemetry, no cloud sync, and no account creation. Your watchlist stays on your device.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="section">
+      <div class="container">
+        <h2>How it works</h2>
+        <p class="lead">Three simple steps. No setup headaches.</p>
+        <div class="steps">
+          <div class="step">
+            <h3>Choose your items</h3>
+            <p>Add the items you want to watch and set your price and rank filters for buy or sell orders.</p>
+          </div>
+          <div class="step">
+            <h3>Let it run in the background</h3>
+            <p>The app monitors Warframe Market continuously while minimized to your system tray.</p>
+          </div>
+          <div class="step">
+            <h3>Get notified</h3>
+            <p>Receive an instant desktop notification the moment a matching order appears. Copy the seller or buyer name and trade on your terms.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2>What you can track</h2>
+        <p class="lead">Fine-tune your alerts so you only hear about orders that actually matter to you.</p>
+        <div class="grid">
+          <div class="card">
+            <h3>Sell orders</h3>
+            <p>Get alerted when someone lists an item at or below your target price, with optional rank filters for mods and arcanes.</p>
+          </div>
+          <div class="card">
+            <h3>Buy orders</h3>
+            <p>Know immediately when a buyer is offering your asking price or higher, so you can sell fast.</p>
+          </div>
+          <div class="card">
+            <h3>Player status</h3>
+            <p>See whether the trader is currently online or in-game before you message them.</p>
+          </div>
+          <div class="card">
+            <h3>Custom notifications</h3>
+            <p>Adjust notification sound and volume, or choose a silent alert that fits your setup.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2>Why traders use Warframe Trade Watch</h2>
+        <p class="lead">Warframe trading moves fast. This is the simplest way to keep up without turning it into a second job.</p>
+        <div class="highlight">
+          <h3>Monitor public market listings without staying signed in</h3>
+          <p>Unlike workflows that depend on keeping a logged-in browser session open, Warframe Trade Watch continuously monitors public listings on its own. No login required.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="download" class="section">
+      <div class="container">
+        <h2>Download</h2>
+        <p class="lead">Get Warframe Trade Watch and start tracking Warframe Market in seconds.</p>
+        <div class="grid">
+          <div class="card">
+            <h3>Requirements</h3>
+            <p>Python 3.9 or later. That's it.</p>
+          </div>
+          <div class="card">
+            <h3>Quick start</h3>
+            <p>Install the requirements and run <code>python gui.py</code>.</p>
+          </div>
+          <div class="card">
+            <h3>Cross-platform</h3>
+            <p>Windows, macOS, and Linux supported.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div>Warframe Trade Watch</div>
+      <div class="footer-links">
+        <a href="https://github.com/TheOneLeeT/WFTW" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://warframe.market/tos" target="_blank" rel="noopener">Warframe Market Terms</a>
+        <a href="https://docs.warframe.market/docs/rules/overview" target="_blank" rel="noopener">Market Rules</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
