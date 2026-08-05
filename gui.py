@@ -342,9 +342,9 @@ def main(page: ft.Page):
 
     threading.Timer(0.5, _force_window_size).start()
 
-    log_output = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=8)
-    log_output_wts = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=8)
-    log_output_wtb = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=8)
+    log_output = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=ft.Padding(8, 8, 16, 8))
+    log_output_wts = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=ft.Padding(8, 8, 16, 8))
+    log_output_wtb = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=ft.Padding(8, 8, 16, 8))
     log_queue = queue.Queue()
 
     def append_log(msg):
@@ -569,8 +569,8 @@ def main(page: ft.Page):
     running = False
     tracking_status = "Waiting"
 
-    wts_items_list = ft.Column(spacing=3, scroll=ft.ScrollMode.AUTO, expand=True)
-    wtb_items_list = ft.Column(spacing=3, scroll=ft.ScrollMode.AUTO, expand=True)
+    wts_items_list = ft.Column(spacing=3, scroll=ft.ScrollMode.AUTO, expand=True, padding=ft.Padding(0, 0, 12, 0))
+    wtb_items_list = ft.Column(spacing=3, scroll=ft.ScrollMode.AUTO, expand=True, padding=ft.Padding(0, 0, 12, 0))
 
     wts_price_field = ft.TextField(label="Max Plat", width=90, input_filter=ft.NumbersOnlyInputFilter(), dense=True, border_color=BG_LIGHT, focused_border_color="#9ecaed")
     wtb_price_field = ft.TextField(label="Min Plat", width=90, input_filter=ft.NumbersOnlyInputFilter(), dense=True, border_color=BG_LIGHT, focused_border_color="#9ecaed")
@@ -1223,7 +1223,7 @@ def main(page: ft.Page):
             sound_dropdown_panel.content = ft.Column([
                 _make_sound_dropdown_item(f)
                 for f in wav_files
-            ], spacing=0, tight=True, scroll=ft.ScrollMode.AUTO)
+            ], spacing=0, tight=True, scroll=ft.ScrollMode.AUTO, padding=ft.Padding(0, 0, 12, 0))
             sound_dropdown_panel.height = min(len(wav_files), dropdown_max_visible) * dropdown_item_height
             current_sound_text.value = current_sound
             _update_sound_dropdown_selection()
@@ -1426,7 +1426,7 @@ def main(page: ft.Page):
             content=ft.Column([
                 _make_sound_dropdown_item(f)
                 for f in wav_files
-            ], spacing=0, tight=True, scroll=ft.ScrollMode.AUTO),
+            ], spacing=0, tight=True, scroll=ft.ScrollMode.AUTO, padding=ft.Padding(0, 0, 12, 0)),
             bgcolor=SETTINGS_BG,
             border_radius=6,
             width=536,
