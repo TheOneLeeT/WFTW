@@ -342,9 +342,9 @@ def main(page: ft.Page):
 
     threading.Timer(0.5, _force_window_size).start()
 
-    log_output = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=8)
-    log_output_wts = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=8)
-    log_output_wtb = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=8)
+    log_output = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=ft.Padding(8, 8, 14, 8))
+    log_output_wts = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=ft.Padding(8, 8, 14, 8))
+    log_output_wtb = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=ft.Padding(8, 8, 14, 8))
     log_queue = queue.Queue()
 
     def append_log(msg):
@@ -442,7 +442,7 @@ def main(page: ft.Page):
             ], spacing=0, tight=True),
             bgcolor=BG_LIGHT,
             border_radius=6,
-            padding=ft.Padding.symmetric(horizontal=8, vertical=4),
+            padding=ft.Padding(8, 4, 12, 4),
             margin=ft.Margin.only(bottom=2),
         )
 
@@ -766,7 +766,7 @@ def main(page: ft.Page):
                         tooltip="Remove",
                         on_click=lambda e, n=name, m=mode: delete_item(n, m)
                     ),
-                ], spacing=2, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+                ], spacing=2, vertical_alignment=ft.CrossAxisAlignment.CENTER, margin=ft.Margin.only(right=6)),
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN, vertical_alignment=ft.CrossAxisAlignment.CENTER),
             bgcolor=BG_LIGHT,
             border_radius=6,
@@ -1746,7 +1746,7 @@ def main(page: ft.Page):
                             content=wts_items_list,
                             bgcolor=BG_DARK,
                             border_radius=10,
-                            padding=8,
+                            padding=ft.Padding(8, 8, 14, 8),
                             expand=True,
                             border=ft.Border.all(1, BG_LIGHT),
                         ),
@@ -1762,7 +1762,7 @@ def main(page: ft.Page):
                             content=wtb_items_list,
                             bgcolor=BG_DARK,
                             border_radius=10,
-                            padding=8,
+                            padding=ft.Padding(8, 8, 14, 8),
                             expand=True,
                             border=ft.Border.all(1, BG_LIGHT),
                         ),
@@ -1776,7 +1776,7 @@ def main(page: ft.Page):
                     content=log_output,
                     bgcolor=BG_DARK,
                     border_radius=10,
-                    padding=8,
+                    padding=ft.Padding(8, 8, 14, 8),
                     border=ft.Border.all(1, BG_LIGHT),
                     height=122,
                     expand=2,
@@ -1809,7 +1809,7 @@ def main(page: ft.Page):
                             content=log_output_wts,
                             bgcolor=BG_DARK,
                             border_radius=10,
-                            padding=8,
+                            padding=ft.Padding(8, 8, 14, 8),
                             expand=True,
                             border=ft.Border.all(1, BG_LIGHT),
                         ),
@@ -1824,7 +1824,7 @@ def main(page: ft.Page):
                             content=log_output_wtb,
                             bgcolor=BG_DARK,
                             border_radius=10,
-                            padding=8,
+                            padding=ft.Padding(8, 8, 14, 8),
                             expand=True,
                             border=ft.Border.all(1, BG_LIGHT),
                         ),
