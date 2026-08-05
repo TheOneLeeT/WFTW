@@ -698,16 +698,21 @@ def main(page: ft.Page):
             if state["matches"]:
                 state["index"] = (state["index"] + 1) % len(state["matches"])
                 _apply_suggestion_highlight(suggestions_col, state)
+            return True
         elif key_lower in ("arrow up", "uparrow", "up"):
             if state["matches"]:
                 state["index"] = (state["index"] - 1) % len(state["matches"])
                 _apply_suggestion_highlight(suggestions_col, state)
+            return True
         elif key_lower in ("enter", "return", "\r", "\n"):
             if state["matches"]:
                 idx = state["index"] if state["index"] >= 0 else 0
                 on_suggestion_click(state["matches"][idx], search_tf, suggestions_col, rank_field, rank_hint, subtype_dropdown)
+            return True
         elif key_lower in ("escape", "esc", "\x1b"):
             close_suggestions(suggestions_col)
+            return True
+        return None
 
     def on_suggestion_click(item_name, search_field, suggestions_col, rank_field=None, rank_hint=None, subtype_dropdown=None):
         state = wts_suggestion_state if suggestions_col is wts_suggestions else wtb_suggestion_state
