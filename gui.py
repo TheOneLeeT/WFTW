@@ -690,30 +690,6 @@ def main(page: ft.Page):
             except Exception:
                 pass
 
-    def _on_search_key_down(e, search_tf, suggestions_col, rank_field, rank_hint, subtype_dropdown):
-        state = wts_suggestion_state if suggestions_col is wts_suggestions else wtb_suggestion_state
-        key = getattr(e, "key", "") or ""
-        key_lower = key.lower()
-        if key_lower in ("arrow down", "downarrow", "down"):
-            if state["matches"]:
-                state["index"] = (state["index"] + 1) % len(state["matches"])
-                _apply_suggestion_highlight(suggestions_col, state)
-            return True
-        elif key_lower in ("arrow up", "uparrow", "up"):
-            if state["matches"]:
-                state["index"] = (state["index"] - 1) % len(state["matches"])
-                _apply_suggestion_highlight(suggestions_col, state)
-            return True
-        elif key_lower in ("enter", "return", "\r", "\n"):
-            if state["matches"]:
-                idx = state["index"] if state["index"] >= 0 else 0
-                on_suggestion_click(state["matches"][idx], search_tf, suggestions_col, rank_field, rank_hint, subtype_dropdown)
-            return True
-        elif key_lower in ("escape", "esc", "\x1b"):
-            close_suggestions(suggestions_col)
-            return True
-        return None
-
     def on_suggestion_click(item_name, search_field, suggestions_col, rank_field=None, rank_hint=None, subtype_dropdown=None):
         state = wts_suggestion_state if suggestions_col is wts_suggestions else wtb_suggestion_state
         state["matches"] = []
@@ -733,39 +709,6 @@ def main(page: ft.Page):
             suggestions_col.update()
         state["matches"] = []
         state["index"] = -1
-
-    def on_page_click(e):
-        for sf, sug in [(wts_search_tf, wts_suggestions), (wtb_search_tf, wtb_suggestions)]:
-            if sug.visible:
-                target = e.control
-                inside = False
-                while target is not None:
-                    if target is sf or target is sug:
-                        inside = True
-                        break
-                    target = target.parent
-                if not inside:
-                    close_suggestions(sug)
-
-    def on_page_key_down(e):
-        focused = None
-        try:
-            focused = page.focused_control
-        except Exception:
-            pass
-        try:
-            key = getattr(e, "key", "") or ""
-            with open("key_debug.log", "a", encoding="utf-8") as f:
-                f.write(f"on_page_key_down key={key!r} focused={focused}\n")
-        except Exception:
-            pass
-        if focused is wts_search_tf or focused is wts_suggestions:
-            _on_search_key_down(e, wts_search_tf, wts_suggestions, wts_rank_field, wts_rank_hint, wts_subtype_dropdown)
-        elif focused is wtb_search_tf or focused is wtb_suggestions:
-            _on_search_key_down(e, wtb_search_tf, wtb_suggestions, wtb_rank_field, wtb_rank_hint, wtb_subtype_dropdown)
-
-    page.on_click = on_page_click
-    page.on_key_down = on_page_key_down
 
     def populate_dropdowns():
         names = sorted({v["name"] for v in ITEM_CACHE.values()})
@@ -792,8 +735,21 @@ def main(page: ft.Page):
 
     wts_search_tf.on_change = lambda e: filter_dropdown(wts_search_tf, wts_suggestions, wts_rank_field, wts_rank_hint, wts_subtype_dropdown)
     wtb_search_tf.on_change = lambda e: filter_dropdown(wtb_search_tf, wtb_suggestions, wtb_rank_field, wtb_rank_hint, wtb_subtype_dropdown)
-    wts_search_tf.on_key_down = lambda e: _on_search_key_down(e, wts_search_tf, wts_suggestions, wts_rank_field, wts_rank_hint, wts_subtype_dropdown)
-    wtb_search_tf.on_key_down = lambda e: _on_search_key_down(e, wtb_search_tf, wtb_suggestions, wtb_rank_field, wtb_rank_hint, wtb_subtype_dropdown)
+
+    def on_page_click(e):
+        for sf, sug in [(wts_search_tf, wts_suggestions), (wtb_search_tf, wtb_suggestions)]:
+            if sug.visible:
+                target = e.control
+                inside = False
+                while target is not None:
+                    if target is sf or target is sug:
+                        inside = True
+                        break
+                    target = target.parent
+                if not inside:
+                    close_suggestions(sug)
+
+    page.on_click = on_page_click
 
     def make_item_row(name, value, mode):
         display_name = name.split("|")[0] if "|" in name else name
