@@ -764,6 +764,9 @@ def main(page: ft.Page):
     wts_suggestions = ft.Column(visible=False, spacing=0, tight=True, horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
     wtb_suggestions = ft.Column(visible=False, spacing=0, tight=True, horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
 
+    wts_suggestion_state = {"matches": [], "index": -1}
+    wtb_suggestion_state = {"matches": [], "index": -1}
+
     wts_suggestions_wrapper = ft.KeyboardListener(
         content=wts_suggestions,
         autofocus=False,
