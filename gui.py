@@ -681,7 +681,12 @@ def main(page: ft.Page):
             pass
 
     def _on_autocomplete_select(e, mode):
-        item_name = (e.value or "").strip()
+        item_name = (getattr(e, "data", None) or "").strip()
+        if not item_name:
+            try:
+                item_name = (e.target.value or "").strip()
+            except Exception:
+                item_name = ""
         if not item_name:
             return
         on_item_selected(
