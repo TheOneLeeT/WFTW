@@ -258,7 +258,7 @@ class TrackerCore:
                         "original_key": target_name,
                     }
                 if not item_lookup:
-                    self.log(f"[{direction}] No valid items to scan.")
+                    self.log(f"[{direction}] Nothing to scan.")
                     self.running = False
                     return
                 try:

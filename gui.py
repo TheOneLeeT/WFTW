@@ -484,13 +484,12 @@ def main(page: ft.Page):
             msg = log_queue.get()
             if msg is None:
                 break
-            color = _color_for(msg)
             now = datetime.now().strftime("%H:%M:%S")
             full = f"[{now}] {msg}"
 
-            def _append(msg=msg, color=color, full=full):
+            def _append(msg=msg, full=full):
                 try:
-                    text_ctrl = ft.Text(full, selectable=True, font_family="Consolas", size=11, color=color)
+                    text_ctrl = ft.Text(full, selectable=True, font_family="Consolas", size=11)
                     log_output.controls.append(text_ctrl)
                     if len(log_output.controls) > 400:
                         log_output.controls.pop(0)
