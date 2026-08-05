@@ -368,7 +368,7 @@ def main(page: ft.Page):
             return name.replace("|", " (", 1) + ")"
         return name
 
-    def _make_match_card(data, on_delete=None):
+    def _make_match_card(data, on_delete=None, on_untrack=None):
         mode = data["mode"]
         item_name = data["item_name"]
         display_rank = data["display_rank"]
@@ -399,18 +399,33 @@ def main(page: ft.Page):
                 on_click=on_delete,
             )
 
+        untrack_btn = None
+        if on_untrack is not None:
+            untrack_btn = ft.Container(
+                content=ft.Row([
+                    ft.Icon(ft.Icons.EYE_OFF, size=13, color=ft.Colors.ON_SURFACE_VARIANT),
+                    ft.Text("Untrack", size=13, color=ft.Colors.ON_SURFACE_VARIANT),
+                ], spacing=2, alignment=ft.MainAxisAlignment.CENTER),
+                ink=True,
+                padding=ft.Padding.symmetric(horizontal=2, vertical=0),
+                on_click=on_untrack,
+            )
+
         top_row = [
             ft.Text(f"[{timestamp}]", size=13, color=ft.Colors.ON_SURFACE_VARIANT),
             ft.Text(user, size=13, color=ft.Colors.ON_SURFACE_VARIANT),
         ]
-        if delete_btn is not None:
-            top_row += [ft.Container(expand=True), delete_btn]
-        else:
+        if untrack_btn is not None or delete_btn is not None:
             top_row += [ft.Container(expand=True)]
+        if untrack_btn is not None:
+            top_row.append(untrack_btn)
+        if delete_btn is not None:
+            top_row.append(delete_btn)
 
         return ft.Container(
             content=ft.Column([
                 ft.Row(top_row, spacing=6, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+                ft.Container(height=1, bgcolor="#0d1416", margin=ft.Margin.symmetric(horizontal=16, vertical=3)),
                 ft.Row([
                     ft.Text(f"{item_name}{display_rank}", size=15, weight=ft.FontWeight.BOLD, expand=True),
                     ft.Text(f"{price}p", size=15, color=tag_color, weight=ft.FontWeight.BOLD),
@@ -455,7 +470,30 @@ def main(page: ft.Page):
                     except Exception:
                         pass
 
-                card = _make_match_card(data, on_delete=on_delete)
+                def on_untrack(e):
+                    nonlocal card
+                    if card is None:
+                        return
+                    try:
+                        key = data.get("original_key")
+                        if key is None:
+                            return
+                        watchlist = WTB_WATCHLIST if mode == "wtb" else WTS_WATCHLIST
+                        if key in watchlist:
+                            del watchlist[key]
+                            save_watchlists()
+                            col = wtb_items_list if mode == "wtb" else wts_items_list
+                            render_watchlist(col, WTB_WATCHLIST if mode == "wtb" else WTS_WATCHLIST, mode)
+                            _set_tracking_status()
+                            _apply_status_color()
+                        target = log_output_wtb if mode == "wtb" else log_output_wts
+                        if card in target.controls:
+                            target.controls.remove(card)
+                            page.update()
+                    except Exception:
+                        pass
+
+                card = _make_match_card(data, on_delete=on_delete, on_untrack=on_untrack)
                 try:
                     if mode == "wtb":
                         log_output_wtb.controls.append(card)

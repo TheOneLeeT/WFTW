@@ -376,6 +376,7 @@ class TrackerCore:
                             "user": ign,
                             "timestamp": timestamp,
                             "whisper_msg": whisper_msg,
+                            "original_key": item_meta["original_key"],
                         })
 
                     if HAS_PLYER:
