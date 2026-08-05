@@ -342,9 +342,9 @@ def main(page: ft.Page):
 
     threading.Timer(0.5, _force_window_size).start()
 
-    log_output = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=ft.Padding(8, 8, 16, 8))
-    log_output_wts = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=ft.Padding(8, 8, 16, 8))
-    log_output_wtb = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=ft.Padding(8, 8, 16, 8))
+    log_output = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=8)
+    log_output_wts = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=8)
+    log_output_wtb = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=8)
     log_queue = queue.Queue()
 
     def append_log(msg):
@@ -1431,7 +1431,6 @@ def main(page: ft.Page):
             border_radius=6,
             width=536,
             height=dropdown_height,
-            padding=ft.Padding(0, 0, 12, 0),
             visible=False,
         )
 
@@ -1747,7 +1746,7 @@ def main(page: ft.Page):
                             content=wts_items_list,
                             bgcolor=BG_DARK,
                             border_radius=10,
-                            padding=ft.Padding(8, 8, 20, 8),
+                            padding=8,
                             expand=True,
                             border=ft.Border.all(1, BG_LIGHT),
                         ),
@@ -1763,7 +1762,7 @@ def main(page: ft.Page):
                             content=wtb_items_list,
                             bgcolor=BG_DARK,
                             border_radius=10,
-                            padding=ft.Padding(8, 8, 20, 8),
+                            padding=8,
                             expand=True,
                             border=ft.Border.all(1, BG_LIGHT),
                         ),
@@ -1777,7 +1776,7 @@ def main(page: ft.Page):
                     content=log_output,
                     bgcolor=BG_DARK,
                     border_radius=10,
-                    padding=ft.Padding(8, 8, 20, 8),
+                    padding=8,
                     border=ft.Border.all(1, BG_LIGHT),
                     height=122,
                     expand=2,
@@ -1810,7 +1809,7 @@ def main(page: ft.Page):
                             content=log_output_wts,
                             bgcolor=BG_DARK,
                             border_radius=10,
-                            padding=ft.Padding(8, 8, 20, 8),
+                            padding=8,
                             expand=True,
                             border=ft.Border.all(1, BG_LIGHT),
                         ),
@@ -1825,7 +1824,7 @@ def main(page: ft.Page):
                             content=log_output_wtb,
                             bgcolor=BG_DARK,
                             border_radius=10,
-                            padding=ft.Padding(8, 8, 20, 8),
+                            padding=8,
                             expand=True,
                             border=ft.Border.all(1, BG_LIGHT),
                         ),
