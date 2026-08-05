@@ -403,7 +403,7 @@ def main(page: ft.Page):
         if on_untrack is not None:
             untrack_btn = ft.Container(
                 content=ft.Row([
-                    ft.Icon(ft.Icons.EYE_OFF, size=13, color=ft.Colors.ON_SURFACE_VARIANT),
+                    ft.Icon(ft.Icons.VISIBILITY_OFF, size=13, color=ft.Colors.ON_SURFACE_VARIANT),
                     ft.Text("Untrack", size=13, color=ft.Colors.ON_SURFACE_VARIANT),
                 ], spacing=2, alignment=ft.MainAxisAlignment.CENTER),
                 ink=True,
