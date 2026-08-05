@@ -1571,6 +1571,34 @@ def main(page: ft.Page):
 
     FUNCTION_BAR_SPACING = 10
 
+    def _inject_test_card(mode):
+        data = {
+            "mode": mode,
+            "item_name": "Test Item Prime",
+            "display_rank": " (Rank 5)",
+            "price": 150,
+            "max_price": 200,
+            "user": "TEST_PLAYER",
+            "timestamp": datetime.now().strftime("%H:%M:%S"),
+            "whisper_msg": "/w TEST_PLAYER Hi! I want to buy: Test Item Prime (Rank 5) for 150 platinum. (warframe.market)",
+            "original_key": "Test Item Prime|5",
+        }
+        match_queue.put(data)
+
+    test_card_btn = ft.Container(
+        content=ft.Stack([
+            ft.Container(
+                content=ft.Icon(ft.Icons.BUG_REPORT, size=20, color="#ff9800"),
+                left=0,
+                top=-2,
+            )
+        ], width=24, height=34),
+        width=34,
+        height=34,
+        ink=True,
+        on_click=lambda e: (_inject_test_card("wts"), _inject_test_card("wtb")),
+    )
+
     settings_btn = ft.Container(
         content=ft.Stack([
             ft.Container(
@@ -1695,6 +1723,8 @@ def main(page: ft.Page):
                 ),
                 ft.Container(expand=True),
                 ft.Row([
+                    test_card_btn,
+                    ft.Container(width=FUNCTION_BAR_SPACING),
                     settings_btn,
                     ft.Container(width=FUNCTION_BAR_SPACING),
                     main_status_seg,
