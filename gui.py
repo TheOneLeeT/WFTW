@@ -491,18 +491,9 @@ def main(page: ft.Page):
             def _append(msg=msg, color=color, full=full):
                 try:
                     text_ctrl = ft.Text(full, selectable=True, font_family="Consolas", size=11, color=color)
-                    if color == WTB_COLOR:
-                        log_output_wtb.controls.append(text_ctrl)
-                        if len(log_output_wtb.controls) > 400:
-                            log_output_wtb.controls.pop(0)
-                    elif color == WTS_COLOR:
-                        log_output_wts.controls.append(text_ctrl)
-                        if len(log_output_wts.controls) > 400:
-                            log_output_wts.controls.pop(0)
-                    else:
-                        log_output.controls.append(text_ctrl)
-                        if len(log_output.controls) > 400:
-                            log_output.controls.pop(0)
+                    log_output.controls.append(text_ctrl)
+                    if len(log_output.controls) > 400:
+                        log_output.controls.pop(0)
                 except Exception:
                     pass
                 try:
