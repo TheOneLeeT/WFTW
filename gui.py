@@ -692,19 +692,21 @@ def main(page: ft.Page):
 
     def _on_search_key_down(e, search_tf, suggestions_col, rank_field, rank_hint, subtype_dropdown):
         state = wts_suggestion_state if suggestions_col is wts_suggestions else wtb_suggestion_state
-        key = getattr(e, "key", "")
-        if key == "ArrowDown":
+        key = getattr(e, "key", "") or ""
+        key_lower = key.lower()
+        if key_lower in ("arrow down", "downarrow", "down"):
             if state["matches"]:
                 state["index"] = (state["index"] + 1) % len(state["matches"])
                 _apply_suggestion_highlight(suggestions_col, state)
-        elif key == "ArrowUp":
+        elif key_lower in ("arrow up", "uparrow", "up"):
             if state["matches"]:
                 state["index"] = (state["index"] - 1) % len(state["matches"])
                 _apply_suggestion_highlight(suggestions_col, state)
-        elif key == "Enter":
-            if state["index"] >= 0 and state["index"] < len(state["matches"]):
-                on_suggestion_click(state["matches"][state["index"]], search_tf, suggestions_col, rank_field, rank_hint, subtype_dropdown)
-        elif key == "Escape":
+        elif key_lower in ("enter", "return"):
+            if state["matches"]:
+                idx = state["index"] if state["index"] >= 0 else 0
+                on_suggestion_click(state["matches"][idx], search_tf, suggestions_col, rank_field, rank_hint, subtype_dropdown)
+        elif key_lower in ("escape", "esc"):
             close_suggestions(suggestions_col)
 
     def on_suggestion_click(item_name, search_field, suggestions_col, rank_field=None, rank_hint=None, subtype_dropdown=None):
