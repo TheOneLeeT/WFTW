@@ -642,73 +642,13 @@ def main(page: ft.Page):
                 subtype_dropdown.value = subtypes[0]
         page.update()
 
-    def filter_dropdown(tf, suggestions_col, rank_field=None, rank_hint=None, subtype_dropdown=None):
-        state = wts_suggestion_state if suggestions_col is wts_suggestions else wtb_suggestion_state
-        query = tf.value.strip().lower()
-        if not query:
-            suggestions_col.controls = []
-            suggestions_col.visible = False
-            suggestions_col.update()
-            state["matches"] = []
-            state["index"] = -1
-            if rank_field: rank_field.visible = False; rank_hint.visible = False
-            if subtype_dropdown: subtype_dropdown.visible = False
-            page.update()
-            return
-
-        names = sorted({v["name"] for v in ITEM_CACHE.values()})
-        matches = [name for name in names if query in name.lower()][:5]
-        state["matches"] = matches
-        state["index"] = -1
-        if not matches:
-            suggestions_col.controls = []
-            suggestions_col.visible = False
-            suggestions_col.update()
-            page.update()
-            return
-
-        def make_suggestion(name, is_selected=False):
-            return ft.Container(
-                content=ft.Row([ft.Text(name, size=12, expand=True)], expand=True),
-                padding=ft.Padding.symmetric(horizontal=10, vertical=6),
-                on_click=lambda e, n=name: on_suggestion_click(n, tf, suggestions_col, rank_field, rank_hint, subtype_dropdown),
-                data=name,
-                ink=True,
-                bgcolor="#3b4858" if is_selected else BG_LIGHT,
-            )
-
-        suggestions_col.controls = [make_suggestion(n) for n in matches]
-        suggestions_col.visible = True
-        suggestions_col.update()
-        page.update()
-
-    def _apply_suggestion_highlight(suggestions_col, state):
-        for i, ctrl in enumerate(suggestions_col.controls):
-            ctrl.bgcolor = "#3b4858" if i == state["index"] else BG_LIGHT
-            try:
-                ctrl.update()
-            except Exception:
-                pass
-
     def on_suggestion_click(item_name, search_field, suggestions_col, rank_field=None, rank_hint=None, subtype_dropdown=None):
-        state = wts_suggestion_state if suggestions_col is wts_suggestions else wtb_suggestion_state
-        state["matches"] = []
-        state["index"] = -1
         search_field.value = item_name
         search_field.update()
         suggestions_col.controls = []
         suggestions_col.visible = False
         suggestions_col.update()
         on_item_selected(item_name, rank_field, rank_hint, subtype_dropdown)
-
-    def close_suggestions(suggestions_col):
-        state = wts_suggestion_state if suggestions_col is wts_suggestions else wtb_suggestion_state
-        if suggestions_col.visible:
-            suggestions_col.controls = []
-            suggestions_col.visible = False
-            suggestions_col.update()
-        state["matches"] = []
-        state["index"] = -1
 
     def populate_dropdowns():
         names = sorted({v["name"] for v in ITEM_CACHE.values()})
@@ -724,32 +664,45 @@ def main(page: ft.Page):
 
     threading.Thread(target=load_items_bg, daemon=True).start()
 
-    wts_search_tf = ft.TextField(label="Item", hint_text="Search item...", expand=True, dense=True, border_color=BG_LIGHT, focused_border_color="#9ecaed")
-    wtb_search_tf = ft.TextField(label="Item", hint_text="Search item...", expand=True, dense=True, border_color=BG_LIGHT, focused_border_color="#9ecaed")
+    def _filter_autocomplete_suggestions(autocomplete, query):
+        if not query:
+            autocomplete.suggestions = []
+            try:
+                autocomplete.update()
+            except Exception:
+                pass
+            return
+        names = sorted({v["name"] for v in ITEM_CACHE.values()})
+        matches = [name for name in names if query.lower() in name.lower()][:5]
+        autocomplete.suggestions = [ft.AutoCompleteSuggestion(key=name, value=name) for name in matches]
+        try:
+            autocomplete.update()
+        except Exception:
+            pass
 
-    wts_suggestions = ft.Column(visible=False, spacing=0, tight=True, horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
-    wtb_suggestions = ft.Column(visible=False, spacing=0, tight=True, horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
+    def _on_autocomplete_select(e, mode):
+        item_name = (e.value or "").strip()
+        if not item_name:
+            return
+        on_item_selected(
+            item_name,
+            wts_rank_field if mode == "wts" else wtb_rank_field,
+            wts_rank_hint if mode == "wts" else wtb_rank_hint,
+            wts_subtype_dropdown if mode == "wts" else wtb_subtype_dropdown,
+        )
 
-    wts_suggestion_state = {"matches": [], "index": -1}
-    wtb_suggestion_state = {"matches": [], "index": -1}
-
-    wts_search_tf.on_change = lambda e: filter_dropdown(wts_search_tf, wts_suggestions, wts_rank_field, wts_rank_hint, wts_subtype_dropdown)
-    wtb_search_tf.on_change = lambda e: filter_dropdown(wtb_search_tf, wtb_suggestions, wtb_rank_field, wtb_rank_hint, wtb_subtype_dropdown)
-
-    def on_page_click(e):
-        for sf, sug in [(wts_search_tf, wts_suggestions), (wtb_search_tf, wtb_suggestions)]:
-            if sug.visible:
-                target = e.control
-                inside = False
-                while target is not None:
-                    if target is sf or target is sug:
-                        inside = True
-                        break
-                    target = target.parent
-                if not inside:
-                    close_suggestions(sug)
-
-    page.on_click = on_page_click
+    wts_autocomplete = ft.AutoComplete(
+        expand=True,
+        suggestions=[],
+        on_select=lambda e: _on_autocomplete_select(e, "wts"),
+        on_change=lambda e: _filter_autocomplete_suggestions(wts_autocomplete, e.control.value),
+    )
+    wtb_autocomplete = ft.AutoComplete(
+        expand=True,
+        suggestions=[],
+        on_select=lambda e: _on_autocomplete_select(e, "wtb"),
+        on_change=lambda e: _filter_autocomplete_suggestions(wtb_autocomplete, e.control.value),
+    )
 
     def make_item_row(name, value, mode):
         display_name = name.split("|")[0] if "|" in name else name
@@ -1637,14 +1590,13 @@ def main(page: ft.Page):
 
     def add_item_inline(mode):
         is_wts = mode == "wts"
-        search_tf = wts_search_tf if is_wts else wtb_search_tf
-        suggestions = wts_suggestions if is_wts else wtb_suggestions
+        autocomplete = wts_autocomplete if is_wts else wtb_autocomplete
         current_price = wts_price_field if is_wts else wtb_price_field
         current_rank = wts_rank_field if is_wts else wtb_rank_field
         current_rank_hint = wts_rank_hint if is_wts else wtb_rank_hint
         current_subtype = wts_subtype_dropdown if is_wts else wtb_subtype_dropdown
 
-        name = search_tf.value.strip()
+        name = autocomplete.value.strip()
         price = current_price.value.strip()
         rank = current_rank.value.strip() if current_rank.visible else ""
         subtype = current_subtype.value.strip() if current_subtype.visible else ""
@@ -1681,10 +1633,12 @@ def main(page: ft.Page):
             f.write(f"  WTB={WTB_WATCHLIST}\n")
         column = wts_items_list if is_wts else wtb_items_list
         render_watchlist(column, WTS_WATCHLIST if is_wts else WTB_WATCHLIST, mode)
-        search_tf.value = ""
-        suggestions.controls = []
-        suggestions.visible = False
-        suggestions.update()
+        autocomplete.value = ""
+        autocomplete.suggestions = []
+        try:
+            autocomplete.update()
+        except Exception:
+            pass
         current_price.value = ""
         current_rank.value = ""
         current_rank.visible = False
@@ -1697,8 +1651,7 @@ def main(page: ft.Page):
 
     def build_add_form(mode):
         is_wts = mode == "wts"
-        search_tf = wts_search_tf if is_wts else wtb_search_tf
-        suggestions = wts_suggestions if is_wts else wtb_suggestions
+        autocomplete = wts_autocomplete if is_wts else wtb_autocomplete
         price = wts_price_field if is_wts else wtb_price_field
         rank = wts_rank_field if is_wts else wtb_rank_field
         rank_hint = wts_rank_hint if is_wts else wtb_rank_hint
@@ -1709,8 +1662,7 @@ def main(page: ft.Page):
 
         return ft.Container(
             content=ft.Column([
-                ft.Row([search_tf, rank, subtype, price, add_btn], spacing=4, tight=True),
-                suggestions,
+                ft.Row([autocomplete, rank, subtype, price, add_btn], spacing=4, tight=True),
                 ft.Row([rank_hint], spacing=2, tight=True),
             ], spacing=2, tight=True),
             padding=ft.Padding.symmetric(horizontal=6, vertical=4),
