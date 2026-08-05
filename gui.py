@@ -643,11 +643,14 @@ def main(page: ft.Page):
         page.update()
 
     def filter_dropdown(tf, suggestions_col, rank_field=None, rank_hint=None, subtype_dropdown=None):
+        state = wts_suggestion_state if suggestions_col is wts_suggestions else wtb_suggestion_state
         query = tf.value.strip().lower()
         if not query:
             suggestions_col.controls = []
             suggestions_col.visible = False
             suggestions_col.update()
+            state["matches"] = []
+            state["index"] = -1
             if rank_field: rank_field.visible = False; rank_hint.visible = False
             if subtype_dropdown: subtype_dropdown.visible = False
             page.update()
@@ -655,6 +658,8 @@ def main(page: ft.Page):
 
         names = sorted({v["name"] for v in ITEM_CACHE.values()})
         matches = [name for name in names if query in name.lower()][:5]
+        state["matches"] = matches
+        state["index"] = -1
         if not matches:
             suggestions_col.controls = []
             suggestions_col.visible = False
@@ -662,14 +667,14 @@ def main(page: ft.Page):
             page.update()
             return
 
-        def make_suggestion(name):
+        def make_suggestion(name, is_selected=False):
             return ft.Container(
                 content=ft.Row([ft.Text(name, size=12, expand=True)], expand=True),
                 padding=ft.Padding.symmetric(horizontal=10, vertical=6),
                 on_click=lambda e, n=name: on_suggestion_click(n, tf, suggestions_col, rank_field, rank_hint, subtype_dropdown),
                 data=name,
                 ink=True,
-                bgcolor=BG_LIGHT,
+                bgcolor="#3b4858" if is_selected else BG_LIGHT,
             )
 
         suggestions_col.controls = [make_suggestion(n) for n in matches]
@@ -677,7 +682,35 @@ def main(page: ft.Page):
         suggestions_col.update()
         page.update()
 
+    def _apply_suggestion_highlight(suggestions_col, state):
+        for i, ctrl in enumerate(suggestions_col.controls):
+            ctrl.bgcolor = "#3b4858" if i == state["index"] else BG_LIGHT
+            try:
+                ctrl.update()
+            except Exception:
+                pass
+
+    def _on_search_key_down(e, search_tf, suggestions_col, rank_field, rank_hint, subtype_dropdown):
+        state = wts_suggestion_state if suggestions_col is wts_suggestions else wtb_suggestion_state
+        key = getattr(e, "key", "")
+        if key == "ArrowDown":
+            if state["matches"]:
+                state["index"] = (state["index"] + 1) % len(state["matches"])
+                _apply_suggestion_highlight(suggestions_col, state)
+        elif key == "ArrowUp":
+            if state["matches"]:
+                state["index"] = (state["index"] - 1) % len(state["matches"])
+                _apply_suggestion_highlight(suggestions_col, state)
+        elif key == "Enter":
+            if state["index"] >= 0 and state["index"] < len(state["matches"]):
+                on_suggestion_click(state["matches"][state["index"]], search_tf, suggestions_col, rank_field, rank_hint, subtype_dropdown)
+        elif key == "Escape":
+            close_suggestions(suggestions_col)
+
     def on_suggestion_click(item_name, search_field, suggestions_col, rank_field=None, rank_hint=None, subtype_dropdown=None):
+        state = wts_suggestion_state if suggestions_col is wts_suggestions else wtb_suggestion_state
+        state["matches"] = []
+        state["index"] = -1
         search_field.value = item_name
         search_field.update()
         suggestions_col.controls = []
@@ -686,10 +719,13 @@ def main(page: ft.Page):
         on_item_selected(item_name, rank_field, rank_hint, subtype_dropdown)
 
     def close_suggestions(suggestions_col):
+        state = wts_suggestion_state if suggestions_col is wts_suggestions else wtb_suggestion_state
         if suggestions_col.visible:
             suggestions_col.controls = []
             suggestions_col.visible = False
             suggestions_col.update()
+        state["matches"] = []
+        state["index"] = -1
 
     def on_page_click(e):
         for sf, sug in [(wts_search_tf, wts_suggestions), (wtb_search_tf, wtb_suggestions)]:
@@ -726,8 +762,13 @@ def main(page: ft.Page):
     wts_suggestions = ft.Column(visible=False, spacing=0, tight=True, horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
     wtb_suggestions = ft.Column(visible=False, spacing=0, tight=True, horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
 
+    wts_suggestion_state = {"matches": [], "index": -1}
+    wtb_suggestion_state = {"matches": [], "index": -1}
+
     wts_search_tf.on_change = lambda e: filter_dropdown(wts_search_tf, wts_suggestions, wts_rank_field, wts_rank_hint, wts_subtype_dropdown)
     wtb_search_tf.on_change = lambda e: filter_dropdown(wtb_search_tf, wtb_suggestions, wtb_rank_field, wtb_rank_hint, wtb_subtype_dropdown)
+    wts_search_tf.on_key_down = lambda e: _on_search_key_down(e, wts_search_tf, wts_suggestions, wts_rank_field, wts_rank_hint, wts_subtype_dropdown)
+    wtb_search_tf.on_key_down = lambda e: _on_search_key_down(e, wtb_search_tf, wtb_suggestions, wtb_rank_field, wtb_rank_hint, wtb_subtype_dropdown)
 
     def make_item_row(name, value, mode):
         display_name = name.split("|")[0] if "|" in name else name
