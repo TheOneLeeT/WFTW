@@ -753,9 +753,15 @@ def main(page: ft.Page):
             focused = page.focused_control
         except Exception:
             pass
-        if focused is wts_search_tf:
+        try:
+            key = getattr(e, "key", "") or ""
+            with open("key_debug.log", "a", encoding="utf-8") as f:
+                f.write(f"on_page_key_down key={key!r} focused={focused}\n")
+        except Exception:
+            pass
+        if focused is wts_search_tf or focused is wts_suggestions:
             _on_search_key_down(e, wts_search_tf, wts_suggestions, wts_rank_field, wts_rank_hint, wts_subtype_dropdown)
-        elif focused is wtb_search_tf:
+        elif focused is wtb_search_tf or focused is wtb_suggestions:
             _on_search_key_down(e, wtb_search_tf, wtb_suggestions, wtb_rank_field, wtb_rank_hint, wtb_subtype_dropdown)
 
     page.on_click = on_page_click
