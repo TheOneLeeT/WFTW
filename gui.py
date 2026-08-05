@@ -569,8 +569,8 @@ def main(page: ft.Page):
     running = False
     tracking_status = "Waiting"
 
-    wts_items_list = ft.Column(spacing=3, scroll=ft.ScrollMode.AUTO, expand=True, padding=ft.Padding(0, 0, 12, 0))
-    wtb_items_list = ft.Column(spacing=3, scroll=ft.ScrollMode.AUTO, expand=True, padding=ft.Padding(0, 0, 12, 0))
+    wts_items_list = ft.Column(spacing=3, scroll=ft.ScrollMode.AUTO, expand=True)
+    wtb_items_list = ft.Column(spacing=3, scroll=ft.ScrollMode.AUTO, expand=True)
 
     wts_price_field = ft.TextField(label="Max Plat", width=90, input_filter=ft.NumbersOnlyInputFilter(), dense=True, border_color=BG_LIGHT, focused_border_color="#9ecaed")
     wtb_price_field = ft.TextField(label="Min Plat", width=90, input_filter=ft.NumbersOnlyInputFilter(), dense=True, border_color=BG_LIGHT, focused_border_color="#9ecaed")
@@ -1223,7 +1223,7 @@ def main(page: ft.Page):
             sound_dropdown_panel.content = ft.Column([
                 _make_sound_dropdown_item(f)
                 for f in wav_files
-            ], spacing=0, tight=True, scroll=ft.ScrollMode.AUTO, padding=ft.Padding(0, 0, 12, 0))
+            ], spacing=0, tight=True, scroll=ft.ScrollMode.AUTO)
             sound_dropdown_panel.height = min(len(wav_files), dropdown_max_visible) * dropdown_item_height
             current_sound_text.value = current_sound
             _update_sound_dropdown_selection()
@@ -1426,11 +1426,12 @@ def main(page: ft.Page):
             content=ft.Column([
                 _make_sound_dropdown_item(f)
                 for f in wav_files
-            ], spacing=0, tight=True, scroll=ft.ScrollMode.AUTO, padding=ft.Padding(0, 0, 12, 0)),
+            ], spacing=0, tight=True, scroll=ft.ScrollMode.AUTO),
             bgcolor=SETTINGS_BG,
             border_radius=6,
             width=536,
             height=dropdown_height,
+            padding=ft.Padding(0, 0, 12, 0),
             visible=False,
         )
 
@@ -1746,7 +1747,7 @@ def main(page: ft.Page):
                             content=wts_items_list,
                             bgcolor=BG_DARK,
                             border_radius=10,
-                            padding=8,
+                            padding=ft.Padding(8, 8, 20, 8),
                             expand=True,
                             border=ft.Border.all(1, BG_LIGHT),
                         ),
@@ -1762,7 +1763,7 @@ def main(page: ft.Page):
                             content=wtb_items_list,
                             bgcolor=BG_DARK,
                             border_radius=10,
-                            padding=8,
+                            padding=ft.Padding(8, 8, 20, 8),
                             expand=True,
                             border=ft.Border.all(1, BG_LIGHT),
                         ),
@@ -1776,7 +1777,7 @@ def main(page: ft.Page):
                     content=log_output,
                     bgcolor=BG_DARK,
                     border_radius=10,
-                    padding=8,
+                    padding=ft.Padding(8, 8, 20, 8),
                     border=ft.Border.all(1, BG_LIGHT),
                     height=122,
                     expand=2,
@@ -1809,7 +1810,7 @@ def main(page: ft.Page):
                             content=log_output_wts,
                             bgcolor=BG_DARK,
                             border_radius=10,
-                            padding=8,
+                            padding=ft.Padding(8, 8, 20, 8),
                             expand=True,
                             border=ft.Border.all(1, BG_LIGHT),
                         ),
@@ -1824,7 +1825,7 @@ def main(page: ft.Page):
                             content=log_output_wtb,
                             bgcolor=BG_DARK,
                             border_radius=10,
-                            padding=8,
+                            padding=ft.Padding(8, 8, 20, 8),
                             expand=True,
                             border=ft.Border.all(1, BG_LIGHT),
                         ),
