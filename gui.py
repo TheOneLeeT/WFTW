@@ -689,11 +689,11 @@ def main(page: ft.Page):
     _filter_debounce_timer = None
 
     def filter_dropdown(tf, suggestions_col, rank_field=None, rank_hint=None, subtype_dropdown=None):
-        global _filter_debounce_timer
+        nonlocal _filter_debounce_timer
         if _filter_debounce_timer is not None:
             _filter_debounce_timer.cancel()
         def _do_filter():
-            global _filter_debounce_timer
+            nonlocal _filter_debounce_timer
             _filter_debounce_timer = None
             query = tf.value.strip().lower()
             if not query:
