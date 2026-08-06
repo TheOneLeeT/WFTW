@@ -706,7 +706,7 @@ def main(page: ft.Page):
                 return
 
             names = sorted({v["name"] for v in ITEM_CACHE.values()})
-            matches = [name for name in names if query in name.lower()]
+            matches = [name for name in names if query in name.lower()][:5]
             if not matches:
                 suggestions_col.controls = []
                 suggestions_col.visible = False
@@ -733,7 +733,7 @@ def main(page: ft.Page):
         _filter_debounce_timer.start()
 
     def populate_dropdowns():
-        global _cached_item_names
+        nonlocal _cached_item_names
         names = sorted({v["name"] for v in ITEM_CACHE.values()})
         _cached_item_names = names
         tracking_text.value = f"Items loaded: {len(names)} | API: warframe.market/v2"
@@ -751,8 +751,8 @@ def main(page: ft.Page):
     wts_search_tf = ft.TextField(label="Item", hint_text="Search item...", expand=True, dense=True, border_color=BG_LIGHT, focused_border_color="#9ecaed")
     wtb_search_tf = ft.TextField(label="Item", hint_text="Search item...", expand=True, dense=True, border_color=BG_LIGHT, focused_border_color="#9ecaed")
 
-    wts_suggestions = ft.Column(visible=False, spacing=0, tight=True, horizontal_alignment=ft.CrossAxisAlignment.STRETCH, scroll=ft.ScrollMode.AUTO, height=150)
-    wtb_suggestions = ft.Column(visible=False, spacing=0, tight=True, horizontal_alignment=ft.CrossAxisAlignment.STRETCH, scroll=ft.ScrollMode.AUTO, height=150)
+    wts_suggestions = ft.Column(visible=False, spacing=0, tight=True, horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
+    wtb_suggestions = ft.Column(visible=False, spacing=0, tight=True, horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
 
     wts_search_tf.on_change = lambda e: filter_dropdown(wts_search_tf, wts_suggestions, wts_rank_field, wts_rank_hint, wts_subtype_dropdown)
     wtb_search_tf.on_change = lambda e: filter_dropdown(wtb_search_tf, wtb_suggestions, wtb_rank_field, wtb_rank_hint, wtb_subtype_dropdown)
