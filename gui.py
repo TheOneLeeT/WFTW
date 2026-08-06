@@ -454,6 +454,8 @@ def main(page: ft.Page):
         )
 
     match_queue = queue.Queue()
+    _seen_match_fingerprints = set()
+    _MAX_SEEN_MATCH_FINGERPRINTS = 500
 
     def _drain_matches():
         while True:
@@ -475,6 +477,13 @@ def main(page: ft.Page):
             def _append_batch(batch=batch):
                 for data in batch:
                     mode = data["mode"]
+                    fingerprint = f"{mode}|{data['item_name']}|{data['price']}|{data['user']}|{data['display_rank']}"
+                    if fingerprint in _seen_match_fingerprints:
+                        continue
+                    _seen_match_fingerprints.add(fingerprint)
+                    if len(_seen_match_fingerprints) > _MAX_SEEN_MATCH_FINGERPRINTS:
+                        _seen_match_fingerprints.clear()
+
                     card = None
 
                     def on_delete(e, mode=mode):
@@ -917,6 +926,7 @@ def main(page: ft.Page):
         if not running:
             running = True
             tracking_status = f"Active ({current_status_filter})"
+            _seen_match_fingerprints.clear()
             start_btn.visible = False
             stop_btn.visible = True
             append_log(f"Scan started | {len(WTS_WATCHLIST)} WTS + {len(WTB_WATCHLIST)} WTB items | Mode: {' + '.join(modes)}")
