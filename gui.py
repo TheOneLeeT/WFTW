@@ -705,7 +705,8 @@ def main(page: ft.Page):
                 page.update()
                 return
 
-            matches = [name for name in _cached_item_names if query in name.lower()]
+            names = sorted({v["name"] for v in ITEM_CACHE.values()})
+            matches = [name for name in names if query in name.lower()]
             if not matches:
                 suggestions_col.controls = []
                 suggestions_col.visible = False
