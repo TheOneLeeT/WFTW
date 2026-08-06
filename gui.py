@@ -7,6 +7,7 @@ import sys
 import threading
 import queue
 import pyperclip
+import atexit
 from datetime import datetime
 from tracker_core import TrackerCore, WTS_WATCHLIST, WTB_WATCHLIST, save_watchlists, load_watchlists, fetch_items, ITEM_CACHE, resolve_item
 try:
@@ -31,6 +32,7 @@ WTB_COLOR = "#209e70"
 BG_DARK = "#071013"
 BG_LIGHT = "#171e21"
 SETTINGS_BG = "#272a2f"
+_TEMP_WAV_FILES = set()
 
 
 def load_settings():
@@ -79,9 +81,22 @@ def _apply_volume_to_wav(src_path, volume):
             wav_out.setframerate(framerate)
             wav_out.writeframes(packed)
         tmp.close()
+        _TEMP_WAV_FILES.add(tmp.name)
         return tmp.name
     except Exception:
         return src_path
+
+
+def _cleanup_temp_wavs():
+    for path in list(_TEMP_WAV_FILES):
+        try:
+            os.remove(path)
+        except Exception:
+            pass
+        _TEMP_WAV_FILES.discard(path)
+
+
+atexit.register(_cleanup_temp_wavs)
 
 
 def _ensure_default_sound():
@@ -345,7 +360,7 @@ def main(page: ft.Page):
     log_output = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=8)
     log_output_wts = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=8)
     log_output_wtb = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=8)
-    log_queue = queue.Queue()
+    log_queue = queue.Queue(maxsize=500)
 
     def append_log(msg):
         try:
@@ -354,14 +369,6 @@ def main(page: ft.Page):
         except Exception:
             pass
         log_queue.put(msg)
-
-    def _color_for(msg):
-        upper = msg.upper()
-        if "WANT TO SELL" in upper or "WTS" in upper:
-            return WTS_COLOR
-        if "WANT TO BUY" in upper or "WTB" in upper:
-            return WTB_COLOR
-        return None
 
     def _format_name(name):
         if "|" in name:
@@ -446,72 +453,82 @@ def main(page: ft.Page):
             margin=ft.Margin.only(bottom=2),
         )
 
-    match_queue = queue.Queue()
+    match_queue = queue.Queue(maxsize=200)
 
     def _drain_matches():
         while True:
-            data = match_queue.get()
-            if data is None:
-                break
-
-            def _append(data=data):
-                mode = data["mode"]
-                card = None
-
-                def on_delete(e):
-                    nonlocal card
-                    if card is None:
-                        return
-                    try:
-                        target = log_output_wtb if mode == "wtb" else log_output_wts
-                        if card in target.controls:
-                            target.controls.remove(card)
-                            page.update()
-                    except Exception:
-                        pass
-
-                def on_untrack(e):
-                    nonlocal card
-                    if card is None:
-                        return
-                    try:
-                        key = data.get("original_key")
-                        if key is None:
-                            return
-                        watchlist = WTB_WATCHLIST if mode == "wtb" else WTS_WATCHLIST
-                        if key in watchlist:
-                            del watchlist[key]
-                            save_watchlists()
-                            col = wtb_items_list if mode == "wtb" else wts_items_list
-                            render_watchlist(col, WTB_WATCHLIST if mode == "wtb" else WTS_WATCHLIST, mode)
-                            _set_tracking_status()
-                            _apply_status_color()
-                        target = log_output_wtb if mode == "wtb" else log_output_wts
-                        if card in target.controls:
-                            target.controls.remove(card)
-                            page.update()
-                    except Exception:
-                        pass
-
-                card = _make_match_card(data, on_delete=on_delete, on_untrack=on_untrack)
+            batch = []
+            while len(batch) < 5:
                 try:
-                    if mode == "wtb":
-                        log_output_wtb.controls.append(card)
-                        if len(log_output_wtb.controls) > 100:
-                            log_output_wtb.controls.pop(0)
-                    else:
-                        log_output_wts.controls.append(card)
-                        if len(log_output_wts.controls) > 100:
-                            log_output_wts.controls.pop(0)
-                except Exception:
-                    pass
+                    item = match_queue.get_nowait()
+                    if item is None:
+                        break
+                    batch.append(item)
+                except queue.Empty:
+                    break
+            if not batch:
+                item = match_queue.get()
+                if item is None:
+                    break
+                batch.append(item)
+
+            def _append_batch(batch=batch):
+                for data in batch:
+                    mode = data["mode"]
+                    card = None
+
+                    def on_delete(e, mode=mode):
+                        nonlocal card
+                        if card is None:
+                            return
+                        try:
+                            target = log_output_wtb if mode == "wtb" else log_output_wts
+                            if card in target.controls:
+                                target.controls.remove(card)
+                        except Exception:
+                            pass
+
+                    def on_untrack(e, mode=mode, data=data):
+                        nonlocal card
+                        if card is None:
+                            return
+                        try:
+                            key = data.get("original_key")
+                            if key is None:
+                                return
+                            watchlist = WTB_WATCHLIST if mode == "wtb" else WTS_WATCHLIST
+                            if key in watchlist:
+                                del watchlist[key]
+                                save_watchlists()
+                                col = wtb_items_list if mode == "wtb" else wts_items_list
+                                render_watchlist(col, WTB_WATCHLIST if mode == "wtb" else WTS_WATCHLIST, mode)
+                                _set_tracking_status()
+                                _apply_status_color()
+                            target = log_output_wtb if mode == "wtb" else log_output_wts
+                            if card in target.controls:
+                                target.controls.remove(card)
+                        except Exception:
+                            pass
+
+                    card = _make_match_card(data, on_delete=on_delete, on_untrack=on_untrack)
+                    try:
+                        if mode == "wtb":
+                            log_output_wtb.controls.append(card)
+                            if len(log_output_wtb.controls) > 100:
+                                log_output_wtb.controls.pop(0)
+                        else:
+                            log_output_wts.controls.append(card)
+                            if len(log_output_wts.controls) > 100:
+                                log_output_wts.controls.pop(0)
+                    except Exception:
+                        pass
                 try:
                     page.update()
                 except Exception:
                     pass
 
             try:
-                page.loop.call_soon_threadsafe(_append)
+                page.loop.call_soon_threadsafe(_append_batch)
             except Exception:
                 pass
 
@@ -519,27 +536,39 @@ def main(page: ft.Page):
 
     def _drain_queue():
         while True:
-            msg = log_queue.get()
-            if msg is None:
-                break
-            now = datetime.now().strftime("%H:%M:%S")
-            full = f"[{now}] {msg}"
-
-            def _append(msg=msg, full=full):
+            batch = []
+            while len(batch) < 10:
                 try:
-                    text_ctrl = ft.Text(full, selectable=True, font_family="Consolas", size=11)
-                    log_output.controls.append(text_ctrl)
-                    if len(log_output.controls) > 400:
-                        log_output.controls.pop(0)
-                except Exception:
-                    pass
+                    item = log_queue.get_nowait()
+                    if item is None:
+                        break
+                    batch.append(item)
+                except queue.Empty:
+                    break
+            if not batch:
+                item = log_queue.get()
+                if item is None:
+                    break
+                batch.append(item)
+
+            def _append_batch(batch=batch):
+                for msg in batch:
+                    now = datetime.now().strftime("%H:%M:%S")
+                    full = f"[{now}] {msg}"
+                    try:
+                        text_ctrl = ft.Text(full, selectable=True, font_family="Consolas", size=11)
+                        log_output.controls.append(text_ctrl)
+                        if len(log_output.controls) > 400:
+                            log_output.controls.pop(0)
+                    except Exception:
+                        pass
                 try:
                     page.update()
                 except Exception:
                     pass
 
             try:
-                page.loop.call_soon_threadsafe(_append)
+                page.loop.call_soon_threadsafe(_append_batch)
             except Exception:
                 pass
 
@@ -556,7 +585,10 @@ def main(page: ft.Page):
     tracking_status = "Waiting"
 
     def _on_match(data):
-        match_queue.put(data)
+        try:
+            match_queue.put_nowait(data)
+        except queue.Full:
+            pass
         append_log(f"Found {data['item_name']}{data['display_rank']} in {data['mode'].upper()} list")
         color = WTS_COLOR if data["mode"] == "wts" else WTB_COLOR
         title = f"{data['item_name']}{data['display_rank']}"
@@ -656,43 +688,56 @@ def main(page: ft.Page):
             suggestions_col.visible = False
             suggestions_col.update()
 
+    _cached_item_names = []
+    _filter_debounce_timer = None
+
     def filter_dropdown(tf, suggestions_col, rank_field=None, rank_hint=None, subtype_dropdown=None):
-        query = tf.value.strip().lower()
-        if not query:
-            suggestions_col.controls = []
-            suggestions_col.visible = False
+        global _filter_debounce_timer
+        if _filter_debounce_timer is not None:
+            _filter_debounce_timer.cancel()
+        def _do_filter():
+            global _filter_debounce_timer
+            _filter_debounce_timer = None
+            query = tf.value.strip().lower()
+            if not query:
+                suggestions_col.controls = []
+                suggestions_col.visible = False
+                suggestions_col.update()
+                if rank_field: rank_field.visible = False; rank_hint.visible = False
+                if subtype_dropdown: subtype_dropdown.visible = False
+                page.update()
+                return
+
+            matches = [name for name in _cached_item_names if query in name.lower()]
+            if not matches:
+                suggestions_col.controls = []
+                suggestions_col.visible = False
+                suggestions_col.update()
+                page.update()
+                return
+
+            def make_suggestion(name):
+                return ft.Container(
+                    content=ft.Row([ft.Text(name, size=12, expand=True)], expand=True),
+                    padding=ft.Padding.symmetric(horizontal=10, vertical=6),
+                    on_click=lambda e, n=name: on_suggestion_click(n, tf, suggestions_col, rank_field, rank_hint, subtype_dropdown),
+                    data=name,
+                    ink=True,
+                    bgcolor=BG_LIGHT,
+                )
+
+            suggestions_col.controls = [make_suggestion(n) for n in matches]
+            suggestions_col.visible = True
             suggestions_col.update()
-            if rank_field: rank_field.visible = False; rank_hint.visible = False
-            if subtype_dropdown: subtype_dropdown.visible = False
             page.update()
-            return
-
-        names = sorted({v["name"] for v in ITEM_CACHE.values()})
-        matches = [name for name in names if query in name.lower()]
-        if not matches:
-            suggestions_col.controls = []
-            suggestions_col.visible = False
-            suggestions_col.update()
-            page.update()
-            return
-
-        def make_suggestion(name):
-            return ft.Container(
-                content=ft.Row([ft.Text(name, size=12, expand=True)], expand=True),
-                padding=ft.Padding.symmetric(horizontal=10, vertical=6),
-                on_click=lambda e, n=name: on_suggestion_click(n, tf, suggestions_col, rank_field, rank_hint, subtype_dropdown),
-                data=name,
-                ink=True,
-                bgcolor=BG_LIGHT,
-            )
-
-        suggestions_col.controls = [make_suggestion(n) for n in matches]
-        suggestions_col.visible = True
-        suggestions_col.update()
-        page.update()
+        _filter_debounce_timer = threading.Timer(0.12, _do_filter)
+        _filter_debounce_timer.daemon = True
+        _filter_debounce_timer.start()
 
     def populate_dropdowns():
+        global _cached_item_names
         names = sorted({v["name"] for v in ITEM_CACHE.values()})
+        _cached_item_names = names
         tracking_text.value = f"Items loaded: {len(names)} | API: warframe.market/v2"
 
     def load_items_bg():
@@ -966,9 +1011,6 @@ def main(page: ft.Page):
         main_status_ingame.content = _segmented_btn_content("In Game", current_status_filter == STATUS_ONLY_INGAME)
         main_status_online.content = _segmented_btn_content("On Site", current_status_filter == STATUS_ONLY_ONLINE)
         main_status_both.content = _segmented_btn_content("Both", current_status_filter == STATUS_BOTH)
-        main_status_ingame.update()
-        main_status_online.update()
-        main_status_both.update()
 
     main_status_ingame = ft.Container(
         content=_segmented_btn_content("In Game", current_status_filter == STATUS_ONLY_INGAME),
@@ -1024,12 +1066,13 @@ def main(page: ft.Page):
         page.update()
 
     def _build_settings_dialog():
-        def _sync_main_status():
+        def _sync_main_status(skip_update=False):
             _update_main_status_filter()
             tracking_status = f"Active ({current_status_filter})" if running else "Idle"
             _set_tracking_status()
             _apply_status_color()
-            page.update()
+            if not skip_update:
+                page.update()
 
         def _segmented_btn_content(label, selected):
             return ft.Text(
@@ -1049,13 +1092,11 @@ def main(page: ft.Page):
             row1_cell_ingame.content = _segmented_btn_content("In Game", value == STATUS_ONLY_INGAME)
             row1_cell_online.content = _segmented_btn_content("On Site", value == STATUS_ONLY_ONLINE)
             row1_cell_both.content = _segmented_btn_content("Both", value == STATUS_BOTH)
-            row1_cell_ingame.update()
-            row1_cell_online.update()
-            row1_cell_both.update()
-            _sync_main_status()
+            _sync_main_status(skip_update=True)
             _settings["default_status"] = current_status_filter
             save_settings(_settings)
             append_log(f"Default status filter set to {current_status_filter}")
+            page.update()
 
         row1_cell_ingame = ft.Container(
             content=_segmented_btn_content("In Game", current_status_filter == STATUS_ONLY_INGAME),
@@ -1113,8 +1154,6 @@ def main(page: ft.Page):
             row2_cell_off.bgcolor = BG_LIGHT
             row2_cell_on.content = _segmented_btn_content("On", True)
             row2_cell_off.content = _segmented_btn_content("Off", False)
-            row2_cell_on.update()
-            row2_cell_off.update()
             append_log("Notifications enabled")
             page.update()
 
@@ -1125,8 +1164,6 @@ def main(page: ft.Page):
             row2_cell_off.bgcolor = "#3b4858"
             row2_cell_on.content = _segmented_btn_content("On", False)
             row2_cell_off.content = _segmented_btn_content("Off", True)
-            row2_cell_on.update()
-            row2_cell_off.update()
             append_log("Notifications disabled")
             page.update()
 
@@ -1357,10 +1394,6 @@ def main(page: ft.Page):
         def _update_sound_dropdown_selection():
             for item, filename in zip(sound_dropdown_items, wav_files):
                 item.bgcolor = "#3b4858" if filename == current_sound else BG_LIGHT
-                try:
-                    item.update()
-                except RuntimeError:
-                    pass
 
         def _toggle_sound_dropdown():
             nonlocal sound_dropdown_open
@@ -1552,8 +1585,6 @@ def main(page: ft.Page):
                 sound_dropdown_open = False
                 sound_dropdown_panel.visible = False
                 sound_dropdown_arrow.content = ft.Icon(ft.Icons.ARROW_DROP_DOWN, size=20, color="white")
-                sound_dropdown_panel.update()
-                sound_dropdown_arrow.update()
             page.pop_dialog()
 
         return ft.AlertDialog(
@@ -1583,7 +1614,10 @@ def main(page: ft.Page):
             "whisper_msg": "/w TEST_PLAYER Hi! I want to buy: Test Item Prime (Rank 5) for 150 platinum. (warframe.market)",
             "original_key": "Test Item Prime|5",
         }
-        match_queue.put(data)
+        try:
+            match_queue.put_nowait(data)
+        except queue.Full:
+            pass
 
     test_card_btn = ft.Container(
         content=ft.Stack([
@@ -1653,10 +1687,6 @@ def main(page: ft.Page):
             (WTS_WATCHLIST if is_wts else WTB_WATCHLIST)[key] = price_int
         save_watchlists()
         append_log(f"Added {_format_name(key)} to {mode.upper()}")
-        with open("add_log.txt", "a") as f:
-            f.write(f"add_item_inline({mode}): name={name}, price={price_int}, rank={rank}, subtype={subtype}\n")
-            f.write(f"  WTS={WTS_WATCHLIST}\n")
-            f.write(f"  WTB={WTB_WATCHLIST}\n")
         column = wts_items_list if is_wts else wtb_items_list
         render_watchlist(column, WTS_WATCHLIST if is_wts else WTB_WATCHLIST, mode)
         search_tf.value = ""
@@ -1833,11 +1863,22 @@ def main(page: ft.Page):
             ], expand=True),
         ], expand=True)
     )
+    _resize_timer = None
+
     def _clamp_window(e=None):
-        if page.window.width < 1365 or page.window.height < 768:
-            page.window.width = 1365
-            page.window.height = 768
-            page.update()
+        nonlocal _resize_timer
+        if _resize_timer is not None:
+            _resize_timer.cancel()
+        def _do_clamp():
+            nonlocal _resize_timer
+            _resize_timer = None
+            if page.window.width < 1365 or page.window.height < 768:
+                page.window.width = 1365
+                page.window.height = 768
+                page.update()
+        _resize_timer = threading.Timer(0.2, _do_clamp)
+        _resize_timer.daemon = True
+        _resize_timer.start()
 
     page.on_resize = _clamp_window
     page.on_close = lambda e: (core_wts.stop(), core_wtb.stop())
