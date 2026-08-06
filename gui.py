@@ -685,57 +685,43 @@ def main(page: ft.Page):
             suggestions_col.visible = False
             suggestions_col.update()
 
-    _cached_item_names = []
-    _filter_debounce_timer = None
-
     def filter_dropdown(tf, suggestions_col, rank_field=None, rank_hint=None, subtype_dropdown=None):
-        nonlocal _filter_debounce_timer
-        if _filter_debounce_timer is not None:
-            _filter_debounce_timer.cancel()
-        def _do_filter():
-            nonlocal _filter_debounce_timer
-            _filter_debounce_timer = None
-            query = tf.value.strip().lower()
-            if not query:
-                suggestions_col.controls = []
-                suggestions_col.visible = False
-                suggestions_col.update()
-                if rank_field: rank_field.visible = False; rank_hint.visible = False
-                if subtype_dropdown: subtype_dropdown.visible = False
-                page.update()
-                return
+        query = tf.value.strip().lower()
+        if not query:
+            suggestions_col.controls = []
+            suggestions_col.visible = False
+            suggestions_col.update()
+            if rank_field: rank_field.visible = False; rank_hint.visible = False
+            if subtype_dropdown: subtype_dropdown.visible = False
+            page.update()
+            return
 
-            names = sorted({v["name"] for v in ITEM_CACHE.values()})
-            matches = [name for name in names if query in name.lower()][:5]
-            if not matches:
-                suggestions_col.controls = []
-                suggestions_col.visible = False
-                suggestions_col.update()
-                page.update()
-                return
-
-            def make_suggestion(name):
-                return ft.Container(
-                    content=ft.Row([ft.Text(name, size=12, expand=True)], expand=True),
-                    padding=ft.Padding.symmetric(horizontal=10, vertical=6),
-                    on_click=lambda e, n=name: on_suggestion_click(n, tf, suggestions_col, rank_field, rank_hint, subtype_dropdown),
-                    data=name,
-                    ink=True,
-                    bgcolor=BG_LIGHT,
-                )
-
-            suggestions_col.controls = [make_suggestion(n) for n in matches]
-            suggestions_col.visible = True
+        names = sorted({v["name"] for v in ITEM_CACHE.values()})
+        matches = [name for name in names if query in name.lower()][:5]
+        if not matches:
+            suggestions_col.controls = []
+            suggestions_col.visible = False
             suggestions_col.update()
             page.update()
-        _filter_debounce_timer = threading.Timer(0.12, lambda: page.loop.call_soon_threadsafe(_do_filter))
-        _filter_debounce_timer.daemon = True
-        _filter_debounce_timer.start()
+            return
+
+        def make_suggestion(name):
+            return ft.Container(
+                content=ft.Row([ft.Text(name, size=12, expand=True)], expand=True),
+                padding=ft.Padding.symmetric(horizontal=10, vertical=6),
+                on_click=lambda e, n=name: on_suggestion_click(n, tf, suggestions_col, rank_field, rank_hint, subtype_dropdown),
+                data=name,
+                ink=True,
+                bgcolor=BG_LIGHT,
+            )
+
+        suggestions_col.controls = [make_suggestion(n) for n in matches]
+        suggestions_col.visible = True
+        suggestions_col.update()
+        page.update()
 
     def populate_dropdowns():
-        nonlocal _cached_item_names
         names = sorted({v["name"] for v in ITEM_CACHE.values()})
-        _cached_item_names = names
         tracking_text.value = f"Items loaded: {len(names)} | API: warframe.market/v2"
 
     def load_items_bg():
