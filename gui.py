@@ -360,7 +360,7 @@ def main(page: ft.Page):
     log_output = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=8)
     log_output_wts = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=8)
     log_output_wtb = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=8)
-    log_queue = queue.Queue(maxsize=500)
+    log_queue = queue.Queue()
 
     def append_log(msg):
         try:
@@ -453,7 +453,7 @@ def main(page: ft.Page):
             margin=ft.Margin.only(bottom=2),
         )
 
-    match_queue = queue.Queue(maxsize=200)
+    match_queue = queue.Queue()
 
     def _drain_matches():
         while True:
@@ -585,10 +585,7 @@ def main(page: ft.Page):
     tracking_status = "Waiting"
 
     def _on_match(data):
-        try:
-            match_queue.put_nowait(data)
-        except queue.Full:
-            pass
+        match_queue.put(data)
         append_log(f"Found {data['item_name']}{data['display_rank']} in {data['mode'].upper()} list")
         color = WTS_COLOR if data["mode"] == "wts" else WTB_COLOR
         title = f"{data['item_name']}{data['display_rank']}"
@@ -1614,10 +1611,7 @@ def main(page: ft.Page):
             "whisper_msg": "/w TEST_PLAYER Hi! I want to buy: Test Item Prime (Rank 5) for 150 platinum. (warframe.market)",
             "original_key": "Test Item Prime|5",
         }
-        try:
-            match_queue.put_nowait(data)
-        except queue.Full:
-            pass
+        match_queue.put(data)
 
     test_card_btn = ft.Container(
         content=ft.Stack([
