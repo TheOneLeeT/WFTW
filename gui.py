@@ -728,7 +728,7 @@ def main(page: ft.Page):
             suggestions_col.visible = True
             suggestions_col.update()
             page.update()
-        _filter_debounce_timer = threading.Timer(0.12, _do_filter)
+        _filter_debounce_timer = threading.Timer(0.12, lambda: page.loop.call_soon_threadsafe(_do_filter))
         _filter_debounce_timer.daemon = True
         _filter_debounce_timer.start()
 
