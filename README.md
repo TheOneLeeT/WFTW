@@ -1,5 +1,7 @@
 # Warframe Trade Watch (WFTW)
 
+![WFTW Logo](Media/Icon/WFTW.png)
+
 ---
 
 ## What it is
