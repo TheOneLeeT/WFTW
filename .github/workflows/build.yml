@@ -56,42 +56,12 @@ jobs:
           flet build ${{ matrix.build_target }} --module-name gui --artifact WFTW --description "Warframe Trade Watch" --yes
         shell: bash
 
-      - name: Package build output
-        run: |
-          python -c "
-          import os, zipfile, tarfile, glob
-          target = '${{ matrix.build_target }}'
-          root = 'build'
-          candidates = [d for d in os.listdir(root) if os.path.isdir(os.path.join(root, d))] if os.path.isdir(root) else []
-          if not candidates:
-              sys.exit(1)
-          src = os.path.join(root, candidates[0])
-          if target == 'windows':
-              out = os.path.join(root, 'WFTW-windows-x64.zip')
-              with zipfile.ZipFile(out, 'w', zipfile.ZIP_DEFLATED) as zf:
-                  for r, _, files in os.walk(src):
-                      for f in files:
-                          p = os.path.join(r, f)
-                          zf.write(p, os.path.relpath(p, src))
-          elif target == 'macos':
-              out = os.path.join(root, 'WFTW-macos-universal.tar.gz')
-              with tarfile.open(out, 'w:gz') as tf:
-                  tf.add(src, arcname=os.path.basename(src))
-          elif target == 'linux':
-              out = os.path.join(root, 'WFTW-linux-x64.zip')
-              with zipfile.ZipFile(out, 'w', zipfile.ZIP_DEFLATED) as zf:
-                  for r, _, files in os.walk(src):
-                      for f in files:
-                          p = os.path.join(r, f)
-                          zf.write(p, os.path.relpath(p, src))
-          "
-        shell: bash
-
       - name: Upload artifacts
         uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.artifact_name }}
-          path: build/WFTW-*
+          path: |
+            build/**/*
           compression-level: 9
           retention-days: 90
 
@@ -109,13 +79,39 @@ jobs:
         with:
           path: ./artifacts
 
+      - name: Prepare release assets
+        run: |
+          mkdir -p release
+          
+          # Windows - find and copy the main executable
+          if [ -d "artifacts/WFTW-windows" ]; then
+              exe=$(find artifacts/WFTW-windows -name "*.exe" -type f | head -1)
+              if [ -n "$exe" ]; then
+                  cp "$exe" release/WFTW-windows-x64.exe
+              fi
+          fi
+          
+          # macOS - create tar.gz from the app bundle
+          if [ -d "artifacts/WFTW-macos" ]; then
+              app_dir=$(find artifacts/WFTW-macos -name "*.app" -type d | head -1)
+              if [ -n "$app_dir" ]; then
+                  tar -czf release/WFTW-macos-universal.tar.gz -C "$(dirname "$app_dir")" "$(basename "$app_dir")"
+              fi
+          fi
+          
+          # Linux - find and copy the AppImage
+          if [ -d "artifacts/WFTW-linux" ]; then
+              appimage=$(find artifacts/WFTW-linux -name "*.AppImage" -type f | head -1)
+              if [ -n "$appimage" ]; then
+                  cp "$appimage" release/WFTW-linux-x64.AppImage
+              fi
+          fi
+
       - name: Create Release
         uses: softprops/action-gh-release@v3
         with:
           files: |
-            artifacts/*/build/WFTW-*.zip
-            artifacts/*/build/WFTW-*.tar.gz
-            artifacts/*/build/WFTW-*.AppImage
+            release/*
           draft: false
           prerelease: true
           generate_release_notes: true
