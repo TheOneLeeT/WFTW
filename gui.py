@@ -800,11 +800,17 @@ def main(page: ft.Page):
         return ft.Container(
             content=ft.Row([
                 ft.Row([
-                    ft.Text(display_name, expand=1, size=13, no_wrap=False),
+                    ft.Container(
+                        content=ft.Text(display_name, size=13, no_wrap=False),
+                        expand=True,
+                    ),
                     ft.Text(extra, size=11, color=ft.Colors.ON_SURFACE_VARIANT),
                 ], expand=1, spacing=4, vertical_alignment=ft.CrossAxisAlignment.CENTER),
                 ft.Row([
-                    ft.Text(f"{price}p", size=13, color=color),
+                    ft.Container(
+                        content=ft.Text(f"{price}p", size=13, color=color),
+                        expand=True,
+                    ),
                     ft.Container(
                         content=ft.Icon(ft.Icons.EDIT, size=14, color="#ff9800"),
                         padding=3,
@@ -819,7 +825,7 @@ def main(page: ft.Page):
                         tooltip="Remove",
                         on_click=lambda e, n=name, m=mode: delete_item(n, m)
                     ),
-                ], spacing=2, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+                ], expand=True, spacing=2, vertical_alignment=ft.CrossAxisAlignment.CENTER),
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN, vertical_alignment=ft.CrossAxisAlignment.CENTER),
             bgcolor=BG_LIGHT,
             border_radius=6,
