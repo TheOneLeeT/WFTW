@@ -800,11 +800,11 @@ def main(page: ft.Page):
         return ft.Container(
             content=ft.Row([
                 ft.Row([
-                    ft.Text(display_name, expand=1, size=13, no_wrap=False, margin=ft.Margin.only(bottom=1)),
+                    ft.Text(display_name, expand=1, size=13, no_wrap=False, margin=ft.Margin.only(bottom=2)),
                     ft.Text(extra, size=11, color=ft.Colors.ON_SURFACE_VARIANT),
                 ], expand=1, spacing=4, vertical_alignment=ft.CrossAxisAlignment.CENTER),
                 ft.Row([
-                    ft.Text(f"{price}p", size=13, color=color, margin=ft.Margin.only(bottom=1)),
+                    ft.Text(f"{price}p", size=13, color=color, margin=ft.Margin.only(bottom=2)),
                     ft.Container(
                         content=ft.Icon(ft.Icons.EDIT, size=14, color="#ff9800"),
                         padding=3,
