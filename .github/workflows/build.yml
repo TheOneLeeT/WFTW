@@ -56,12 +56,38 @@ jobs:
           flet build ${{ matrix.build_target }} --module-name gui --artifact WFTW --description "Warframe Trade Watch" --yes
         shell: bash
 
+      - name: Package build output
+        run: |
+          python -c "
+          import os, sys, zipfile, tarfile, shutil
+          target = '${{ matrix.build_target }}'
+          if target == 'windows':
+              with zipfile.ZipFile('build/WFTW-windows-x64.zip', 'w', zipfile.ZIP_DEFLATED) as zf:
+                  for root, dirs, files in os.walk('build/windows'):
+                      for f in files:
+                          p = os.path.join(root, f)
+                          zf.write(p, os.path.relpath(p, 'build/windows'))
+          elif target == 'macos':
+              with tarfile.open('build/WFTW-macos-universal.tar.gz', 'w:gz') as tf:
+                  tf.add('build/macos', arcname='WFTW-macos')
+          elif target == 'linux':
+              for root, dirs, files in os.walk('build/linux'):
+                  for f in files:
+                      if f.endswith('.AppImage'):
+                          src = os.path.join(root, f)
+                          dst = 'build/WFTW-linux-x64.AppImage'
+                          shutil.copy2(src, dst)
+          "
+        shell: bash
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.artifact_name }}
           path: |
-            build/**/*
+            build/WFTW-windows-x64.zip
+            build/WFTW-macos-universal.tar.gz
+            build/WFTW-linux-x64.AppImage
           compression-level: 9
           retention-days: 90
 
@@ -79,18 +105,13 @@ jobs:
         with:
           path: ./artifacts
 
-      - name: Prepare release assets
-        run: |
-          mkdir -p release
-          find artifacts/WFTW-windows -type f \( -name '*.exe' -o -name '*.dll' -o -name '*.pyd' \) -exec cp --parents {} release/ \;
-          find artifacts/WFTW-macos -type f -name '*.tar.gz' -exec cp --parents {} release/ \;
-          find artifacts/WFTW-linux -type f -name '*.AppImage' -exec cp --parents {} release/ \;
-
       - name: Create Release
         uses: softprops/action-gh-release@v3
         with:
           files: |
-            release/**/*
+            artifacts/*/build/WFTW-*.zip
+            artifacts/*/build/WFTW-*.tar.gz
+            artifacts/*/build/WFTW-*.AppImage
           draft: false
           prerelease: true
           generate_release_notes: true
