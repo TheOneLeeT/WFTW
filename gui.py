@@ -456,7 +456,7 @@ def main(page: ft.Page):
             ], spacing=0, tight=True),
             bgcolor=BG_LIGHT,
             border_radius=6,
-            padding=ft.Padding.symmetric(horizontal=4, vertical=0),
+            padding=ft.Padding(left=4, top=0, right=0, bottom=0),
             margin=ft.Margin.only(bottom=2),
         )
 
