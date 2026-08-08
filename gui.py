@@ -489,24 +489,18 @@ def main(page: ft.Page):
                     if len(_seen_match_fingerprints) > _MAX_SEEN_MATCH_FINGERPRINTS:
                         _seen_match_fingerprints.clear()
 
-                    card_ref = {"value": None}
+                    card = _make_match_card(data, on_delete=lambda e: None, on_untrack=lambda e: None)
 
-                    def on_delete(e, mode=mode):
-                        c = card_ref["value"]
-                        if c is None:
-                            return
+                    def _on_delete(e, card=card):
                         try:
                             target = log_output_wtb if mode == "wtb" else log_output_wts
-                            if c in target.controls:
-                                target.controls.remove(c)
+                            if card in target.controls:
+                                target.controls.remove(card)
                                 page.update()
                         except Exception:
                             pass
 
-                    def on_untrack(e, mode=mode, data=data):
-                        c = card_ref["value"]
-                        if c is None:
-                            return
+                    def _on_untrack(e, card=card, data=data):
                         try:
                             key = data.get("original_key")
                             if key is None:
@@ -520,14 +514,25 @@ def main(page: ft.Page):
                                 _set_tracking_status()
                                 _apply_status_color()
                             target = log_output_wtb if mode == "wtb" else log_output_wts
-                            if c in target.controls:
-                                target.controls.remove(c)
+                            if card in target.controls:
+                                target.controls.remove(card)
                                 page.update()
                         except Exception:
                             pass
 
-                    card = _make_match_card(data, on_delete=on_delete, on_untrack=on_untrack)
-                    card_ref["value"] = card
+                    try:
+                        top_row = card.content.controls[0]
+                        for btn in top_row.controls:
+                            if isinstance(btn, ft.Container):
+                                txt = btn.content
+                                if isinstance(txt, ft.Row):
+                                    for inner in txt.controls:
+                                        if isinstance(inner, ft.Text) and inner.value == "Delete Log":
+                                            btn.on_click = _on_delete
+                                        elif isinstance(inner, ft.Text) and inner.value == "Untrack":
+                                            btn.on_click = _on_untrack
+                    except Exception:
+                        pass
                     try:
                         if mode == "wtb":
                             log_output_wtb.controls.append(card)
