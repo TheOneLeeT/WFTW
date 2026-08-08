@@ -1838,11 +1838,13 @@ def main(page: ft.Page):
                                 expand=True,
                                 border=ft.Border.all(1, BG_LIGHT),
                             ),
-                            ft.Image(
-                                src=BACKGROUND_LOGO_PATH,
-                                opacity=BACKGROUND_LOGO_OPACITY,
-                                fit=ft.BoxFit.FILL,
-                                expand=True,
+                            ft.TransparentPointer(
+                                content=ft.Image(
+                                    src=BACKGROUND_LOGO_PATH,
+                                    opacity=BACKGROUND_LOGO_OPACITY,
+                                    fit=ft.BoxFit.FILL,
+                                    expand=True,
+                                ),
                             ),
                         ], fit=ft.StackFit.EXPAND),
                         expand=True,
@@ -1863,11 +1865,13 @@ def main(page: ft.Page):
                                 expand=True,
                                 border=ft.Border.all(1, BG_LIGHT),
                             ),
-                            ft.Image(
-                                src=BACKGROUND_LOGO_PATH,
-                                opacity=BACKGROUND_LOGO_OPACITY,
-                                fit=ft.BoxFit.FILL,
-                                expand=True,
+                            ft.TransparentPointer(
+                                content=ft.Image(
+                                    src=BACKGROUND_LOGO_PATH,
+                                    opacity=BACKGROUND_LOGO_OPACITY,
+                                    fit=ft.BoxFit.FILL,
+                                    expand=True,
+                                ),
                             ),
                         ], fit=ft.StackFit.EXPAND),
                         expand=True,
