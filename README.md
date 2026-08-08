@@ -162,41 +162,6 @@ WFTW/
         └── ...            # Additional alert sounds
 ```
 
-## Configuration
-
-### settings.json
-
-Created automatically on first run. Stores:
-- Default status filter (`online`, `ingame`, or `both`)
-- Notification sound and volume
-- Log rotation preferences
-
-### watchlist.json
-
-Created automatically when you add your first item. Stores your WTS and WTB watchlists.
-
-### Logs
-
-The `Logs/` folder is created automatically. Logs rotate based on your settings to prevent unlimited growth. You can adjust rotation in `settings.json`:
-
-```json
-{
-  "log_rotation": {
-    "enabled": true,
-    "mode": "size",
-    "max_size_mb": 10,
-    "max_lines": 10000,
-    "max_age_hours": 168,
-    "max_backup_files": 5
-  }
-}
-```
-
-- **mode `size`**: rotate when file exceeds `max_size_mb`
-- **mode `lines`**: rotate when file exceeds `max_lines`
-- **mode `time`**: rotate when file is older than `max_age_hours`
-- **max_backup_files**: number of rotated backups to keep
-
 ## Troubleshooting
 
 ### "python is not recognized" (Windows)
