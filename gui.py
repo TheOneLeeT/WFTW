@@ -1745,6 +1745,7 @@ def main(page: ft.Page):
                     src=BACKGROUND_LOGO_PATH,
                     opacity=BACKGROUND_LOGO_OPACITY,
                     fit=ft.BoxFit.COVER,
+                    expand=True,
                 ),
                 expand=True,
             ),
