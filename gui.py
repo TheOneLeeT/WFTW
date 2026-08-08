@@ -456,8 +456,8 @@ def main(page: ft.Page):
             ], spacing=0, tight=True),
             bgcolor=BG_LIGHT,
             border_radius=6,
-            padding=ft.Padding.symmetric(horizontal=8, vertical=4),
-            margin=ft.Margin.only(bottom=2),
+            padding=ft.Padding.symmetric(horizontal=8, vertical=0),
+            margin=ft.Margin.only(left=8, right=8, bottom=2),
         )
 
     match_queue = queue.Queue()
@@ -823,8 +823,8 @@ def main(page: ft.Page):
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN, vertical_alignment=ft.CrossAxisAlignment.CENTER),
             bgcolor=BG_LIGHT,
             border_radius=6,
-            padding=ft.Padding.symmetric(horizontal=8, vertical=4),
-            margin=ft.Margin.only(bottom=2),
+            padding=ft.Padding.symmetric(horizontal=8, vertical=0),
+            margin=ft.Margin.only(left=8, right=8, bottom=2),
         )
 
     def render_watchlist(column, watchlist, mode):
