@@ -1744,10 +1744,12 @@ def main(page: ft.Page):
                 content=ft.Image(
                     src=BACKGROUND_LOGO_PATH,
                     opacity=BACKGROUND_LOGO_OPACITY,
-                    fit=ft.BoxFit.COVER,
-                    expand=True,
+                    fit=ft.BoxFit.FILL,
+                    width=5000,
+                    height=5000,
                 ),
-                expand=True,
+                width=5000,
+                height=5000,
             ),
             ft.Column([
                 ft.Row([
