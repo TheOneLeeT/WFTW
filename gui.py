@@ -1773,11 +1773,11 @@ def main(page: ft.Page):
     instructions = ft.Container(
         content=ft.Column([
             ft.Text("How to use:", size=12, weight=ft.FontWeight.BOLD),
-            ft.Text("1. Add items in the form at top of each column.", size=10),
-            ft.Text("2. Set your max/min platinum price per item.", size=10),
+            ft.Text("1. Add items: use the form at top of each column.", size=10),
+            ft.Text("2. Set max/min platinum price per item.", size=10),
             ft.Text("3. Click Start Tracker. Both lists run together.", size=10),
             ft.Text("4. When a match appears, click Copy to whisper.", size=10),
-            ft.Text("5. Use the Settings button to change preferences.", size=10),
+            ft.Text("5. Use Settings button to change preferences.", size=10),
         ], spacing=1, tight=True, expand=True, alignment=ft.MainAxisAlignment.START),
         bgcolor=BG_LIGHT,
         border_radius=10,
