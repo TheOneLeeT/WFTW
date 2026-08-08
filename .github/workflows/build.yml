@@ -47,7 +47,7 @@ jobs:
         env:
           FLET_CLI_NO_RICH_OUTPUT: 1
         run: |
-          flet build ${{ matrix.build_target }} --artifact WFTW --description "Warframe Trade Watch" --yes
+          flet build ${{ matrix.build_target }} --module-name gui --artifact WFTW --description "Warframe Trade Watch" --yes
         shell: bash
 
       - name: Upload artifacts
