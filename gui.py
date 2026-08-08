@@ -29,10 +29,11 @@ STATUS_ONLY_INGAME = "ingame"
 STATUS_ONLY_ONLINE = "online"
 WTS_COLOR = "#cb4a9e"
 WTB_COLOR = "#209e70"
-BG_DARK = "#071013"
-BG_LIGHT = "#171e21"
-SETTINGS_BG = "#272a2f"
-ACCENT_COLOR = "#3b4858"
+BG_DARK = "#131A20"
+BG_LIGHT = "#222B35"
+SETTINGS_BG = "#36414D"
+ACCENT_COLOR = "#427D96"
+NOTIFICATION_ALPHA = 0.85
 _TEMP_WAV_FILES = set()
 
 
@@ -204,7 +205,7 @@ class NotificationOverlay:
             win = tk.Toplevel(self.root)
             win.overrideredirect(True)
             win.attributes("-topmost", True)
-            win.attributes("-alpha", 0.92)
+            win.attributes("-alpha", NOTIFICATION_ALPHA)
             win.configure(bg=BG_DARK)
 
             frame = tk.Frame(win, bg=BG_LIGHT)
