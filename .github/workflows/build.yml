@@ -56,24 +56,12 @@ jobs:
           flet build ${{ matrix.build_target }} --module-name gui --artifact WFTW --description "Warframe Trade Watch" --yes
         shell: bash
 
-      - name: Package build output
-        run: |
-          if [ "${{ matrix.build_target }}" == "windows" ]; then
-            cd build/windows && zip -r ../WFTW-windows-x64.zip .
-          elif [ "${{ matrix.build_target }}" == "macos" ]; then
-            cd build/macos && tar -czf ../WFTW-macos-universal.tar.gz .
-          elif [ "${{ matrix.build_target }}" == "linux" ]; then
-            cd build/linux && zip -r ../WFTW-linux-x64.zip .
-          fi
-        shell: bash
-
       - name: Upload artifacts
         uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.artifact_name }}
           path: |
-            build/WFTW-*.zip
-            build/WFTW-*.tar.gz
+            build/**/*
           compression-level: 9
           retention-days: 90
 
@@ -91,14 +79,20 @@ jobs:
         with:
           path: ./artifacts
 
+      - name: Prepare release assets
+        run: |
+          mkdir -p release
+          find artifacts/WFTW-windows -type f \( -name '*.exe' -o -name '*.dll' -o -name '*.pyd' \) -exec cp --parents {} release/ \;
+          find artifacts/WFTW-macos -type f -name '*.tar.gz' -exec cp --parents {} release/ \;
+          find artifacts/WFTW-linux -type f -name '*.AppImage' -exec cp --parents {} release/ \;
+
       - name: Create Release
         uses: softprops/action-gh-release@v3
         with:
           files: |
-            artifacts/*/build/*.zip
-            artifacts/*/build/*.tar.gz
+            release/**/*
           draft: false
-          prerelease: false
+          prerelease: true
           generate_release_notes: true
           overwrite_files: true
         env:
