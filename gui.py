@@ -34,7 +34,7 @@ BG_LIGHT = "#222B35"
 SETTINGS_BG = "#36414D"
 ACCENT_COLOR = "#427D96"
 NOTIFICATION_ALPHA = 0.85
-BACKGROUND_LOGO_OPACITY = 0.38
+BACKGROUND_LOGO_OPACITY = 0.03
 BACKGROUND_LOGO_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Media", "Icon", "WFTW_bg.png")
 _TEMP_WAV_FILES = set()
 
@@ -1830,12 +1830,23 @@ def main(page: ft.Page):
                         ft.Container(expand=True),
                     ]),
                     ft.Container(
-                        content=log_output_wts,
-                        bgcolor=BG_DARK,
-                        border_radius=10,
-                        padding=8,
+                        content=ft.Stack([
+                            ft.Image(
+                                src=BACKGROUND_LOGO_PATH,
+                                opacity=BACKGROUND_LOGO_OPACITY,
+                                fit=ft.BoxFit.FILL,
+                                expand=True,
+                            ),
+                            ft.Container(
+                                content=log_output_wts,
+                                bgcolor=BG_DARK,
+                                border_radius=10,
+                                padding=8,
+                                expand=True,
+                                border=ft.Border.all(1, BG_LIGHT),
+                            ),
+                        ], expand=True),
                         expand=True,
-                        border=ft.Border.all(1, BG_LIGHT),
                     ),
                 ], expand=True),
                 ft.VerticalDivider(width=8),
@@ -1845,12 +1856,23 @@ def main(page: ft.Page):
                         ft.Container(expand=True),
                     ]),
                     ft.Container(
-                        content=log_output_wtb,
-                        bgcolor=BG_DARK,
-                        border_radius=10,
-                        padding=8,
+                        content=ft.Stack([
+                            ft.Image(
+                                src=BACKGROUND_LOGO_PATH,
+                                opacity=BACKGROUND_LOGO_OPACITY,
+                                fit=ft.BoxFit.FILL,
+                                expand=True,
+                            ),
+                            ft.Container(
+                                content=log_output_wtb,
+                                bgcolor=BG_DARK,
+                                border_radius=10,
+                                padding=8,
+                                expand=True,
+                                border=ft.Border.all(1, BG_LIGHT),
+                            ),
+                        ], expand=True),
                         expand=True,
-                        border=ft.Border.all(1, BG_LIGHT),
                     ),
                 ], expand=True),
             ], expand=True),
@@ -1858,22 +1880,7 @@ def main(page: ft.Page):
     ], expand=True)
 
     page.add(
-        ft.Stack([
-            foreground,
-            ft.TransparentPointer(
-                content=ft.Container(
-                    content=ft.Image(
-                        src=BACKGROUND_LOGO_PATH,
-                        opacity=BACKGROUND_LOGO_OPACITY,
-                        fit=ft.BoxFit.FILL,
-                        width=5000,
-                        height=5000,
-                    ),
-                    width=5000,
-                    height=5000,
-                ),
-            ),
-        ], expand=True)
+        foreground
     )
     _resize_timer = None
 
