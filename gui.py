@@ -452,7 +452,7 @@ def main(page: ft.Page):
                         border_radius=4,
                         on_click=do_copy,
                     ),
-                ], spacing=6, vertical_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.CENTER),
+                ], spacing=6, vertical_alignment=ft.CrossAxisAlignment.START),
             ], spacing=0, tight=True),
             bgcolor=BG_LIGHT,
             border_radius=6,
