@@ -21,7 +21,7 @@ jobs:
           - os: macos-latest
             build_target: macos
             artifact_name: WFTW-macos
-            asset_name: WFTW-macos-universal.tar.gz
+            asset_name: WFTW-macos-universal.dmg
           - os: ubuntu-latest
             build_target: linux
             artifact_name: WFTW-linux
@@ -59,28 +59,27 @@ jobs:
       - name: Package Windows build
         if: matrix.build_target == 'windows'
         run: |
-          mkdir -p release
-          cp -r build/windows/* release/
-          cd release
-          zip -r ../WFTW-windows-x64.zip .
-        shell: bash
+          Compress-Archive -Path build/windows/* -DestinationPath WFTW-windows-x64.zip
+        shell: pwsh
 
       - name: Package macOS build
         if: matrix.build_target == 'macos'
         run: |
-          mkdir -p release
-          cp -r build/macos/* release/
-          cd release
-          tar -czf ../WFTW-macos-universal.tar.gz .
+          mkdir -p staging
+          app_dir=$(find build/macos -name "*.app" -type d | head -1)
+          if [ -n "$app_dir" ]; then
+              cp -r "$app_dir" staging/
+              hdiutil create -volname "WFTW" -srcfolder staging -ov -format UDZO WFTW-macos-universal.dmg
+          else
+              echo "No .app bundle found"
+              exit 1
+          fi
         shell: bash
 
       - name: Package Linux build
         if: matrix.build_target == 'linux'
         run: |
-          mkdir -p release
-          cp -r build/linux/* release/
-          cd release
-          tar -czf ../WFTW-linux-x64.tar.gz .
+          tar -czf WFTW-linux-x64.tar.gz -C build/linux .
         shell: bash
 
       - name: Upload artifacts
@@ -89,6 +88,7 @@ jobs:
           name: ${{ matrix.artifact_name }}
           path: |
             WFTW-*.zip
+            WFTW-*.dmg
             WFTW-*.tar.gz
           compression-level: 9
           retention-days: 90
@@ -117,8 +117,8 @@ jobs:
           fi
           
           # macOS
-          if [ -f "artifacts/WFTW-macos/WFTW-macos-universal.tar.gz" ]; then
-              cp "artifacts/WFTW-macos/WFTW-macos-universal.tar.gz" release/
+          if [ -f "artifacts/WFTW-macos/WFTW-macos-universal.dmg" ]; then
+              cp "artifacts/WFTW-macos/WFTW-macos-universal.dmg" release/
           fi
           
           # Linux
