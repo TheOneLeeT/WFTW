@@ -443,11 +443,13 @@ def main(page: ft.Page):
                     ft.Text(f"{price}p", size=15, color=tag_color, weight=ft.FontWeight.BOLD),
                     ft.Container(
                         content=ft.Row([
-                            ft.Icon(ft.Icons.CONTENT_COPY, size=15, color=ft.Colors.BLUE_400),
-                            ft.Text("Copy", size=15, color=ft.Colors.BLUE_400),
+                            ft.Icon(ft.Icons.CONTENT_COPY, size=15, color="#ffffff"),
+                            ft.Text("Copy", size=14, color="#ffffff", weight=ft.FontWeight.BOLD),
                         ], spacing=2),
                         ink=True,
-                        padding=ft.Padding.symmetric(horizontal=6, vertical=2),
+                        padding=ft.Padding.symmetric(horizontal=8, vertical=2),
+                        bgcolor=ft.Colors.BLUE_600,
+                        border_radius=4,
                         on_click=do_copy,
                     ),
                 ], spacing=6, vertical_alignment=ft.CrossAxisAlignment.CENTER),
