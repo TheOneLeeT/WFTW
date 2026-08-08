@@ -1773,11 +1773,13 @@ def main(page: ft.Page):
     instructions = ft.Container(
         content=ft.Column([
             ft.Text("How to use:", size=12, weight=ft.FontWeight.BOLD),
-            ft.Text("1. Use form at top of each column to add items.", size=10),
-            ft.Text("2. Type in search box to filter the dropdown, then select an item.", size=10),
-            ft.Text("4. Rank/Subtype shown automatically if item supports it.", size=10),
-            ft.Text("5. Click Start Tracker. Both lists run simultaneously.", size=10),
-        ], spacing=2, tight=True, expand=True, alignment=ft.MainAxisAlignment.CENTER),
+            ft.Text("1. Add items: use the form at the top of each column.", size=10),
+            ft.Text("2. Search: type in the search box to filter the dropdown, then select an item.", size=10),
+            ft.Text("3. Set your max/min platinum price for each item.", size=10),
+            ft.Text("4. Rank/Subtype: shown automatically if the item supports it.", size=10),
+            ft.Text("5. Start: click Start Tracker. Both WTS and WTB lists run simultaneously.", size=10),
+            ft.Text("6. Alerts: when a match is found, click Copy to whisper the seller/buyer.", size=10),
+        ], spacing=1, tight=True, expand=True, alignment=ft.MainAxisAlignment.START),
         bgcolor=BG_LIGHT,
         border_radius=10,
         padding=10,
