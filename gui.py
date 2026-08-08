@@ -10,7 +10,7 @@ import queue
 import pyperclip
 import atexit
 from datetime import datetime
-from tracker_core import TrackerCore, WTS_WATCHLIST, WTB_WATCHLIST, save_watchlists, load_watchlists, fetch_items, ITEM_CACHE, resolve_item, _write_debug_log
+from tracker_core import TrackerCore, WTS_WATCHLIST, WTB_WATCHLIST, save_watchlists, load_watchlists, fetch_items, ITEM_CACHE, resolve_item, _write_debug_log, _rotate_logs
 try:
     from plyer import notification
     HAS_PLYER = True
@@ -43,9 +43,18 @@ _TEMP_WAV_FILES = set()
 def load_settings():
     try:
         with open(SETTINGS_PATH, "r", encoding="utf-8") as f:
-            return json.load(f)
+            settings = json.load(f)
     except Exception:
-        return {}
+        settings = {}
+    settings.setdefault("log_rotation", {
+        "enabled": True,
+        "mode": "size",
+        "max_size_mb": 10,
+        "max_lines": 10000,
+        "max_age_hours": 168,
+        "max_backup_files": 5,
+    })
+    return settings
 
 
 def save_settings(settings):
@@ -369,6 +378,7 @@ def main(page: ft.Page):
 
     def append_log(msg):
         try:
+            _rotate_logs()
             with open(os.path.join("Logs", "wftw_alerts.log"), "a", encoding="utf-8") as f:
                 f.write(f"{datetime.now().strftime('%H:%M:%S')} {msg}\n")
         except Exception:

@@ -16,9 +16,88 @@ except ImportError:
 LOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Logs")
 os.makedirs(LOG_DIR, exist_ok=True)
 
+LOG_FILES = ["tracker_debug.log", "tracker_perf.log", "tracker_api.log", "wftw_alerts.log"]
+
+
+def _get_log_rotation_settings():
+    try:
+        settings_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "settings.json")
+        with open(settings_path, "r", encoding="utf-8") as f:
+            settings = json.load(f)
+        rotation = settings.get("log_rotation", {})
+        return {
+            "enabled": rotation.get("enabled", True),
+            "mode": rotation.get("mode", "size"),
+            "max_size_mb": rotation.get("max_size_mb", 10),
+            "max_lines": rotation.get("max_lines", 10000),
+            "max_age_hours": rotation.get("max_age_hours", 168),
+            "max_backup_files": rotation.get("max_backup_files", 5),
+        }
+    except Exception:
+        return {
+            "enabled": True,
+            "mode": "size",
+            "max_size_mb": 10,
+            "max_lines": 10000,
+            "max_age_hours": 168,
+            "max_backup_files": 5,
+        }
+
+
+def _rotate_logs():
+    try:
+        settings = _get_log_rotation_settings()
+        if not settings.get("enabled", True):
+            return
+        mode = settings.get("mode", "size")
+        max_size_mb = settings.get("max_size_mb", 10)
+        max_lines = settings.get("max_lines", 10000)
+        max_age_hours = settings.get("max_age_hours", 168)
+        max_backup_files = settings.get("max_backup_files", 5)
+        for filename in LOG_FILES:
+            path = os.path.join(LOG_DIR, filename)
+            if not os.path.exists(path):
+                continue
+            stat = os.stat(path)
+            size_bytes = stat.st_size
+            age_hours = (time.time() - stat.st_mtime) / 3600
+            line_count = 0
+            if mode in ("lines", "size"):
+                try:
+                    with open(path, "r", encoding="utf-8") as f:
+                        for _ in f:
+                            line_count += 1
+                except Exception:
+                    pass
+            should_rotate = False
+            if mode == "size" and size_bytes > max_size_mb * 1024 * 1024:
+                should_rotate = True
+            elif mode == "lines" and line_count > max_lines:
+                should_rotate = True
+            elif mode == "time" and age_hours > max_age_hours:
+                should_rotate = True
+            if not should_rotate:
+                continue
+            for i in range(max_backup_files, 0, -1):
+                src = os.path.join(LOG_DIR, f"{filename}.{i}")
+                dst = os.path.join(LOG_DIR, f"{filename}.{i + 1}")
+                if os.path.exists(src):
+                    if i == max_backup_files:
+                        os.remove(src)
+                    else:
+                        os.rename(src, dst)
+            rotated_path = os.path.join(LOG_DIR, f"{filename}.1")
+            try:
+                os.rename(path, rotated_path)
+            except Exception:
+                pass
+    except Exception:
+        pass
+
 
 def _write_debug_log(msg):
     try:
+        _rotate_logs()
         with open(os.path.join(LOG_DIR, "tracker_debug.log"), "a", encoding="utf-8") as f:
             f.write(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} {msg}\n")
     except Exception:
@@ -27,6 +106,7 @@ def _write_debug_log(msg):
 
 def _write_perf_log(msg):
     try:
+        _rotate_logs()
         with open(os.path.join(LOG_DIR, "tracker_perf.log"), "a", encoding="utf-8") as f:
             f.write(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]} {msg}\n")
     except Exception:
@@ -35,6 +115,7 @@ def _write_perf_log(msg):
 
 def _write_api_log(msg):
     try:
+        _rotate_logs()
         with open(os.path.join(LOG_DIR, "tracker_api.log"), "a", encoding="utf-8") as f:
             f.write(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} {msg}\n")
     except Exception:
