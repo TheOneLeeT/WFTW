@@ -18,14 +18,17 @@ jobs:
             build_target: windows
             artifact_name: WFTW-windows
             asset_name: WFTW-windows-x64.zip
+            icon_path: Media/Icon/WFTW.ico
           - os: macos-latest
             build_target: macos
             artifact_name: WFTW-macos
             asset_name: WFTW-macos-universal.dmg
+            icon_path: Media/Icon/WFTW.icns
           - os: ubuntu-latest
             build_target: linux
             artifact_name: WFTW-linux
             asset_name: WFTW-linux-x64.tar.gz
+            icon_path: Media/Icon/WFTW.png
 
     runs-on: ${{ matrix.os }}
 
@@ -53,7 +56,7 @@ jobs:
         env:
           FLET_CLI_NO_RICH_OUTPUT: 1
         run: |
-          flet build ${{ matrix.build_target }} --module-name gui --yes
+          flet build ${{ matrix.build_target }} --module-name gui --icon ${{ matrix.icon_path }} --yes
         shell: bash
 
       - name: Package Windows build
@@ -137,3 +140,4 @@ jobs:
           overwrite_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
