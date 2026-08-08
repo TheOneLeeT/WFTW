@@ -2,6 +2,7 @@ import flet as ft
 import json
 import math
 import os
+import random
 import subprocess
 import sys
 import threading
@@ -1600,17 +1601,28 @@ def main(page: ft.Page):
 
     FUNCTION_BAR_SPACING = 10
 
-    def _inject_test_card(mode):
+    def _inject_test_card(mode, index=0):
+        suffixes = ["Prime", "Wraith", "Vandal", "Set", "Blueprint", "Part", "Max", "Meso", "Neo", "Axi"]
+        suffix = suffixes[index % len(suffixes)]
+        item_name = f"Test {suffix}"
+        rank = (index % 10) + 1
+        display_rank = f" (Rank {rank})"
+        price = 50 + (index * 25) % 300
+        max_price = price + 50 + (index * 10) % 100
+        user = f"TEST_PLAYER_{index + 1}"
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        whisper_msg = f"/w {user} Hi! I want to buy: {item_name} (Rank {rank}) for {price} platinum. (warframe.market)"
+        original_key = f"{item_name}|{rank}"
         data = {
             "mode": mode,
-            "item_name": "Test Item Prime",
-            "display_rank": " (Rank 5)",
-            "price": 150,
-            "max_price": 200,
-            "user": "TEST_PLAYER",
-            "timestamp": datetime.now().strftime("%H:%M:%S"),
-            "whisper_msg": "/w TEST_PLAYER Hi! I want to buy: Test Item Prime (Rank 5) for 150 platinum. (warframe.market)",
-            "original_key": "Test Item Prime|5",
+            "item_name": item_name,
+            "display_rank": display_rank,
+            "price": price,
+            "max_price": max_price,
+            "user": user,
+            "timestamp": timestamp,
+            "whisper_msg": whisper_msg,
+            "original_key": original_key,
         }
         match_queue.put(data)
 
@@ -1625,7 +1637,7 @@ def main(page: ft.Page):
         width=34,
         height=34,
         ink=True,
-        on_click=lambda e: (_inject_test_card("wts"), _inject_test_card("wtb")),
+        on_click=lambda e: tuple(_inject_test_card(mode, i) for mode in ("wts", "wtb") for i in range(5)),
     )
 
     settings_btn = ft.Container(
