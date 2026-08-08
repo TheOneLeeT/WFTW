@@ -442,11 +442,11 @@ def main(page: ft.Page):
                     ft.Container(
                         content=ft.Text(f"{item_name}{display_rank}", size=15, weight=ft.FontWeight.BOLD),
                         expand=True,
-                        padding=ft.Padding.only(bottom=2),
+                        padding=ft.Padding.only(bottom=4),
                     ),
                     ft.Container(
                         content=ft.Text(f"{price}p", size=15, color=tag_color, weight=ft.FontWeight.BOLD),
-                        padding=ft.Padding.only(bottom=2),
+                        padding=ft.Padding.only(bottom=4),
                     ),
                     ft.Container(
                         content=ft.Row([
