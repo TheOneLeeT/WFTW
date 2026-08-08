@@ -84,10 +84,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.artifact_name }}
-          path: |
-            build/WFTW-windows-x64.zip
-            build/WFTW-macos-universal.tar.gz
-            build/WFTW-linux-x64.AppImage
+          path: build/WFTW-*
           compression-level: 9
           retention-days: 90
 
