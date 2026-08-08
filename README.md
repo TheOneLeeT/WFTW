@@ -4,9 +4,9 @@
 
 </div>
 
-# Warframe Trade Watch (WFTW)
-
 ---
+
+# Warframe Trade Watch (WFTW)
 
 ## What it is
 
