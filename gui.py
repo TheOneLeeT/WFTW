@@ -344,15 +344,15 @@ def main(page: ft.Page):
 
     _set_icon()
 
-    page.window.width = 1365
+    page.window.width = 1366
     page.window.height = 768
-    page.window.min_width = 1365
+    page.window.min_width = 1366
     page.window.min_height = 768
 
     def _force_window_size():
-        page.window.width = 1365
+        page.window.width = 1366
         page.window.height = 768
-        page.window.min_width = 1365
+        page.window.min_width = 1366
         page.window.min_height = 768
         try:
             page.loop.call_soon_threadsafe(page.update)
@@ -1884,8 +1884,8 @@ def main(page: ft.Page):
         def _do_clamp():
             nonlocal _resize_timer
             _resize_timer = None
-            if page.window.width < 1365 or page.window.height < 768:
-                page.window.width = 1365
+            if page.window.width < 1366 or page.window.height < 768:
+                page.window.width = 1366
                 page.window.height = 768
                 page.update()
         _resize_timer = threading.Timer(0.2, _do_clamp)
