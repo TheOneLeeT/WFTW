@@ -457,7 +457,7 @@ def main(page: ft.Page):
             bgcolor=BG_LIGHT,
             border_radius=6,
             padding=ft.Padding.symmetric(horizontal=8, vertical=0),
-            margin=ft.Margin.only(left=8, right=8, bottom=2),
+            margin=ft.Margin.only(bottom=2),
         )
 
     match_queue = queue.Queue()
