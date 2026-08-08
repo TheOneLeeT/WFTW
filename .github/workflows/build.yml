@@ -59,24 +59,31 @@ jobs:
       - name: Package build output
         run: |
           python -c "
-          import os, sys, zipfile, tarfile, shutil
+          import os, zipfile, tarfile, glob
           target = '${{ matrix.build_target }}'
+          root = 'build'
+          candidates = [d for d in os.listdir(root) if os.path.isdir(os.path.join(root, d))] if os.path.isdir(root) else []
+          if not candidates:
+              sys.exit(1)
+          src = os.path.join(root, candidates[0])
           if target == 'windows':
-              with zipfile.ZipFile('build/WFTW-windows-x64.zip', 'w', zipfile.ZIP_DEFLATED) as zf:
-                  for root, dirs, files in os.walk('build/windows'):
+              out = os.path.join(root, 'WFTW-windows-x64.zip')
+              with zipfile.ZipFile(out, 'w', zipfile.ZIP_DEFLATED) as zf:
+                  for r, _, files in os.walk(src):
                       for f in files:
-                          p = os.path.join(root, f)
-                          zf.write(p, os.path.relpath(p, 'build/windows'))
+                          p = os.path.join(r, f)
+                          zf.write(p, os.path.relpath(p, src))
           elif target == 'macos':
-              with tarfile.open('build/WFTW-macos-universal.tar.gz', 'w:gz') as tf:
-                  tf.add('build/macos', arcname='WFTW-macos')
+              out = os.path.join(root, 'WFTW-macos-universal.tar.gz')
+              with tarfile.open(out, 'w:gz') as tf:
+                  tf.add(src, arcname=os.path.basename(src))
           elif target == 'linux':
-              for root, dirs, files in os.walk('build/linux'):
-                  for f in files:
-                      if f.endswith('.AppImage'):
-                          src = os.path.join(root, f)
-                          dst = 'build/WFTW-linux-x64.AppImage'
-                          shutil.copy2(src, dst)
+              out = os.path.join(root, 'WFTW-linux-x64.zip')
+              with zipfile.ZipFile(out, 'w', zipfile.ZIP_DEFLATED) as zf:
+                  for r, _, files in os.walk(src):
+                      for f in files:
+                          p = os.path.join(r, f)
+                          zf.write(p, os.path.relpath(p, src))
           "
         shell: bash
 
