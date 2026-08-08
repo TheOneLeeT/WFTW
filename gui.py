@@ -10,7 +10,7 @@ import queue
 import pyperclip
 import atexit
 from datetime import datetime
-from tracker_core import TrackerCore, WTS_WATCHLIST, WTB_WATCHLIST, save_watchlists, load_watchlists, fetch_items, ITEM_CACHE, resolve_item
+from tracker_core import TrackerCore, WTS_WATCHLIST, WTB_WATCHLIST, save_watchlists, load_watchlists, fetch_items, ITEM_CACHE, resolve_item, _write_debug_log
 try:
     from plyer import notification
     HAS_PLYER = True
@@ -447,7 +447,7 @@ def main(page: ft.Page):
                             ft.Text("Copy", size=14, color="#ffffff", weight=ft.FontWeight.BOLD),
                         ], spacing=2, vertical_alignment=ft.CrossAxisAlignment.CENTER),
                         ink=True,
-                        padding=ft.Padding(left=8, top=0, right=8, bottom=4),
+                        padding=ft.Padding(left=8, top=0, right=8, bottom=3),
                         bgcolor=ft.Colors.BLUE_600,
                         border_radius=4,
                         on_click=do_copy,
@@ -848,6 +848,7 @@ def main(page: ft.Page):
         save_watchlists()
         render_watchlist(col, WTS_WATCHLIST if mode == "wts" else WTB_WATCHLIST, mode)
         append_log(f"Removed {_format_name(name)} from {mode.upper()}")
+        _write_debug_log(f"[GUI] delete_item: name={name} mode={mode.upper()} WTS={len(WTS_WATCHLIST)} WTB={len(WTB_WATCHLIST)}")
 
     def edit_platinum(name, mode, old_price):
         display_name = name.split("|")[0]
@@ -910,6 +911,7 @@ def main(page: ft.Page):
             col = wts_items_list if mode == "wts" else wtb_items_list
             render_watchlist(col, watchlist, mode)
             append_log(f"Updated platinum for {_format_name(name)}: {old_price}p -> {nv}p ({mode.upper()})")
+            _write_debug_log(f"[GUI] edit_platinum: name={name} mode={mode.upper()} old_price={old_price} new_price={nv} WTS={len(WTS_WATCHLIST)} WTB={len(WTB_WATCHLIST)}")
             page.pop_dialog()
 
         dlg = ft.AlertDialog(
@@ -1710,6 +1712,7 @@ def main(page: ft.Page):
             (WTS_WATCHLIST if is_wts else WTB_WATCHLIST)[key] = price_int
         save_watchlists()
         append_log(f"Added {_format_name(key)} to {mode.upper()}")
+        _write_debug_log(f"[GUI] add_item_inline: name={key} mode={mode.upper()} price={price_int} rank={rank or 'None'} subtype={subtype or 'None'} WTS={len(WTS_WATCHLIST)} WTB={len(WTB_WATCHLIST)}")
         column = wts_items_list if is_wts else wtb_items_list
         render_watchlist(column, WTS_WATCHLIST if is_wts else WTB_WATCHLIST, mode)
         search_tf.value = ""
