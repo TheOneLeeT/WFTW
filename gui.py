@@ -445,9 +445,9 @@ def main(page: ft.Page):
                         content=ft.Row([
                             ft.Icon(ft.Icons.CONTENT_COPY, size=15, color="#ffffff"),
                             ft.Text("Copy", size=14, color="#ffffff", weight=ft.FontWeight.BOLD),
-                        ], spacing=2, vertical_alignment=ft.CrossAxisAlignment.START),
+                        ], spacing=2, vertical_alignment=ft.CrossAxisAlignment.CENTER),
                         ink=True,
-                        padding=ft.Padding.symmetric(horizontal=8, vertical=2),
+                        padding=ft.Padding(left=8, top=0, right=8, bottom=4),
                         bgcolor=ft.Colors.BLUE_600,
                         border_radius=4,
                         on_click=do_copy,
