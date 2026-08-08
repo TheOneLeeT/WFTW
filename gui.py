@@ -439,8 +439,15 @@ def main(page: ft.Page):
                 ft.Row(top_row, spacing=6, vertical_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.CENTER),
                 ft.Container(height=1, bgcolor="#0d1416", margin=ft.Margin.symmetric(horizontal=16, vertical=3)),
                 ft.Row([
-                    ft.Text(f"{item_name}{display_rank}", size=15, weight=ft.FontWeight.BOLD, expand=True, margin=ft.Margin.only(bottom=2)),
-                    ft.Text(f"{price}p", size=15, color=tag_color, weight=ft.FontWeight.BOLD, margin=ft.Margin.only(bottom=2)),
+                    ft.Container(
+                        content=ft.Text(f"{item_name}{display_rank}", size=15, weight=ft.FontWeight.BOLD),
+                        expand=True,
+                        padding=ft.Padding.only(bottom=2),
+                    ),
+                    ft.Container(
+                        content=ft.Text(f"{price}p", size=15, color=tag_color, weight=ft.FontWeight.BOLD),
+                        padding=ft.Padding.only(bottom=2),
+                    ),
                     ft.Container(
                         content=ft.Row([
                             ft.Icon(ft.Icons.CONTENT_COPY, size=15, color="#ffffff", margin=ft.Margin.only(top=2)),
