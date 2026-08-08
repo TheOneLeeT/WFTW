@@ -1831,19 +1831,18 @@ def main(page: ft.Page):
                     ]),
                     ft.Container(
                         content=ft.Stack([
+                            ft.Container(
+                                content=log_output_wts,
+                                border_radius=10,
+                                padding=8,
+                                expand=True,
+                                border=ft.Border.all(1, BG_LIGHT),
+                            ),
                             ft.Image(
                                 src=BACKGROUND_LOGO_PATH,
                                 opacity=BACKGROUND_LOGO_OPACITY,
                                 fit=ft.BoxFit.FILL,
                                 expand=True,
-                            ),
-                            ft.Container(
-                                content=log_output_wts,
-                                bgcolor=BG_DARK,
-                                border_radius=10,
-                                padding=8,
-                                expand=True,
-                                border=ft.Border.all(1, BG_LIGHT),
                             ),
                         ], expand=True),
                         expand=True,
@@ -1857,19 +1856,18 @@ def main(page: ft.Page):
                     ]),
                     ft.Container(
                         content=ft.Stack([
+                            ft.Container(
+                                content=log_output_wtb,
+                                border_radius=10,
+                                padding=8,
+                                expand=True,
+                                border=ft.Border.all(1, BG_LIGHT),
+                            ),
                             ft.Image(
                                 src=BACKGROUND_LOGO_PATH,
                                 opacity=BACKGROUND_LOGO_OPACITY,
                                 fit=ft.BoxFit.FILL,
                                 expand=True,
-                            ),
-                            ft.Container(
-                                content=log_output_wtb,
-                                bgcolor=BG_DARK,
-                                border_radius=10,
-                                padding=8,
-                                expand=True,
-                                border=ft.Border.all(1, BG_LIGHT),
                             ),
                         ], expand=True),
                         expand=True,
