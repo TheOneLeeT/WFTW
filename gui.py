@@ -803,7 +803,7 @@ def main(page: ft.Page):
                     ft.Container(
                         content=ft.Text(display_name, size=13, no_wrap=False),
                         expand=True,
-                        alignment=ft.Alignment.center,
+                        alignment=ft.Alignment.CENTER,
                     ),
                     ft.Text(extra, size=11, color=ft.Colors.ON_SURFACE_VARIANT),
                 ], expand=1, spacing=4, vertical_alignment=ft.CrossAxisAlignment.CENTER),
@@ -811,7 +811,7 @@ def main(page: ft.Page):
                     ft.Container(
                         content=ft.Text(f"{price}p", size=13, color=color),
                         expand=True,
-                        alignment=ft.Alignment.center,
+                        alignment=ft.Alignment.CENTER,
                     ),
                     ft.Container(
                         content=ft.Icon(ft.Icons.EDIT, size=14, color="#ff9800"),
