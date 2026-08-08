@@ -44,8 +44,10 @@ jobs:
           pip install -r requirements.txt
 
       - name: Build with Flet
+        env:
+          FLET_CLI_NO_RICH_OUTPUT: 1
         run: |
-          flet build ${{ matrix.build_target }} --artifact WFTW --description "Warframe Trade Watch"
+          flet build ${{ matrix.build_target }} --artifact WFTW --description "Warframe Trade Watch" --yes
         shell: bash
 
       - name: Upload artifacts
