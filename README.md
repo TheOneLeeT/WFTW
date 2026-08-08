@@ -1,4 +1,9 @@
+<div align="center">
+
 ![WFTW Logo](Media/Icon/WFTW.png)
+
+</div>
+
 # Warframe Trade Watch (WFTW)
 
 ---
