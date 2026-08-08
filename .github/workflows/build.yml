@@ -17,7 +17,7 @@ jobs:
           - os: windows-latest
             build_target: windows
             artifact_name: WFTW-windows
-            asset_name: WFTW-windows-x64.exe
+            asset_name: WFTW-windows-x64.zip
           - os: macos-latest
             build_target: macos
             artifact_name: WFTW-macos
@@ -25,7 +25,7 @@ jobs:
           - os: ubuntu-latest
             build_target: linux
             artifact_name: WFTW-linux
-            asset_name: WFTW-linux-x64.AppImage
+            asset_name: WFTW-linux-x64.tar.gz
 
     runs-on: ${{ matrix.os }}
 
@@ -53,7 +53,34 @@ jobs:
         env:
           FLET_CLI_NO_RICH_OUTPUT: 1
         run: |
-          flet build ${{ matrix.build_target }} --module-name gui --artifact WFTW --description "Warframe Trade Watch" --yes
+          flet build ${{ matrix.build_target }} --module-name gui --yes
+        shell: bash
+
+      - name: Package Windows build
+        if: matrix.build_target == 'windows'
+        run: |
+          mkdir -p release
+          cp -r build/windows/* release/
+          cd release
+          zip -r ../WFTW-windows-x64.zip .
+        shell: bash
+
+      - name: Package macOS build
+        if: matrix.build_target == 'macos'
+        run: |
+          mkdir -p release
+          cp -r build/macos/* release/
+          cd release
+          tar -czf ../WFTW-macos-universal.tar.gz .
+        shell: bash
+
+      - name: Package Linux build
+        if: matrix.build_target == 'linux'
+        run: |
+          mkdir -p release
+          cp -r build/linux/* release/
+          cd release
+          tar -czf ../WFTW-linux-x64.tar.gz .
         shell: bash
 
       - name: Upload artifacts
@@ -61,7 +88,8 @@ jobs:
         with:
           name: ${{ matrix.artifact_name }}
           path: |
-            build/**/*
+            WFTW-*.zip
+            WFTW-*.tar.gz
           compression-level: 9
           retention-days: 90
 
@@ -83,28 +111,19 @@ jobs:
         run: |
           mkdir -p release
           
-          # Windows - find and copy the main executable
-          if [ -d "artifacts/WFTW-windows" ]; then
-              exe=$(find artifacts/WFTW-windows -name "*.exe" -type f | head -1)
-              if [ -n "$exe" ]; then
-                  cp "$exe" release/WFTW-windows-x64.exe
-              fi
+          # Windows
+          if [ -f "artifacts/WFTW-windows/WFTW-windows-x64.zip" ]; then
+              cp "artifacts/WFTW-windows/WFTW-windows-x64.zip" release/
           fi
           
-          # macOS - create tar.gz from the app bundle
-          if [ -d "artifacts/WFTW-macos" ]; then
-              app_dir=$(find artifacts/WFTW-macos -name "*.app" -type d | head -1)
-              if [ -n "$app_dir" ]; then
-                  tar -czf release/WFTW-macos-universal.tar.gz -C "$(dirname "$app_dir")" "$(basename "$app_dir")"
-              fi
+          # macOS
+          if [ -f "artifacts/WFTW-macos/WFTW-macos-universal.tar.gz" ]; then
+              cp "artifacts/WFTW-macos/WFTW-macos-universal.tar.gz" release/
           fi
           
-          # Linux - find and copy the AppImage
-          if [ -d "artifacts/WFTW-linux" ]; then
-              appimage=$(find artifacts/WFTW-linux -name "*.AppImage" -type f | head -1)
-              if [ -n "$appimage" ]; then
-                  cp "$appimage" release/WFTW-linux-x64.AppImage
-              fi
+          # Linux
+          if [ -f "artifacts/WFTW-linux/WFTW-linux-x64.tar.gz" ]; then
+              cp "artifacts/WFTW-linux/WFTW-linux-x64.tar.gz" release/
           fi
 
       - name: Create Release
