@@ -64,23 +64,14 @@ def load_watchlists():
         WTS_WATCHLIST.update(_safe_defaults())
         WTB_WATCHLIST.clear()
         save_watchlists()
-    if hasattr(threading, 'current_thread') and threading.current_thread().name == 'MainThread':
-        try:
-            with open("load_log.txt", "a") as f:
-                f.write(f"load_watchlists: WTS={len(WTS_WATCHLIST)}, WTB={len(WTB_WATCHLIST)}\n")
-        except Exception:
-            pass
+    _write_debug_log(f"[INIT] load_watchlists: WTS={len(WTS_WATCHLIST)}, WTB={len(WTB_WATCHLIST)}")
 
 
 def save_watchlists():
     with open(CONFIG_PATH, "w", encoding="utf-8") as f:
         json.dump({"wts": WTS_WATCHLIST, "wtb": WTB_WATCHLIST}, f, indent=4)
         f.flush()
-    try:
-        with open("save_watchlists_log.txt", "a") as f:
-            f.write(f"save_watchlists: WTS={len(WTS_WATCHLIST)}, WTB={len(WTB_WATCHLIST)}\n")
-    except Exception:
-        pass
+    _write_debug_log(f"[INIT] save_watchlists: WTS={len(WTS_WATCHLIST)}, WTB={len(WTB_WATCHLIST)}")
 
 
 ITEM_CACHE = {}
