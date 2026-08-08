@@ -369,7 +369,7 @@ def main(page: ft.Page):
 
     def append_log(msg):
         try:
-            with open("wftw_alerts.log", "a", encoding="utf-8") as f:
+            with open(os.path.join("Logs", "wftw_alerts.log"), "a", encoding="utf-8") as f:
                 f.write(f"{datetime.now().strftime('%H:%M:%S')} {msg}\n")
         except Exception:
             pass

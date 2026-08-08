@@ -13,9 +13,13 @@ except ImportError:
     HAS_PLYER = False
 
 
+LOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Logs")
+os.makedirs(LOG_DIR, exist_ok=True)
+
+
 def _write_debug_log(msg):
     try:
-        with open("tracker_debug.log", "a", encoding="utf-8") as f:
+        with open(os.path.join(LOG_DIR, "tracker_debug.log"), "a", encoding="utf-8") as f:
             f.write(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} {msg}\n")
     except Exception:
         pass
@@ -23,7 +27,7 @@ def _write_debug_log(msg):
 
 def _write_perf_log(msg):
     try:
-        with open("tracker_perf.log", "a", encoding="utf-8") as f:
+        with open(os.path.join(LOG_DIR, "tracker_perf.log"), "a", encoding="utf-8") as f:
             f.write(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]} {msg}\n")
     except Exception:
         pass
@@ -31,7 +35,7 @@ def _write_perf_log(msg):
 
 def _write_api_log(msg):
     try:
-        with open("tracker_api.log", "a", encoding="utf-8") as f:
+        with open(os.path.join(LOG_DIR, "tracker_api.log"), "a", encoding="utf-8") as f:
             f.write(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} {msg}\n")
     except Exception:
         pass
