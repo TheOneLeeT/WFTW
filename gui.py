@@ -1856,22 +1856,23 @@ def main(page: ft.Page):
             ], expand=True),
         ], expand=True),
     ], expand=True)
-    foreground.opacity = 0.88
 
     page.add(
         ft.Stack([
-            ft.Container(
-                content=ft.Image(
-                    src=BACKGROUND_LOGO_PATH,
-                    opacity=BACKGROUND_LOGO_OPACITY,
-                    fit=ft.BoxFit.FILL,
+            foreground,
+            ft.TransparentPointer(
+                content=ft.Container(
+                    content=ft.Image(
+                        src=BACKGROUND_LOGO_PATH,
+                        opacity=BACKGROUND_LOGO_OPACITY,
+                        fit=ft.BoxFit.FILL,
+                        width=5000,
+                        height=5000,
+                    ),
                     width=5000,
                     height=5000,
                 ),
-                width=5000,
-                height=5000,
             ),
-            foreground,
         ], expand=True)
     )
     _resize_timer = None
