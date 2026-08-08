@@ -443,7 +443,7 @@ def main(page: ft.Page):
                     ft.Text(f"{price}p", size=15, color=tag_color, weight=ft.FontWeight.BOLD),
                     ft.Container(
                         content=ft.Row([
-                            ft.Icon(ft.Icons.CONTENT_COPY, size=15, color="#ffffff", offset=ft.Offset(0, 1)),
+                            ft.Icon(ft.Icons.CONTENT_COPY, size=15, color="#ffffff", margin=ft.Margin.only(top=1)),
                             ft.Text("Copy", size=14, color="#ffffff", weight=ft.FontWeight.BOLD),
                         ], spacing=2, vertical_alignment=ft.CrossAxisAlignment.CENTER),
                         ink=True,
