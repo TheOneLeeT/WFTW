@@ -436,7 +436,7 @@ def main(page: ft.Page):
 
         return ft.Container(
             content=ft.Column([
-                ft.Row(top_row, spacing=6, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+                ft.Row(top_row, spacing=6, vertical_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.CENTER),
                 ft.Container(height=1, bgcolor="#0d1416", margin=ft.Margin.symmetric(horizontal=16, vertical=3)),
                 ft.Row([
                     ft.Text(f"{item_name}{display_rank}", size=15, weight=ft.FontWeight.BOLD, expand=True),
@@ -452,7 +452,7 @@ def main(page: ft.Page):
                         border_radius=4,
                         on_click=do_copy,
                     ),
-                ], spacing=6, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+                ], spacing=6, vertical_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.CENTER),
             ], spacing=0, tight=True),
             bgcolor=BG_LIGHT,
             border_radius=6,
