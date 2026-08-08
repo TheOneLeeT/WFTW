@@ -34,6 +34,8 @@ BG_LIGHT = "#222B35"
 SETTINGS_BG = "#36414D"
 ACCENT_COLOR = "#427D96"
 NOTIFICATION_ALPHA = 0.85
+BACKGROUND_LOGO_OPACITY = 0.38
+BACKGROUND_LOGO_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Media", "Icon", "WFTW_bg.png")
 _TEMP_WAV_FILES = set()
 
 
@@ -1737,120 +1739,130 @@ def main(page: ft.Page):
     )
 
     page.add(
-        ft.Column([
-            ft.Row([
-                ft.Container(
-                    content=ft.Text("Warframe Trade Watch (WFTW)", size=20, weight=ft.FontWeight.BOLD),
-                    alignment=ft.Alignment.CENTER_LEFT,
-                    height=34,
+        ft.Stack([
+            ft.Container(
+                content=ft.Image(
+                    src=BACKGROUND_LOGO_PATH,
+                    opacity=BACKGROUND_LOGO_OPACITY,
+                    fit=ft.ImageFit.COVER,
                 ),
-                ft.Container(expand=True),
-                ft.Row([
-                    test_card_btn,
-                    ft.Container(width=FUNCTION_BAR_SPACING),
-                    settings_btn,
-                    ft.Container(width=FUNCTION_BAR_SPACING),
-                    main_status_seg,
-                    ft.Container(width=FUNCTION_BAR_SPACING),
-                    start_btn,
-                    stop_btn,
-                ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
-            ], vertical_alignment=ft.CrossAxisAlignment.CENTER, height=34),
-            ft.Divider(height=4),
+                expand=True,
+            ),
             ft.Column([
                 ft.Row([
-                    ft.Column([
-                        ft.Row([
-                            ft.Text("Want to Sell Orders", size=15, weight=ft.FontWeight.BOLD, color=WTS_COLOR),
-                            ft.Container(expand=True),
-                        ]),
-                        wts_add_form,
-                        ft.Container(
-                            content=wts_items_list,
-                            bgcolor=BG_DARK,
-                            border_radius=10,
-                            padding=8,
-                            expand=True,
-                            border=ft.Border.all(1, BG_LIGHT),
-                        ),
-                    ], expand=True),
-                    ft.VerticalDivider(width=8),
-                    ft.Column([
-                        ft.Row([
-                            ft.Text("Want to Buy Orders", size=15, weight=ft.FontWeight.BOLD, color=WTB_COLOR),
-                            ft.Container(expand=True),
-                        ]),
-                        wtb_add_form,
-                        ft.Container(
-                            content=wtb_items_list,
-                            bgcolor=BG_DARK,
-                            border_radius=10,
-                            padding=8,
-                            expand=True,
-                            border=ft.Border.all(1, BG_LIGHT),
-                        ),
+                    ft.Container(
+                        content=ft.Text("Warframe Trade Watch (WFTW)", size=20, weight=ft.FontWeight.BOLD),
+                        alignment=ft.Alignment.CENTER_LEFT,
+                        height=34,
+                    ),
+                    ft.Container(expand=True),
+                    ft.Row([
+                        test_card_btn,
+                        ft.Container(width=FUNCTION_BAR_SPACING),
+                        settings_btn,
+                        ft.Container(width=FUNCTION_BAR_SPACING),
+                        main_status_seg,
+                        ft.Container(width=FUNCTION_BAR_SPACING),
+                        start_btn,
+                        stop_btn,
+                    ], spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+                ], vertical_alignment=ft.CrossAxisAlignment.CENTER, height=34),
+                ft.Divider(height=4),
+                ft.Column([
+                    ft.Row([
+                        ft.Column([
+                            ft.Row([
+                                ft.Text("Want to Sell Orders", size=15, weight=ft.FontWeight.BOLD, color=WTS_COLOR),
+                                ft.Container(expand=True),
+                            ]),
+                            wts_add_form,
+                            ft.Container(
+                                content=wts_items_list,
+                                bgcolor=BG_DARK,
+                                border_radius=10,
+                                padding=8,
+                                expand=True,
+                                border=ft.Border.all(1, BG_LIGHT),
+                            ),
+                        ], expand=True),
+                        ft.VerticalDivider(width=8),
+                        ft.Column([
+                            ft.Row([
+                                ft.Text("Want to Buy Orders", size=15, weight=ft.FontWeight.BOLD, color=WTB_COLOR),
+                                ft.Container(expand=True),
+                            ]),
+                            wtb_add_form,
+                            ft.Container(
+                                content=wtb_items_list,
+                                bgcolor=BG_DARK,
+                                border_radius=10,
+                                padding=8,
+                                expand=True,
+                                border=ft.Border.all(1, BG_LIGHT),
+                            ),
+                        ], expand=True),
                     ], expand=True),
                 ], expand=True),
-            ], expand=True),
-            ft.Divider(height=4),
-            ft.Row([
-                instructions,
-                ft.Container(
-                    content=log_output,
-                    bgcolor=BG_DARK,
-                    border_radius=10,
-                    padding=8,
-                    border=ft.Border.all(1, BG_LIGHT),
-                    height=122,
-                    expand=2,
-                ),
-                ft.Container(
-                    content=ft.Column([
-                        ft.Row([tracking_text], alignment=ft.MainAxisAlignment.END),
-                        ft.Row([status_label, status_word, status_detail], alignment=ft.MainAxisAlignment.END),
-                        ft.Container(expand=True),
-                        ft.Text("API: api.warframe.market/v2", size=10, color=ft.Colors.ON_SURFACE_VARIANT),
-                        ft.Text("This is a fan project and is not affiliated with Digital Extremes", size=10, color=ft.Colors.ON_SURFACE_VARIANT),
-                    ], spacing=2, tight=True, horizontal_alignment=ft.CrossAxisAlignment.END),
-                    bgcolor=BG_LIGHT,
-                    border_radius=10,
-                    padding=10,
-                    border=ft.Border.all(1, BG_LIGHT),
-                    height=122,
-                    expand=1,
-                ),
-            ], vertical_alignment=ft.CrossAxisAlignment.CENTER),
-            ft.Divider(height=4),
-            ft.Column([
+                ft.Divider(height=4),
                 ft.Row([
-                    ft.Column([
-                        ft.Row([
-                            ft.Text("WTS Log", size=14, weight=ft.FontWeight.BOLD, color=WTS_COLOR),
+                    instructions,
+                    ft.Container(
+                        content=log_output,
+                        bgcolor=BG_DARK,
+                        border_radius=10,
+                        padding=8,
+                        border=ft.Border.all(1, BG_LIGHT),
+                        height=122,
+                        expand=2,
+                    ),
+                    ft.Container(
+                        content=ft.Column([
+                            ft.Row([tracking_text], alignment=ft.MainAxisAlignment.END),
+                            ft.Row([status_label, status_word, status_detail], alignment=ft.MainAxisAlignment.END),
                             ft.Container(expand=True),
-                        ]),
-                        ft.Container(
-                            content=log_output_wts,
-                            bgcolor=BG_DARK,
-                            border_radius=10,
-                            padding=8,
-                            expand=True,
-                            border=ft.Border.all(1, BG_LIGHT),
-                        ),
-                    ], expand=True),
-                    ft.VerticalDivider(width=8),
-                    ft.Column([
-                        ft.Row([
-                            ft.Text("WTB Log", size=14, weight=ft.FontWeight.BOLD, color=WTB_COLOR),
-                            ft.Container(expand=True),
-                        ]),
-                        ft.Container(
-                            content=log_output_wtb,
-                            bgcolor=BG_DARK,
-                            border_radius=10,
-                            padding=8,
-                            expand=True,
-                            border=ft.Border.all(1, BG_LIGHT),
-                        ),
+                            ft.Text("API: api.warframe.market/v2", size=10, color=ft.Colors.ON_SURFACE_VARIANT),
+                            ft.Text("This is a fan project and is not affiliated with Digital Extremes", size=10, color=ft.Colors.ON_SURFACE_VARIANT),
+                        ], spacing=2, tight=True, horizontal_alignment=ft.CrossAxisAlignment.END),
+                        bgcolor=BG_LIGHT,
+                        border_radius=10,
+                        padding=10,
+                        border=ft.Border.all(1, BG_LIGHT),
+                        height=122,
+                        expand=1,
+                    ),
+                ], vertical_alignment=ft.CrossAxisAlignment.CENTER),
+                ft.Divider(height=4),
+                ft.Column([
+                    ft.Row([
+                        ft.Column([
+                            ft.Row([
+                                ft.Text("WTS Log", size=14, weight=ft.FontWeight.BOLD, color=WTS_COLOR),
+                                ft.Container(expand=True),
+                            ]),
+                            ft.Container(
+                                content=log_output_wts,
+                                bgcolor=BG_DARK,
+                                border_radius=10,
+                                padding=8,
+                                expand=True,
+                                border=ft.Border.all(1, BG_LIGHT),
+                            ),
+                        ], expand=True),
+                        ft.VerticalDivider(width=8),
+                        ft.Column([
+                            ft.Row([
+                                ft.Text("WTB Log", size=14, weight=ft.FontWeight.BOLD, color=WTB_COLOR),
+                                ft.Container(expand=True),
+                            ]),
+                            ft.Container(
+                                content=log_output_wtb,
+                                bgcolor=BG_DARK,
+                                border_radius=10,
+                                padding=8,
+                                expand=True,
+                                border=ft.Border.all(1, BG_LIGHT),
+                            ),
+                        ], expand=True),
                     ], expand=True),
                 ], expand=True),
             ], expand=True),
