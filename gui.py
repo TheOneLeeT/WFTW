@@ -491,21 +491,16 @@ def main(page: ft.Page):
 
                     card = None
 
-                    def on_delete(e, mode=mode):
-                        nonlocal card
-                        if card is None:
-                            return
+                    def on_delete(e, mode=mode, card=card):
                         try:
                             target = log_output_wtb if mode == "wtb" else log_output_wts
                             if card in target.controls:
                                 target.controls.remove(card)
+                                page.update()
                         except Exception:
                             pass
 
-                    def on_untrack(e, mode=mode, data=data):
-                        nonlocal card
-                        if card is None:
-                            return
+                    def on_untrack(e, mode=mode, data=data, card=card):
                         try:
                             key = data.get("original_key")
                             if key is None:
@@ -521,6 +516,7 @@ def main(page: ft.Page):
                             target = log_output_wtb if mode == "wtb" else log_output_wts
                             if card in target.controls:
                                 target.controls.remove(card)
+                                page.update()
                         except Exception:
                             pass
 
@@ -1601,30 +1597,36 @@ def main(page: ft.Page):
 
     FUNCTION_BAR_SPACING = 10
 
-    def _inject_test_card(mode, index=0):
-        suffixes = ["Prime", "Wraith", "Vandal", "Set", "Blueprint", "Part", "Max", "Meso", "Neo", "Axi"]
-        suffix = suffixes[index % len(suffixes)]
-        item_name = f"Test {suffix}"
-        rank = (index % 10) + 1
-        display_rank = f" (Rank {rank})"
-        price = 50 + (index * 25) % 300
-        max_price = price + 50 + (index * 10) % 100
-        user = f"TEST_PLAYER_{index + 1}"
-        timestamp = datetime.now().strftime("%H:%M:%S")
-        whisper_msg = f"/w {user} Hi! I want to buy: {item_name} (Rank {rank}) for {price} platinum. (warframe.market)"
-        original_key = f"{item_name}|{rank}"
-        data = {
-            "mode": mode,
-            "item_name": item_name,
-            "display_rank": display_rank,
-            "price": price,
-            "max_price": max_price,
-            "user": user,
-            "timestamp": timestamp,
-            "whisper_msg": whisper_msg,
-            "original_key": original_key,
-        }
-        match_queue.put(data)
+    _test_card_counter = 0
+
+    def _inject_test_card(mode, count=1):
+        nonlocal _test_card_counter
+        for i in range(count):
+            idx = _test_card_counter + i
+            suffixes = ["Prime", "Wraith", "Vandal", "Set", "Blueprint", "Part", "Max", "Meso", "Neo", "Axi"]
+            suffix = suffixes[idx % len(suffixes)]
+            item_name = f"Test {suffix}"
+            rank = (idx % 10) + 1
+            display_rank = f" (Rank {rank})"
+            price = 50 + (idx * 25) % 300
+            max_price = price + 50 + (idx * 10) % 100
+            user = f"TEST_PLAYER_{idx + 1}"
+            timestamp = datetime.now().strftime("%H:%M:%S")
+            whisper_msg = f"/w {user} Hi! I want to buy: {item_name} (Rank {rank}) for {price} platinum. (warframe.market)"
+            original_key = f"{item_name}|{rank}"
+            data = {
+                "mode": mode,
+                "item_name": item_name,
+                "display_rank": display_rank,
+                "price": price,
+                "max_price": max_price,
+                "user": user,
+                "timestamp": timestamp,
+                "whisper_msg": whisper_msg,
+                "original_key": original_key,
+            }
+            match_queue.put(data)
+        _test_card_counter += count
 
     test_card_btn = ft.Container(
         content=ft.Stack([
@@ -1637,7 +1639,7 @@ def main(page: ft.Page):
         width=34,
         height=34,
         ink=True,
-        on_click=lambda e: tuple(_inject_test_card(mode, i) for mode in ("wts", "wtb") for i in range(5)),
+        on_click=lambda e: (_inject_test_card("wts", 5), _inject_test_card("wtb", 5)),
     )
 
     settings_btn = ft.Container(
