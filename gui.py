@@ -491,7 +491,7 @@ def main(page: ft.Page):
 
                     card = _make_match_card(data, on_delete=lambda e: None, on_untrack=lambda e: None)
 
-                    def _on_delete(e, card=card):
+                    def _on_delete(e, card=card, mode=mode):
                         try:
                             target = log_output_wtb if mode == "wtb" else log_output_wts
                             if card in target.controls:
@@ -500,7 +500,7 @@ def main(page: ft.Page):
                         except Exception:
                             pass
 
-                    def _on_untrack(e, card=card, data=data):
+                    def _on_untrack(e, card=card, data=data, mode=mode):
                         try:
                             key = data.get("original_key")
                             if key is None:
