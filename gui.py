@@ -32,6 +32,7 @@ WTB_COLOR = "#209e70"
 BG_DARK = "#071013"
 BG_LIGHT = "#171e21"
 SETTINGS_BG = "#272a2f"
+ACCENT_COLOR = "#3b4858"
 _TEMP_WAV_FILES = set()
 
 
@@ -999,16 +1000,16 @@ def main(page: ft.Page):
     )
 
     def _update_main_status_filter():
-        main_status_ingame.bgcolor = "#3b4858" if current_status_filter == STATUS_ONLY_INGAME else BG_LIGHT
-        main_status_online.bgcolor = "#3b4858" if current_status_filter == STATUS_ONLY_ONLINE else BG_LIGHT
-        main_status_both.bgcolor = "#3b4858" if current_status_filter == STATUS_BOTH else BG_LIGHT
+        main_status_ingame.bgcolor = ACCENT_COLOR if current_status_filter == STATUS_ONLY_INGAME else BG_LIGHT
+        main_status_online.bgcolor = ACCENT_COLOR if current_status_filter == STATUS_ONLY_ONLINE else BG_LIGHT
+        main_status_both.bgcolor = ACCENT_COLOR if current_status_filter == STATUS_BOTH else BG_LIGHT
         main_status_ingame.content = _segmented_btn_content("In Game", current_status_filter == STATUS_ONLY_INGAME)
         main_status_online.content = _segmented_btn_content("On Site", current_status_filter == STATUS_ONLY_ONLINE)
         main_status_both.content = _segmented_btn_content("Both", current_status_filter == STATUS_BOTH)
 
     main_status_ingame = ft.Container(
         content=_segmented_btn_content("In Game", current_status_filter == STATUS_ONLY_INGAME),
-        bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_INGAME else BG_LIGHT,
+        bgcolor=ACCENT_COLOR if current_status_filter == STATUS_ONLY_INGAME else BG_LIGHT,
         expand=True,
         height=34,
         alignment=ft.Alignment.CENTER,
@@ -1018,7 +1019,7 @@ def main(page: ft.Page):
     )
     main_status_online = ft.Container(
         content=_segmented_btn_content("On Site", current_status_filter == STATUS_ONLY_ONLINE),
-        bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_ONLINE else BG_LIGHT,
+        bgcolor=ACCENT_COLOR if current_status_filter == STATUS_ONLY_ONLINE else BG_LIGHT,
         expand=True,
         height=34,
         alignment=ft.Alignment.CENTER,
@@ -1028,7 +1029,7 @@ def main(page: ft.Page):
     )
     main_status_both = ft.Container(
         content=_segmented_btn_content("Both", current_status_filter == STATUS_BOTH),
-        bgcolor="#3b4858" if current_status_filter == STATUS_BOTH else BG_LIGHT,
+        bgcolor=ACCENT_COLOR if current_status_filter == STATUS_BOTH else BG_LIGHT,
         expand=True,
         height=34,
         alignment=ft.Alignment.CENTER,
@@ -1080,9 +1081,9 @@ def main(page: ft.Page):
         def _on_default_status_changed(value):
             nonlocal current_status_filter, tracking_status
             current_status_filter = value
-            row1_cell_ingame.bgcolor = "#3b4858" if value == STATUS_ONLY_INGAME else BG_LIGHT
-            row1_cell_online.bgcolor = "#3b4858" if value == STATUS_ONLY_ONLINE else BG_LIGHT
-            row1_cell_both.bgcolor = "#3b4858" if value == STATUS_BOTH else BG_LIGHT
+            row1_cell_ingame.bgcolor = ACCENT_COLOR if value == STATUS_ONLY_INGAME else BG_LIGHT
+            row1_cell_online.bgcolor = ACCENT_COLOR if value == STATUS_ONLY_ONLINE else BG_LIGHT
+            row1_cell_both.bgcolor = ACCENT_COLOR if value == STATUS_BOTH else BG_LIGHT
             row1_cell_ingame.content = _segmented_btn_content("In Game", value == STATUS_ONLY_INGAME)
             row1_cell_online.content = _segmented_btn_content("On Site", value == STATUS_ONLY_ONLINE)
             row1_cell_both.content = _segmented_btn_content("Both", value == STATUS_BOTH)
@@ -1094,7 +1095,7 @@ def main(page: ft.Page):
 
         row1_cell_ingame = ft.Container(
             content=_segmented_btn_content("In Game", current_status_filter == STATUS_ONLY_INGAME),
-            bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_INGAME else BG_LIGHT,
+            bgcolor=ACCENT_COLOR if current_status_filter == STATUS_ONLY_INGAME else BG_LIGHT,
             expand=True,
             height=34,
             alignment=ft.Alignment.CENTER,
@@ -1105,7 +1106,7 @@ def main(page: ft.Page):
 
         row1_cell_online = ft.Container(
             content=_segmented_btn_content("On Site", current_status_filter == STATUS_ONLY_ONLINE),
-            bgcolor="#3b4858" if current_status_filter == STATUS_ONLY_ONLINE else BG_LIGHT,
+            bgcolor=ACCENT_COLOR if current_status_filter == STATUS_ONLY_ONLINE else BG_LIGHT,
             expand=True,
             height=34,
             alignment=ft.Alignment.CENTER,
@@ -1116,7 +1117,7 @@ def main(page: ft.Page):
 
         row1_cell_both = ft.Container(
             content=_segmented_btn_content("Both", current_status_filter == STATUS_BOTH),
-            bgcolor="#3b4858" if current_status_filter == STATUS_BOTH else BG_LIGHT,
+            bgcolor=ACCENT_COLOR if current_status_filter == STATUS_BOTH else BG_LIGHT,
             expand=True,
             height=34,
             alignment=ft.Alignment.CENTER,
@@ -1144,7 +1145,7 @@ def main(page: ft.Page):
         def _on_notif_on_click():
             _settings["notifications_enabled"] = True
             save_settings(_settings)
-            row2_cell_on.bgcolor = "#3b4858"
+            row2_cell_on.bgcolor = ACCENT_COLOR
             row2_cell_off.bgcolor = BG_LIGHT
             row2_cell_on.content = _segmented_btn_content("On", True)
             row2_cell_off.content = _segmented_btn_content("Off", False)
@@ -1155,7 +1156,7 @@ def main(page: ft.Page):
             _settings["notifications_enabled"] = False
             save_settings(_settings)
             row2_cell_on.bgcolor = BG_LIGHT
-            row2_cell_off.bgcolor = "#3b4858"
+            row2_cell_off.bgcolor = ACCENT_COLOR
             row2_cell_on.content = _segmented_btn_content("On", False)
             row2_cell_off.content = _segmented_btn_content("Off", True)
             append_log("Notifications disabled")
@@ -1166,7 +1167,7 @@ def main(page: ft.Page):
 
         row2_cell_on = ft.Container(
             content=_segmented_btn_content("On", notifications_enabled),
-            bgcolor="#3b4858" if notifications_enabled else BG_LIGHT,
+            bgcolor=ACCENT_COLOR if notifications_enabled else BG_LIGHT,
             expand=True,
             height=34,
             alignment=ft.Alignment.CENTER,
@@ -1177,7 +1178,7 @@ def main(page: ft.Page):
 
         row2_cell_off = ft.Container(
             content=_segmented_btn_content("Off", not notifications_enabled),
-            bgcolor="#3b4858" if not notifications_enabled else BG_LIGHT,
+            bgcolor=ACCENT_COLOR if not notifications_enabled else BG_LIGHT,
             expand=True,
             height=34,
             alignment=ft.Alignment.CENTER,
@@ -1188,7 +1189,7 @@ def main(page: ft.Page):
 
         row2_cell_test = ft.Container(
             content=ft.Text("⌂ Test", color="#d7e3f7", text_align=ft.TextAlign.CENTER, size=13, weight=ft.FontWeight.W_500),
-            bgcolor="#3b4858",
+            bgcolor=ACCENT_COLOR,
             expand=True,
             height=34,
             alignment=ft.Alignment.CENTER,
@@ -1315,7 +1316,7 @@ def main(page: ft.Page):
         track_active = ft.Container(
             width=(int(current_volume * 100) / 100.0) * 77,
             height=track_height,
-            bgcolor="#3b4858", border_radius=2,
+            bgcolor=ACCENT_COLOR, border_radius=2,
         )
         halo = ft.Container(
             width=halo_size, height=halo_size,
@@ -1387,7 +1388,7 @@ def main(page: ft.Page):
 
         def _update_sound_dropdown_selection():
             for item, filename in zip(sound_dropdown_items, wav_files):
-                item.bgcolor = "#3b4858" if filename == current_sound else BG_LIGHT
+                item.bgcolor = ACCENT_COLOR if filename == current_sound else BG_LIGHT
 
         def _toggle_sound_dropdown():
             nonlocal sound_dropdown_open
