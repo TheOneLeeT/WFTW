@@ -18,17 +18,14 @@ jobs:
             build_target: windows
             artifact_name: WFTW-windows
             asset_name: WFTW-windows-x64.zip
-            
           - os: macos-latest
             build_target: macos
             artifact_name: WFTW-macos
             asset_name: WFTW-macos-universal.dmg
-            
           - os: ubuntu-latest
             build_target: linux
             artifact_name: WFTW-linux
             asset_name: WFTW-linux-x64.tar.gz
-            
 
     runs-on: ${{ matrix.os }}
 
@@ -62,8 +59,8 @@ jobs:
       - name: Set Windows EXE icon
         if: matrix.build_target == 'windows'
         run: |
-          npm install -g rcedit
-          rcedit build/windows/WFTW.exe --set-icon Media/Icon/WFTW.ico
+          npm install rcedit
+          npx rcedit build/windows/WFTW.exe --set-icon Media/Icon/WFTW.ico
         shell: bash
 
       - name: Package Windows build
@@ -147,7 +144,3 @@ jobs:
           overwrite_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
-
-
