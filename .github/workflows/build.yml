@@ -59,6 +59,13 @@ jobs:
           flet build ${{ matrix.build_target }} --module-name gui --yes
         shell: bash
 
+      - name: Set Windows EXE icon
+        if: matrix.build_target == 'windows'
+        run: |
+          npm install -g rcedit
+          rcedit build/windows/WFTW.exe --set-icon Media/Icon/WFTW.ico
+        shell: bash
+
       - name: Package Windows build
         if: matrix.build_target == 'windows'
         run: |
@@ -140,6 +147,7 @@ jobs:
           overwrite_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
 
 
