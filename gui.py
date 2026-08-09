@@ -324,6 +324,11 @@ def show_overlay_notification(title, line2, line3, title_color="#aaaaaa", price_
                 pass
         elif sys.platform == "win32" and HAS_TKINTER:
             _overlay.notify(title, line2, line3, title_color, price_color)
+        elif sys.platform == "win32" and HAS_PLYER:
+            try:
+                notification.notify(title=title, message=f"{line2}\n{line3}", app_name="Warframe Trade Watch", timeout=15)
+            except Exception:
+                pass
         try:
             play_notification_sound(sound_filename, volume=volume)
         except Exception:
