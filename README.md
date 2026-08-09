@@ -1,6 +1,6 @@
 <div align="center">
 
-![WFTW Logo](Media/Icon/WFTW.png)
+![WFTW Logo](Media/Icon/png/256x256.png)
 
 </div>
 
@@ -70,13 +70,13 @@ WFTW/
 ├── notif.json              # Notification preferences
 ├── Logs/                   # Application logs
 └── Media/
-    ├── Icon/
-    │   ├── WFTW.ico       # Windows icon
-    │   ├── WFTW.icns      # macOS icon
-    │   └── WFTW.png       # App logo
-    └── Sound/
-        ├── Dnotif.wav     # Default notification sound
-        └── ...            # Additional alert sounds
+    └── Icon/
+        ├── svg/                  # Vector sources
+        ├── png/                  # Rendered PNGs at exact sizes
+        ├── ico/                  # Windows multi-resolution ICO
+        ├── icns/                 # macOS multi-resolution ICNS
+        ├── WFTW.svg              # Master vector source
+        └── WFTW_bg.png           # Background image
 ```
 
 ## Troubleshooting
