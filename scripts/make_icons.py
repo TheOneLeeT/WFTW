@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate high-quality platform icons from WFTW.svg using Inkscape."""
+"""Generate platform icons from pre-rendered SVGs in Media/Icon/svg/."""
 
 from pathlib import Path
 import io
@@ -9,51 +9,63 @@ import subprocess
 
 from PIL import Image
 
-SRC = Path("Media/Icon/WFTW.svg")
-OUT_DIR = Path("Media/Icon")
+SVG_DIR = Path("Media/Icon/svg")
+PNG_DIR = Path("Media/Icon/png")
+ICO_DIR = Path("Media/Icon/ico")
+ICNS_DIR = Path("Media/Icon/icns")
 ASSETS_DIR = Path("assets")
 INKSCAPE = Path(r"C:\Program Files\Inkscape\bin\inkscape.exe")
 
-print(f"Opening source: {SRC}")
-print(f"  SVG size: {SRC.stat().st_size} bytes")
-
 # Ensure output directories exist
-OUT_DIR.mkdir(parents=True, exist_ok=True)
-ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+for d in [PNG_DIR, ICO_DIR, ICNS_DIR, ASSETS_DIR]:
+    d.mkdir(parents=True, exist_ok=True)
 
 # ============================================================
-# Helper: render SVG at requested size via Inkscape CLI
+# Helper: convert SVG to PNG via Inkscape CLI
 # ============================================================
-def render_svg_to_png(size: int) -> bytes:
-    out = OUT_DIR / f"_tmp_{size}.png"
+def svg_to_png(svg_path: Path, png_path: Path, size: int):
     subprocess.run(
         [
             str(INKSCAPE),
-            str(SRC),
+            str(svg_path),
             "--export-type=png",
-            f"--export-filename={out}",
+            f"--export-filename={png_path}",
             "-w", str(size),
             "-h", str(size),
         ],
         check=True,
         capture_output=True,
     )
-    data = out.read_bytes()
-    out.unlink()
-    return data
+
+# ============================================================
+# Convert all SVGs to PNGs
+# ============================================================
+print("Converting SVGs to PNGs...")
+for svg_file in SVG_DIR.glob("*.svg"):
+    if "x" not in svg_file.stem:
+        continue
+    png_file = PNG_DIR / f"{svg_file.stem}.png"
+    if png_file.exists():
+        continue
+    size = int(svg_file.stem.split("x")[0])
+    svg_to_png(svg_file, png_file, size)
+    print(f"  {svg_file.name} -> {png_file.name}")
+
+print("SVG to PNG conversion done.")
 
 # ============================================================
 # Windows .ico (multiple resolutions embedded)
 # ============================================================
 win_sizes = [16, 32, 48, 64, 128, 256]
-ico_path = OUT_DIR / "WFTW.ico"
+ico_path = ICO_DIR / "WFTW.ico"
 
 pngs = []
 for size in win_sizes:
-    png = render_svg_to_png(size)
-    pngs.append((size, png))
+    png_file = PNG_DIR / f"{size}x{size}.png"
+    if not png_file.exists():
+        raise FileNotFoundError(f"Missing PNG: {png_file}")
+    pngs.append((size, png_file.read_bytes()))
 
-# Build multi-resolution ICO manually
 num = len(pngs)
 header = struct.pack("<HHH", 0, 1, num)
 entries = b""
@@ -80,12 +92,14 @@ print(f"Created {ico_path} with sizes: {win_sizes}")
 # macOS .icns (multiple resolutions embedded)
 # ============================================================
 mac_sizes = [16, 32, 64, 128, 256, 512, 1024]
-icns_path = OUT_DIR / "WFTW.icns"
+icns_path = ICNS_DIR / "WFTW.icns"
 
 icns_images = []
 for size in mac_sizes:
-    png = render_svg_to_png(size)
-    img = Image.open(io.BytesIO(png)).convert("RGBA")
+    png_file = PNG_DIR / f"{size}x{size}.png"
+    if not png_file.exists():
+        raise FileNotFoundError(f"Missing PNG: {png_file}")
+    img = Image.open(png_file).convert("RGBA")
     icns_images.append(img)
 
 icns_images[0].save(
@@ -96,20 +110,11 @@ icns_images[0].save(
 print(f"Created {icns_path} with sizes: {mac_sizes}")
 
 # ============================================================
-# Linux / general high-quality PNG
-# ============================================================
-linux_png = OUT_DIR / "WFTW.png"
-linux_size = 1024
-linux_png_data = render_svg_to_png(linux_size)
-linux_img = Image.open(io.BytesIO(linux_png_data)).convert("RGBA")
-linux_img.save(linux_png, format="PNG", optimize=True)
-print(f"Created {linux_png} at {linux_size}x{linux_size}")
-
-# ============================================================
 # Copy to assets/ for Flet build
 # ============================================================
 shutil.copy2(ico_path, ASSETS_DIR / "icon_windows.ico")
-shutil.copy2(linux_png, ASSETS_DIR / "icon.png")
+shutil.copy2(PNG_DIR / "512x512.png", ASSETS_DIR / "icon.png")
 print(f"Copied icons to {ASSETS_DIR}/")
 
 print("Done.")
+
