@@ -1,4 +1,4 @@
-name: Build and Release
+﻿name: Build and Release
 
 on:
   push:
@@ -59,7 +59,7 @@ jobs:
       - name: Set Windows EXE icon
         if: matrix.build_target == 'windows'
         run: |
-          npm install @electron/rcedit?
+          npm install @electron/rcedit
           npx rcedit build/windows/WFTW.exe --set-icon Media/Icon/WFTW.ico
         shell: bash
 
@@ -144,4 +144,3 @@ jobs:
           overwrite_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
