@@ -302,6 +302,15 @@ class NotificationOverlay:
         if self.running:
             self._notify_queue.put((title, line2, line3, title_color, price_color))
 
+    def stop(self):
+        self.running = False
+        try:
+            if self.root:
+                self.root.quit()
+                self.root.destroy()
+        except Exception:
+            pass
+
 
 _overlay = NotificationOverlay()
 
@@ -347,13 +356,14 @@ def main(page: ft.Page):
 
     def _set_icon():
         try:
-            import sys
+            _base = os.path.dirname(os.path.abspath(__file__))
+            icon_dir = os.path.join(_base, "Media", "Icon")
             if sys.platform == "darwin":
-                page.window.icon = os.path.join(_base_dir, "Media", "Icon", "WFTW.icns")
+                page.window.icon = os.path.join(icon_dir, "icns", "WFTW.icns")
             elif sys.platform == "win32":
-                page.window.icon = os.path.join(_base_dir, "Media", "Icon", "WFTW.ico")
+                page.window.icon = os.path.join(icon_dir, "ico", "WFTW.ico")
             else:
-                page.window.icon = os.path.join(_base_dir, "Media", "Icon", "WFTW.png")
+                page.window.icon = os.path.join(icon_dir, "png", "icon.png")
         except Exception:
             pass
 
@@ -374,7 +384,9 @@ def main(page: ft.Page):
         except Exception:
             pass
 
-    threading.Timer(0.5, _force_window_size).start()
+    _timer = threading.Timer(0.5, _force_window_size)
+    _timer.daemon = True
+    _timer.start()
 
     log_output = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=8)
     log_output_wts = ft.ListView(expand=True, spacing=4, auto_scroll=True, padding=8)
@@ -1956,7 +1968,18 @@ def main(page: ft.Page):
         _resize_timer.start()
 
     page.on_resize = _clamp_window
-    page.on_close = lambda e: (core_wts.stop(), core_wtb.stop())
+
+    def _on_window_event(e):
+        try:
+            if e.type == ft.WindowEventType.CLOSE:
+                core_wts.stop()
+                core_wtb.stop()
+                _overlay.stop()
+                threading.Thread(target=os._exit, args=(0,), daemon=True).start()
+        except Exception:
+            pass
+
+    page.window.on_event = _on_window_event
 
 
 if __name__ == "__main__":
