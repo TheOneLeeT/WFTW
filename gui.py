@@ -1971,24 +1971,39 @@ def main(page: ft.Page):
 
     def _on_close(e):
         try:
-            with open(os.path.join("Logs", "close_debug.log"), "a", encoding="utf-8") as f:
-                f.write(f"[CLOSE] page.on_close fired at {datetime.now()}\n")
             core_wts.stop()
             core_wtb.stop()
             _overlay.stop()
         except Exception:
             pass
-        os._exit(0)
+        try:
+            import ctypes
+            handle = ctypes.windll.kernel32.GetCurrentProcess()
+            ctypes.windll.kernel32.TerminateProcess(handle, 0)
+        except Exception:
+            try:
+                os._exit(0)
+            except Exception:
+                pass
 
     def _on_window_event(e):
         try:
-            with open(os.path.join("Logs", "close_debug.log"), "a", encoding="utf-8") as f:
-                f.write(f"[CLOSE] window event type={e.type} at {datetime.now()}\n")
             if e.type == ft.WindowEventType.CLOSE:
-                core_wts.stop()
-                core_wtb.stop()
-                _overlay.stop()
-                os._exit(0)
+                try:
+                    core_wts.stop()
+                    core_wtb.stop()
+                    _overlay.stop()
+                except Exception:
+                    pass
+                try:
+                    import ctypes
+                    handle = ctypes.windll.kernel32.GetCurrentProcess()
+                    ctypes.windll.kernel32.TerminateProcess(handle, 0)
+                except Exception:
+                    try:
+                        os._exit(0)
+                    except Exception:
+                        pass
         except Exception:
             pass
 
