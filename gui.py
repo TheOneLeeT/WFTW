@@ -1977,10 +1977,19 @@ def main(page: ft.Page):
         except Exception:
             pass
         try:
+            with open(os.path.join("Logs", "exit_log.txt"), "a", encoding="utf-8") as f:
+                f.write(f"on_close: TerminateProcess attempt at {datetime.now()}\n")
+                f.flush()
             import ctypes
             handle = ctypes.windll.kernel32.GetCurrentProcess()
             ctypes.windll.kernel32.TerminateProcess(handle, 0)
-        except Exception:
+        except Exception as ex:
+            try:
+                with open(os.path.join("Logs", "exit_log.txt"), "a", encoding="utf-8") as f:
+                    f.write(f"TerminateProcess failed: {ex}\n")
+                    f.flush()
+            except Exception:
+                pass
             try:
                 os._exit(0)
             except Exception:
@@ -1996,10 +2005,19 @@ def main(page: ft.Page):
                 except Exception:
                     pass
                 try:
+                    with open(os.path.join("Logs", "exit_log.txt"), "a", encoding="utf-8") as f:
+                        f.write(f"window_event: TerminateProcess attempt at {datetime.now()}\n")
+                        f.flush()
                     import ctypes
                     handle = ctypes.windll.kernel32.GetCurrentProcess()
                     ctypes.windll.kernel32.TerminateProcess(handle, 0)
-                except Exception:
+                except Exception as ex:
+                    try:
+                        with open(os.path.join("Logs", "exit_log.txt"), "a", encoding="utf-8") as f:
+                            f.write(f"window_event TerminateProcess failed: {ex}\n")
+                            f.flush()
+                    except Exception:
+                        pass
                     try:
                         os._exit(0)
                     except Exception:
