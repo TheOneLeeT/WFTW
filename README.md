@@ -19,23 +19,14 @@ No Warframe Market account is required. WFTW reads public listing data only; it 
 - Watches public buy and sell orders on Warframe Market for items you choose
 - Filters by price, item rank, and seller/buyer online status
 - Shows a desktop notification and plays a sound when a matching order is found
-- Copies a ready-to-paste chat message to your clipboard so you can whisper the trader in-game
+- Optionally copies a ready-to-paste chat message to your clipboard if you want to contact the trader in-game
 - Runs in the background as a lightweight desktop window and system-tray app
-
-## What it does not do
-
-- It does not require or use your Warframe Market credentials
-- It does not place orders or complete trades for you
-- It does not send chat messages, automate input, or control the Warframe client
-- It does not read game memory, game files, or running processes
-- It does not collect telemetry, analytics, or usage data
-- It does not create accounts, sync to cloud services, or contact Digital Extremes servers
 
 ## How it works
 
-WFTW periodically reads the public Warframe Market API for recent orders and compares them against your watchlist. When an order matches your filters, WFTW alerts you and copies a whisper message to your clipboard. You then manually paste that message into Warframe chat to contact the trader.
+WFTW periodically reads the public Warframe Market API for recent listings and compares them against your watchlist. When a listing matches your filters, WFTW alerts you and, if you want, copies a chat message to your clipboard. You then decide what to do with that information.
 
-This means you still control the trade yourself; WFTW only saves you from manually refreshing the market.
+This means WFTW is a passive monitoring tool; it does not trade on your behalf or require you to take any action.
 
 ## Requirements
 
@@ -58,17 +49,21 @@ Pre-release builds are available on the [Releases page](https://github.com/TheOn
 ## First-time setup
 
 1. Start WFTW
-2. Use the **WTS** / **WTB** tabs to add items you want to buy or sell
-3. Set your maximum price, minimum price, and optional rank or subtype filters
-4. Choose whether you only want to see online or in-game traders
-5. WFTW begins monitoring automatically
+2. Use the **WTS** / **WTB** tabs to choose what kind of listings you want to track
+3. Add items you want to monitor
+4. Set your price filters and any optional rank or subtype filters
+5. Choose whether you only want to see online or in-game sellers/buyers
+6. WFTW begins monitoring automatically
+
+WTS tracks sell listings from other players. WTB tracks buy listings from other players. You can use either or both depending on what market activity you want to follow.
 
 ## Watchlists and filters
 
-- **WTS (Want To Sell)** — tracks public **sell orders** from other players. WFTW alerts you when someone posts a sell order that matches your max price and rank. You would **buy** from that seller and paste the whisper message into in-game chat.
-- **WTB (Want To Buy)** — tracks public **buy orders** from other players. WFTW alerts you when someone posts a buy order that matches your min price and rank. You would **sell** to that buyer and paste the whisper message into in-game chat.
+- **WTS (Want To Sell)** — tracks public **sell listings** from other players. Use this to monitor what is currently available for purchase.
+- **WTB (Want To Buy)** — tracks public **buy orders** from other players. Use this to monitor what other players are looking to purchase.
+- You can track any number of items in each list without needing to trade yourself
 - Filters include: platform, language, max/min platinum, mod rank, item subtype, and trader status
-- Matching orders are shown in the alert log and copied to your clipboard as a whisper message
+- Matching listings are shown in the alert log and copied to your clipboard as a whisper message
 
 ## Notifications
 
@@ -94,11 +89,11 @@ These files are plain JSON and can be backed up, copied, or moved between instal
 
 ## How monitoring works
 
-WFTW reads the public Warframe Market order feed and checks it against your watchlist. When a match is found, it:
+WFTW reads the public Warframe Market listing feed and checks it against your watchlist. When a match is found, it:
 
-1. Adds the order to the alert log
+1. Adds the listing to the alert log
 2. Shows a desktop notification
-3. Copies a whisper message to your clipboard
+3. Optionally copies a chat message to your clipboard
 4. Plays a sound
 
 Monitoring continues in the background until you close the app. Network errors or API changes may temporarily prevent alerts; WFTW will retry automatically.
@@ -118,11 +113,11 @@ Warframe Market limits public API clients to **3 requests per second**. WFTW is 
 ## Limitations
 
 - WFTW depends on the public Warframe Market API. If the API changes, goes down, or changes its rate limits, WFTW may stop working until it is updated.
-- Public listings can change or disappear before you contact the trader.
-- Notifications are not instant. WFTW polls the market on a short interval, so there is a small delay between an order being posted and WFTW noticing it.
-- WFTW cannot guarantee that an order will still be available after you receive a notification.
-- WFTW cannot guarantee trader behavior, trade completion, or item availability.
-- WFTW does not verify that orders are still valid when you paste the whisper message.
+- Public listings can change or disappear at any time.
+- Notifications are not instant. WFTW polls the market on a short interval, so there is a small delay between a listing being posted and WFTW noticing it.
+- WFTW cannot guarantee that a listing will still be available after you receive a notification.
+- WFTW cannot guarantee listing accuracy, seller/buyer availability, or transaction completion.
+- WFTW does not verify that listings are still valid when you use the copied message.
 
 ## Troubleshooting
 
