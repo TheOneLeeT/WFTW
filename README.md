@@ -22,6 +22,15 @@ No Warframe Market account is required. WFTW reads public listing data only; it 
 - Optionally copies a ready-to-paste chat message to your clipboard if you want to contact the trader in-game
 - Runs in the background as a lightweight desktop window and system-tray app
 
+## What it does not do
+
+- It does not require or use your Warframe Market credentials
+- It does not place orders or complete trades for you
+- It does not send chat messages, automate input, or control the Warframe client
+- It does not read game memory, game files, or running processes
+- It does not collect telemetry, analytics, or usage data
+- It does not create accounts, sync to cloud services, or contact Digital Extremes servers
+
 ## How it works
 
 WFTW periodically reads the public Warframe Market API for recent listings and compares them against your watchlist. When a listing matches your filters, WFTW alerts you and, if you want, copies a chat message to your clipboard. You then decide what to do with that information.
