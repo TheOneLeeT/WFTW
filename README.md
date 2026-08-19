@@ -65,10 +65,10 @@ Pre-release builds are available on the [Releases page](https://github.com/TheOn
 
 ## Watchlists and filters
 
-- **WTS** — items you want to sell. WFTW alerts you when someone posts a buy order that matches your price and rank.
-- **WTB** — items you want to buy. WFTW alerts you when someone posts a sell order that matches your price and rank.
+- **WTS (Want To Sell)** — tracks public **sell orders** from other players. WFTW alerts you when someone posts a sell order that matches your max price and rank. You would **buy** from that seller and paste the whisper message into in-game chat.
+- **WTB (Want To Buy)** — tracks public **buy orders** from other players. WFTW alerts you when someone posts a buy order that matches your min price and rank. You would **sell** to that buyer and paste the whisper message into in-game chat.
 - Filters include: platform, language, max/min platinum, mod rank, item subtype, and trader status
-- Matching orders are shown in the log and copied to your clipboard as a whisper message
+- Matching orders are shown in the alert log and copied to your clipboard as a whisper message
 
 ## Notifications
 
