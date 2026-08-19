@@ -10,112 +10,185 @@
 
 ## What it is
 
-Warframe Trade Watch is a desktop companion that watches Warframe Market for you and instantly alerts you when matching buy or sell orders appear. No account. No browser tab. Just passive notifications while you play.
+Warframe Trade Watch is a desktop companion that monitors public Warframe Market listings for you and alerts you when a matching buy or sell order appears. It runs quietly in the background while you play and shows a desktop notification when something you want is posted.
 
-## Why it exists
+No Warframe Market account is required. WFTW reads public listing data only; it does not place orders, automate chat, or interact with the Warframe game client.
 
-Warframe Market is excellent for browsing and trading manually. Warframe Trade Watch complements it by continuously monitoring the public market for the items you care about, so you don't have to refresh pages or keep browser tabs open.
+## What it does
 
-No Warframe Market account required. Warframe Trade Watch monitors public market listings directly, so it works independently of your browser session or Warframe Market login.
+- Watches public buy and sell orders on Warframe Market for items you choose
+- Filters by price, item rank, and seller/buyer online status
+- Shows a desktop notification and plays a sound when a matching order is found
+- Copies a ready-to-paste chat message to your clipboard so you can whisper the trader in-game
+- Runs in the background as a lightweight desktop window and system-tray app
 
-## What you get
+## What it does not do
 
-- **No account required**: monitor public market listings without staying signed in
-- **Monitor dozens of items at once**: track multiple buy and sell orders across as many items as you want
-- **Runs quietly in the background**: a lightweight tray app that stays out of your way while you play
-- **Instant desktop alerts**: know immediately when a matching order appears with sound and notification
-- **Available everywhere**: cross-platform desktop app for Windows, macOS, and Linux
-- **Private by default**: no telemetry, no cloud sync, and no account creation
-- **Responsive while monitoring**: lightweight background polling keeps the interface snappy
+- It does not require or use your Warframe Market credentials
+- It does not place orders or complete trades for you
+- It does not send chat messages, automate input, or control the Warframe client
+- It does not read game memory, game files, or running processes
+- It does not collect telemetry, analytics, or usage data
+- It does not create accounts, sync to cloud services, or contact Digital Extremes servers
 
-## What it tracks
+## How it works
 
-- Sell orders with price and rank filters
-- Buy orders with price and rank filters
-- Online and in-game status awareness
-- Local notifications with customizable sound and volume
+WFTW periodically reads the public Warframe Market API for recent orders and compares them against your watchlist. When an order matches your filters, WFTW alerts you and copies a whisper message to your clipboard. You then manually paste that message into Warframe chat to contact the trader.
 
-## Download
+This means you still control the trade yourself; WFTW only saves you from manually refreshing the market.
 
-**Pre-release builds are available on the [Releases page](https://github.com/TheOneLeeT/WFTW/releases).**
+## Requirements
 
-No Python or extra dependencies required. Just download the archive for your platform, extract it, and run the app.
+- Windows 10+, macOS 10.14+, or a modern Linux desktop
+- An internet connection
+- No Python, pip, or extra dependencies are needed for the release builds
 
-| Platform | Archive | Contents |
-|----------|---------|----------|
-| Windows | `WFTW-windows-x64.zip` | Portable app — extract and run `WFTW.exe` |
-| macOS | `WFTW-macos-universal.dmg` | Disk image — mount and drag `.app` to `Applications` |
-| Linux | `WFTW-linux-x64.tar.gz` | Archive — extract and run the executable |
+## Download and installation
 
-> **Note:** This is a pre-release. Back up your `watchlist.json` and `settings.json` before updating.
+Pre-release builds are available on the [Releases page](https://github.com/TheOneLeeT/WFTW/releases).
 
-## Build from source
+| Platform | Archive | How to run |
+|----------|---------|------------|
+| Windows | `WFTW-windows-x64.zip` | Extract the archive and run `WFTW.exe` |
+| macOS | `WFTW-macos-universal.dmg` | Open the DMG and drag the app to `Applications` |
+| Linux | `WFTW-linux-x64.tar.gz` | Extract and run the executable |
 
-If you want to build the app yourself:
+> **Note:** This is a pre-release. Back up your `watchlist.json` and `settings.json` before updating to a newer build.
 
-1. Install Python 3.11+
-2. `pip install -r requirements.txt`
-3. `flet build <windows|macos|linux> --module-name gui --yes`
-4. The build output will be in `build/<platform>/`
+## First-time setup
 
-## Project layout
+1. Start WFTW
+2. Use the **WTS** / **WTB** tabs to add items you want to buy or sell
+3. Set your maximum price, minimum price, and optional rank or subtype filters
+4. Choose whether you only want to see online or in-game traders
+5. WFTW begins monitoring automatically
 
-```
-WFTW/
-├── gui.py                  # Main application UI
-├── tracker_core.py         # Scanning engine and API logic
-├── requirements.txt        # Python dependencies
-├── settings.json           # User settings
-├── watchlist.json          # Tracked items
-├── notif.json              # Notification preferences
-├── Logs/                   # Application logs
-└── Media/
-    └── Icon/         # App icons per platform
-```
+## Watchlists and filters
+
+- **WTS** — items you want to sell. WFTW alerts you when someone posts a buy order that matches your price and rank.
+- **WTB** — items you want to buy. WFTW alerts you when someone posts a sell order that matches your price and rank.
+- Filters include: platform, language, max/min platinum, mod rank, item subtype, and trader status
+- Matching orders are shown in the log and copied to your clipboard as a whisper message
+
+## Notifications
+
+WFTW uses your operating system's notification system. You can configure:
+
+- Default notification sound
+- Per-item custom sounds
+- Notification volume
+- Whether notifications are enabled
+
+Sounds are stored locally in the app's `Media/Sound` folder. You can replace them with your own `.wav` files if you want.
+
+## Where your data is stored
+
+WFTW stores everything locally in the same folder where you run it:
+
+- `watchlist.json` — your tracked items and price filters
+- `notif.json` — notification sound settings
+- `settings.json` — app preferences
+- `Logs/` — diagnostic and alert logs
+
+These files are plain JSON and can be backed up, copied, or moved between installs. The README download table assumes you are running from the extracted release folder. If you move or delete that folder, your local data goes with it.
+
+## How monitoring works
+
+WFTW reads the public Warframe Market order feed and checks it against your watchlist. When a match is found, it:
+
+1. Adds the order to the alert log
+2. Shows a desktop notification
+3. Copies a whisper message to your clipboard
+4. Plays a sound
+
+Monitoring continues in the background until you close the app. Network errors or API changes may temporarily prevent alerts; WFTW will retry automatically.
+
+## Network and API behavior
+
+- WFTW contacts only `api.warframe.market`
+- It uses read-only `GET` requests; it does not submit orders, log in, or modify data
+- It does not send Warframe Market credentials, cookies, or authentication tokens
+- It does not contact Digital Extremes servers or the Warframe game client
+- It does not send telemetry, analytics, or crash reports anywhere
+
+### Rate limits
+
+Warframe Market limits public API clients to **3 requests per second**. WFTW is designed to stay within this limit.
+
+## Limitations
+
+- WFTW depends on the public Warframe Market API. If the API changes, goes down, or changes its rate limits, WFTW may stop working until it is updated.
+- Public listings can change or disappear before you contact the trader.
+- Notifications are not instant. WFTW polls the market on a short interval, so there is a small delay between an order being posted and WFTW noticing it.
+- WFTW cannot guarantee that an order will still be available after you receive a notification.
+- WFTW cannot guarantee trader behavior, trade completion, or item availability.
+- WFTW does not verify that orders are still valid when you paste the whisper message.
 
 ## Troubleshooting
 
-### "python is not recognized" (Windows)
+**App does not start**
+- Make sure you extracted the archive before running it
+- On Windows, if SmartScreen appears, click "More info" and then "Run anyway"
+- On macOS, if the app is blocked, right-click the app and choose "Open"
+- On Linux, make sure the executable has run permission: `chmod +x WFTW-linux-x64.AppImage`
 
-Python is not in your PATH. Re-run the Python installer and check "Add Python to PATH", or use `py` instead of `python`:
-```
-py gui.py
-```
-
-### "python3: command not found" (macOS/Linux)
-
-Try `python` instead of `python3`, or install Python via your package manager.
-
-### Permission errors when installing
-
-Add the `--user` flag:
-```
-pip3 install --user -r requirements.txt
-```
-
-### App won't start / blank window
-
-Make sure you have a display environment running. On Linux, you may need to install additional dependencies:
-```
-sudo apt install python3-tk
-```
-
-### Notifications not appearing
-
+**No notifications appear**
 - Check your system notification settings
-- On Linux, ensure you have a notification daemon running (e.g., `dunst`, `xfce4-notifyd`)
-- Try adjusting volume in the app settings
+- Make sure WFTW's notifications are allowed at the OS level
+- On Linux, ensure you have a notification daemon running, such as `dunst` or `xfce4-notifyd`
 
-## Legal
+**No orders are detected**
+- Verify your internet connection
+- Check that Warframe Market is online and reachable
+- Make sure your watchlist items and filters are entered correctly
+- Open the `Logs/` folder and check `wftw_alerts.log` and `tracker_api.log` for errors
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+**Settings or watchlist disappeared**
+- Did you move or delete the folder WFTW is running from?
+- WFTW stores data next to the executable. If you removed that folder, the data is gone unless you have a backup
 
-This is a fan-made, non-commercial desktop notification tool. It is not affiliated with, endorsed by, or connected to Digital Extremes Ltd. or warframe.market in any way.
+**High CPU or network usage**
+- WFTW is designed to be lightweight. If you see high usage, check that you do not have dozens of duplicate instances running
+- Look in `Logs/tracker_perf.log` for timing details
 
-Warframe is a registered trademark of Digital Extremes Ltd. All game-related content, including item names, images, and terminology, is property of Digital Extremes Ltd.
+**How to report a problem**
+- Include the contents of the `Logs/` folder
+- Mention your platform, WFTW version, and what you expected to happen
 
-This tool interacts with the public Warframe Market API. Use of this tool is subject to the [Warframe Market Terms of Service](https://warframe.market/tos) and [Rules](https://docs.warframe.market/docs/rules/overview). Users are responsible for complying with all applicable terms, including rate limits (3 requests per second).
+## Third-party software and licenses
 
-This tool does not automate in-game actions, modify the Warframe client, or interact with Digital Extremes servers. It is a passive notification client for an external community website.
+WFTW is built with:
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. USE AT YOUR OWN RISK.
+- [Flet](https://flet.dev) — MIT License
+- [requests](https://requests.readthedocs.io/) — Apache 2.0 License
+- [pyperclip](https://pyperclip.readthedocs.io/) — BSD License
+- [PyInstaller](https://pyinstaller.org/) — GPL / proprietary build tool used only for packaging
+
+Release bundles also include the Python runtime, Flutter runtime, and platform-specific system libraries, each under its own license. Those bundled components are not covered by WFTW's MIT license.
+
+## Warframe and Digital Extremes legal notices
+
+Warframe, Warframe-related imagery, and all Warframe trademarks and copyrights are owned by [Digital Extremes Ltd.](https://www.digitalextremes.com/)
+
+WFTW is not affiliated with, endorsed by, or connected to Digital Extremes Ltd. or Warframe in any way.
+
+Warframe Market is a community-run website and is not affiliated with Digital Extremes Ltd.
+
+By using WFTW you remain responsible for complying with:
+
+- [Warframe Terms of Use](https://www.warframe.com/en/terms)
+- [Warframe EULA](https://www.warframe.com/en/eula)
+- [Warframe Privacy Policy](https://www.warframe.com/privacy)
+- [Warframe Market Terms of Service](https://warframe.market/tos)
+- [Warframe Market Rules](https://docs.warframe.market/docs/rules/overview)
+- [Warframe Market API Documentation](https://docs.warframe.market/docs/api/overview/)
+
+WFTW does not bypass, override, or violate any of these policies. It reads public marketplace data only and does not automate in-game actions.
+
+## Disclaimer
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## License
+
+WFTW is released under the [MIT License](LICENSE).
