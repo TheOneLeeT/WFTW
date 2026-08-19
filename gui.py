@@ -1976,9 +1976,20 @@ def main(page: ft.Page):
             _overlay.stop()
         except Exception:
             pass
-        threading.Thread(target=lambda: os._exit(0), daemon=True).start()
+        os._exit(0)
+
+    def _on_window_event(e):
+        try:
+            if e.type == ft.WindowEventType.CLOSE:
+                core_wts.stop()
+                core_wtb.stop()
+                _overlay.stop()
+                os._exit(0)
+        except Exception:
+            pass
 
     page.on_close = _on_close
+    page.window.on_event = _on_window_event
 
 
 if __name__ == "__main__":
