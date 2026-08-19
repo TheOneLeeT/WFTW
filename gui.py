@@ -9,6 +9,7 @@ import threading
 import queue
 import pyperclip
 import atexit
+import time
 from datetime import datetime
 from tracker_core import TrackerCore, WTS_WATCHLIST, WTB_WATCHLIST, save_watchlists, load_watchlists, fetch_items, ITEM_CACHE, resolve_item, _write_debug_log, _rotate_logs
 try:
@@ -1969,62 +1970,82 @@ def main(page: ft.Page):
 
     page.on_resize = _clamp_window
 
+    def _log_close(msg):
+        try:
+            with open(os.path.join("Logs", "close_debug.log"), "a", encoding="utf-8") as f:
+                f.write(f"[{datetime.now()}] {msg}\n")
+                f.flush()
+        except Exception:
+            pass
+
+    def _on_disconnect(e):
+        _log_close("on_disconnect fired")
+        _close_requested.set()
+        try:
+            import flet.app as _fapp
+            if hasattr(_fapp, "terminate"):
+                _fapp.terminate.set()
+        except Exception:
+            pass
+
     def _on_close(e):
+        _log_close("on_close fired")
+        _close_requested.set()
+        try:
+            import flet.app as _fapp
+            if hasattr(_fapp, "terminate"):
+                _fapp.terminate.set()
+        except Exception:
+            pass
         try:
             core_wts.stop()
             core_wtb.stop()
             _overlay.stop()
         except Exception:
             pass
-        try:
-            with open(os.path.join("Logs", "exit_log.txt"), "a", encoding="utf-8") as f:
-                f.write(f"on_close: TerminateProcess attempt at {datetime.now()}\n")
-                f.flush()
-            import ctypes
-            handle = ctypes.windll.kernel32.GetCurrentProcess()
-            ctypes.windll.kernel32.TerminateProcess(handle, 0)
-        except Exception as ex:
-            try:
-                with open(os.path.join("Logs", "exit_log.txt"), "a", encoding="utf-8") as f:
-                    f.write(f"TerminateProcess failed: {ex}\n")
-                    f.flush()
-            except Exception:
-                pass
-            try:
-                os._exit(0)
-            except Exception:
-                pass
 
     def _on_window_event(e):
+        _log_close(f"window_event fired type={e.type}")
         try:
             if e.type == ft.WindowEventType.CLOSE:
+                _close_requested.set()
+                try:
+                    import flet.app as _fapp
+                    if hasattr(_fapp, "terminate"):
+                        _fapp.terminate.set()
+                except Exception:
+                    pass
                 try:
                     core_wts.stop()
                     core_wtb.stop()
                     _overlay.stop()
                 except Exception:
                     pass
-                try:
-                    with open(os.path.join("Logs", "exit_log.txt"), "a", encoding="utf-8") as f:
-                        f.write(f"window_event: TerminateProcess attempt at {datetime.now()}\n")
-                        f.flush()
-                    import ctypes
-                    handle = ctypes.windll.kernel32.GetCurrentProcess()
-                    ctypes.windll.kernel32.TerminateProcess(handle, 0)
-                except Exception as ex:
-                    try:
-                        with open(os.path.join("Logs", "exit_log.txt"), "a", encoding="utf-8") as f:
-                            f.write(f"window_event TerminateProcess failed: {ex}\n")
-                            f.flush()
-                    except Exception:
-                        pass
-                    try:
-                        os._exit(0)
-                    except Exception:
-                        pass
         except Exception:
             pass
 
+    def _watchdog():
+        while not _close_requested.wait(timeout=0.5):
+            pass
+        _log_close("watchdog: close requested, waiting 3s then force exit")
+        time.sleep(3)
+        try:
+            _log_close("watchdog: calling os._exit(0)")
+            os._exit(0)
+        except Exception as ex:
+            _log_close(f"watchdog: os._exit failed: {ex}")
+            try:
+                import ctypes
+                handle = ctypes.windll.kernel32.GetCurrentProcess()
+                _log_close("watchdog: calling TerminateProcess")
+                ctypes.windll.kernel32.TerminateProcess(handle, 0)
+            except Exception as ex2:
+                _log_close(f"watchdog: TerminateProcess failed: {ex2}")
+
+    _close_requested = threading.Event()
+    threading.Thread(target=_watchdog, daemon=True).start()
+
+    page.on_disconnect = _on_disconnect
     page.on_close = _on_close
     page.window.on_event = _on_window_event
 
