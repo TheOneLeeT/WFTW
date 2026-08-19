@@ -56,16 +56,6 @@ pip install -r requirements.txt
 flet build <windows|macos|linux> --module-name gui --yes
 ```
 
-## Development workflow
-
-- All feature work happens on the **Dev** branch
-- When Dev is ready, it is merged into **Main**
-- Release builds are compiled from **Main** only
-
-```
-Dev  ──►  Main  ──►  Build / Release
-```
-
 ## Troubleshooting
 
 - **Python not found (Windows)**: use `py gui.py` or add Python to PATH
