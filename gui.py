@@ -1969,17 +1969,16 @@ def main(page: ft.Page):
 
     page.on_resize = _clamp_window
 
-    def _on_window_event(e):
+    def _on_close(e):
         try:
-            if e.type == ft.WindowEventType.CLOSE:
-                core_wts.stop()
-                core_wtb.stop()
-                _overlay.stop()
-                threading.Thread(target=os._exit, args=(0,), daemon=True).start()
+            core_wts.stop()
+            core_wtb.stop()
+            _overlay.stop()
         except Exception:
             pass
+        threading.Thread(target=lambda: os._exit(0), daemon=True).start()
 
-    page.window.on_event = _on_window_event
+    page.on_close = _on_close
 
 
 if __name__ == "__main__":
